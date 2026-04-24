@@ -1,0 +1,121 @@
+---
+title: "How It Works"
+description: "How It Works"
+---
+
+**Know Your Issuer (KYI)** links a token contract to a verified legal entity and its controlling wallet. It turns issuer verification into a repeatable, machine-readable process that exchanges, wallets, regulators, and apps can trust.
+
+KYI is straightforward for issuers to complete. It is rigorous enough for institutional compliance workflows.
+
+***
+
+## Step-by-Step Process
+
+<Steps>
+<Step>
+
+### Start the KYI application
+
+The issuer starts a KYI submission from the Bluprynt dashboard.
+
+The submission begins with:
+
+* Asset name and ticker
+* Blockchain network
+* Token contract or mint address
+* Wallets with mint, freeze, pause, or admin authority
+  </Step>
+
+<Step>
+
+### Submit issuer details
+
+The issuer provides the business information tied to the asset.
+
+This includes:
+
+* Legal entity name
+* Jurisdiction of incorporation
+* Registration number
+* Website and legal address
+* Supporting company documents
+  </Step>
+
+<Step>
+
+### Complete KYB review
+
+Bluprynt reviews the submitted business data and company records.
+
+The review confirms:
+
+* The entity exists and is active
+* The entity is tied to the asset
+* The submitting party can act for the business
+  </Step>
+
+<Step>
+
+### Verify the controlling wallet
+
+Bluprynt issues a signature challenge to the wallet listed as the controlling authority.
+
+The issuer signs the challenge with a wallet that:
+
+* Deployed the token, or
+* Holds mint, freeze, pause, or admin privileges
+
+Wallet verification can be completed through a wallet extension, CLI flow, or HSM workflow.
+</Step>
+
+<Step>
+
+### Submit for approval
+
+Once the business review and wallet verification are complete, the issuer submits the asset for final review.
+
+The application moves into a pending state until approval.
+</Step>
+
+<Step>
+
+### Generate the KYI attestation
+
+After approval, Bluprynt issues a KYI attestation that binds:
+
+* The verified legal entity
+* The verified controlling wallet
+* The associated token address
+
+The attestation is published on-chain and made available through Bluprynt surfaces and the KYI API.
+</Step>
+</Steps>
+
+***
+
+## Attestation Format
+
+KYI attestations are structured for compliance tooling. Each record includes:
+
+| Field                   | Description                                      |
+| ----------------------- | ------------------------------------------------ |
+| **Token Address**       | The verified token contract                      |
+| **Wallet Address**      | The wallet that completed the verification       |
+| **Legal Entity**        | Name, jurisdiction, registration number          |
+| **Issue Date**          | Timestamp of attestation                         |
+| **Status**              | Active, expired, or revoked                      |
+| **Related Disclosures** | Linked Smart Disclosures attestations (optional) |
+
+These attestations are designed to work with Ethereum, Solana, and broader attestation-based compliance systems.
+
+***
+
+## Revocation and Expiration
+
+* **Automatic expiration:** KYI attestations can carry a defined validity period
+* **Manual revocation:** Bluprynt or an authorized party can revoke an attestation if legal status or wallet control changes
+* **Tamper detection:** Invalid signatures or mismatched wallets can flag an asset as unauthenticated
+
+***
+
+KYI makes token provenance verifiable. That gives platforms, users, and regulators a trusted way to identify who stands behind an asset.

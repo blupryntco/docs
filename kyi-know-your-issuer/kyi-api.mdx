@@ -1,0 +1,213 @@
+---
+title: "KYI API"
+description: "KYI API"
+---
+
+## KYI API Documentation
+
+Bluprynt partners, such as wallets, exchanges, explorers, and tokenization platforms, can integrate KYI to automate issuer verification and reduce token fraud.
+
+The KYI API helps partners verify KYI'd issuers and assets, automate compliance checks, and protect end users.
+
+<Info>
+  **Note:** The KYI API (v1.0.0-26) is in beta. Public access is limited to the endpoints below. For expanded access, contact <product@bluprynt.com>. You can test the API [here](https://integrations.bluprynt.com/).
+</Info>
+
+***
+
+### Authentication
+
+All API calls require an **API key**.
+
+* Include the key in the `Authorization` header as:
+
+```http
+Authorization: Bearer <API_KEY>
+```
+
+For example, you may submit the GET asset information request as follows:
+
+```bash
+curl -X 'GET'
+'https://integrations.bluprynt.com/assets/solana/2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'
+-H 'accept: application/json'
+-H 'Authorization: Bearer <API_KEY>'
+```
+
+***
+
+### Endpoints
+
+The following endpoints are currently available:
+
+* `GET /assets/{chain}/{token_address}`
+* `GET /assets`
+
+#### **Get Asset Details**
+
+Use this endpoint to retrieve KYI verification details for a specific asset.
+
+```
+https://integrations.bluprynt.com/assets/{chain}/{token_address}
+```
+
+The response returns KYI metadata for the token address, including issuer status, authority verification, and branding permissions.
+
+**Request Parameters**
+
+| Name | Type | Required | Description |
+|---|---|---|---|
+| `chain` | string | Yes | Name of blockchain network (e.g., "solana", "ethereum", etc.) |
+| `address` | string | Yes | Token contract address to query (e.g., For USDC on Solana, the contract is EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v) |
+
+
+**Example Request (PYUSD on Solana)**
+
+```bash
+curl -X 'GET'
+'https://integrations.bluprynt.com/assets/solana/2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo'
+-H 'accept: application/json'
+-H 'Authorization: Bearer <API_KEY>'
+```
+
+**Example Response (PYUSD on Solana)**
+
+```json
+{
+  "token_details": {
+    "chain": "solana",
+    "address": "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
+    "asset_did": null,
+    "token_name": "PayPal USD",
+    "token_ticker": "PYUSD",
+    "authorities": [
+      {
+        "authority_type": "mint_authority",
+        "address": "FtrZqgM9begkaLHq3f4hGEUrAK1jjJpkc8hZ1hVk3EDN",
+        "verified": true,
+        "account_type": "multisig",
+        "multisig_signers": [
+          "5gUuDFHswKi2QMA1qJHf6FEVhNCrHnyAdfWniMaUUPE4",
+          "AuVW19qwit2bxZqcspGZLsbq2ZiqosvryTNXE8UZSeGh",
+          "3QaqDJS5angcPhW1HsMbB74vJbzWNcy1r5bwtATUro7d"
+        ]
+      },
+      {
+        "authority_type": "freeze_authority",
+        "address": "2apBGMsS6ti9RyF5TwQTDswXBWskiJP2LD4cUEDqYJjk",
+        "verified": true,
+        "account_type": "regular",
+        "multisig_signers": []
+      },
+      {
+        "authority_type": "update_authority",
+        "address": "2apBGMsS6ti9RyF5TwQTDswXBWskiJP2LD4cUEDqYJjk",
+        "verified": true,
+        "account_type": "regular",
+        "multisig_signers": []
+      }
+    ],
+    "token_image": null,
+    "copyright_confirmed": false
+  },
+  "business_details": {
+    "issuer_did": null,
+    "business_verified": true,
+    "business_name": "PayPal Holdings, Inc. (PYPL ticker or PayPal), PayPal Inc., and Paxos  (Issuer)",
+    "business_description": "PayPal Holdings, Inc. is an American multinational financial technology company operating an online payments system in the majority of countries that support [online money transfers](https://en.wikipedia.org/wiki/E-commerce_payment_system \"E-commerce payment system\"); it serves as an electronic alternative to traditional [paper](https://en.wikipedia.org/wiki/Banknote \"Banknote\") methods such as [checks](https://en.wikipedia.org/wiki/Cheque \"Cheque\") and [money orders](https://en.wikipedia.org/wiki/Money_order \"Money order\"). The company operates as a payment processor for online vendors, [auction](https://en.wikipedia.org/wiki/Auction \"Auction\") sites and many other commercial and company users, for which it charges an international addition bank charges fee.\n\n\n\nPayPal Inc. (legal entity within PayPal Holding, Inc.) is a technology platform that enables digital payments for merchants and consumers worldwide. It operates a two-sided network that connects merchants and consumers, facilitating online transactions and payments. PayPal, Inc. (NMLS ID #: 910457) is licensed to engage in Virtual Currency Business Activity by the New York State Department of Financial Services"
+  },
+  "website_url": "https://www.paypal.com/us/digital-wallet/manage-money/crypto/pyusd",
+  "whitepaper_url": "https://www.paypalobjects.com/devdoc/community/PYUSD-Solana-White-Paper.pdf",
+  "asset_url": "https://verified.bluprynt.com/verified-assets/2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo/solana"
+}
+```
+
+**Response Fields**
+
+| Field | Type | Description |
+|---|---|---|
+| `token_details` | object | Object of attributes that provide additional information about the queried asset. |
+| `chain` | string | `[token_details]` : A token_details attribute that indicates the blockchain network that the issuer's asset is deployed on. |
+| `asset_did` | string | `[token_details]` : A token_details attribute that provides the decentralized identifier of the asset. Assets have their own onchain identities with additional compliance metadata. |
+| `token_name` | string | `[token_details]` : A token_details attribute that indicates the name of the asset. |
+| `token_ticker` | string | `[token_details]` : A token_details attribute that indicates the ticker (acronym) of the asset's name. |
+| `authorities` | object | `[token_details]` : A token_details attribute that lists the asset's authorities (i.e., controlling wallets of the asset). |
+| `authority_type` | string | `[authorities]` : A authorities object attribute that indicates which type of authority is the entity (e.g., an asset authority on Solana can be a 'mint authority' and/or a 'freeze authority'). This concept may not extend to all blockchain networks. |
+| `address` | string | `[authorities]` : A authorities object attribute that indicates the wallet address of the asset authority |
+| `verified` | boolean | `[authorities]` : A authorities object attribute that may be `true` or `false` and indicates whether or not the authority has had their wallet verified by the KYI process. |
+| `account_type` | string | `[authorities]` : A authorities object attribute that may be `regular` or `multisig` , indicating what type of wallet the authority is using. |
+| `multisig_signers` | array | `[authorities]` : A authorities object attribute that indicates the multi-sig wallet addresses associated with the authority if it in fact is using a multi-sig wallet. |
+| `token_image` | string (url) | `[token_details]` : A token_details attribute that indicates the token's logo url used to identify the token across explorers, wallets, and exchanges. |
+| `copyright_confirmed` | boolean | `[token_details]` : A token_details attribute that may be `true` or `false` and indicates whether or not the token authority has the legal permissions / copyright to use the image as the token logo across wallets, exchanges, explorers and other third party platforms. If `true`, it signifies that the asset issuer as declared they do have the correct permissions and has abided by Bluprynt's Terms of Conditions. |
+| `business_details` | object | Object of attributes that provide additional information about the queried asset issuer. |
+| `issuer_did` | string | `[business_details]` : A business_details attribute that indicates the asset issuer's decentralized identity. |
+| `business_verified` | boolean | `[business_details]` : A business_details attribute that may be `true` or `false` and indicates whether or not the asset issuer has been KYI-verified. |
+| `business_name` | string | `[business_details]` : A business_details attribute that indicates the legal name of the asset issuer. |
+| `business_description` | string | `[business_details]` : A business_details attribute that indicates the business description of the asset issuer. |
+| `website_url` | string (url) | The website url of the asset issuer. |
+| `whitepaper_url` | string (url) | The white paper url of the asset issuer for the asset in question. |
+| `asset_url` | string (url) | The KYI asset details page of the asset that contains the asset's onchain attestation and asset issuer details. |
+
+
+#### **Get Assets**
+
+Use this endpoint to get the full list of verified assets surfaced on [verified.bluprynt.com](https://verified.bluprynt.com/).
+
+```
+https://integrations.bluprynt.com/assets
+```
+
+**Example Request**
+
+```bash
+curl -X 'GET'
+'https://integrations.bluprynt.com/assets'
+-H 'accept: application/json'
+-H 'Authorization: Bearer <API_KEY>'
+```
+
+**Response Fields (for each Asset object)**
+
+| Field | Type | Description |
+|---|---|---|
+| `token_details` | object | Object of attributes that provide additional information about the queried asset. |
+| `chain` | string | `[token_details]` : A token_details attribute that indicates the blockchain network that the issuer's asset is deployed on. |
+| `asset_did` | string | `[token_details]` : A token_details attribute that provides the decentralized identifier of the asset. Assets have their own onchain identities with additional compliance metadata. |
+| `token_name` | string | `[token_details]` : A token_details attribute that indicates the name of the asset. |
+| `token_ticker` | string | `[token_details]` : A token_details attribute that indicates the ticker (acronym) of the asset's name. |
+| `authorities` | object | `[token_details]` : A token_details attribute that lists the asset's authorities (i.e., controlling wallets of the asset). |
+| `authority_type` | string | `[authorities]` : A authorities object attribute that indicates which type of authority is the entity (e.g., an asset authority on Solana can be a 'mint authority' and/or a 'freeze authority'). This concept may not extend to all blockchain networks. |
+| `address` | string | `[authorities]` : A authorities object attribute that indicates the wallet address of the asset authority |
+| `verified` | boolean | `[authorities]` : A authorities object attribute that may be `true` or `false` and indicates whether or not the authority has had their wallet verified by the KYI process. |
+| `account_type` | string | `[authorities]` : A authorities object attribute that may be `regular` or `multisig` , indicating what type of wallet the authority is using. |
+| `multisig_signers` | array | `[authorities]` : A authorities object attribute that indicates the multi-sig wallet addresses associated with the authority if it in fact is using a multi-sig wallet. |
+| `token_image` | string (url) | `[token_details]` : A token_details attribute that indicates the token's logo url used to identify the token across explorers, wallets, and exchanges. |
+| `copyright_confirmed` | boolean | `[token_details]` : A token_details attribute that may be `true` or `false` and indicates whether or not the token authority has the legal permissions / copyright to use the image as the token logo across wallets, exchanges, explorers and other third party platforms. If `true`, it signifies that the asset issuer as declared they do have the correct permissions and has abided by Bluprynt's Terms of Conditions. |
+| `business_details` | object | Object of attributes that provide additional information about the queried asset issuer. |
+| `issuer_did` | string | `[business_details]` : A business_details attribute that indicates the asset issuer's decentralized identity. |
+| `business_verified` | boolean | `[business_details]` : A business_details attribute that may be `true` or `false` and indicates whether or not the asset issuer has been KYI-verified. |
+| `business_name` | string | `[business_details]` : A business_details attribute that indicates the legal name of the asset issuer. |
+| `business_description` | string | `[business_details]` : A business_details attribute that indicates the business description of the asset issuer. |
+| `website_url` | string (url) | The website url of the asset issuer. |
+| `whitepaper_url` | string (url) | The white paper url of the asset issuer for the asset in question. |
+| `asset_url` | string (url) | The KYI asset details page of the asset that contains the asset's onchain attestation and asset issuer details. |
+
+
+***
+
+## Use Cases
+
+The KYI API enables a range of compliance and trust features across wallets, explorers, and token launch platforms:
+
+1. **Fraud Prevention for Users**
+   * Wallets and explorers can display a **KYI Verified badge** for authenticated tokens.
+   * This gives end-users immediate confidence that they are not interacting with fraudulent or copycat tokens.
+2. **Copyright Liability Reduction**
+   * By requiring issuers to authenticate themselves and **attest logo copyright ownership**, wallets and explorers minimize legal exposure to copyright claims.
+   * Only KYI-verified tokens with confirmed logo ownership are displayed with branding assets.
+3. **Proactive Copycat Removal**
+   * Wallets and explorers can automatically **de-list or disable copycat tokens** that attempt to use the same name or logo as a KYI-verified asset.
+   * This reduces the risk of scams and maintains ecosystem integrity.
+4. **Compliance in Token Launches**
+   * Token launch platforms can require issuers to complete KYI before launching.
+   * This ensures that new tokens meet jurisdictional compliance standards, particularly for exchange-listed assets.

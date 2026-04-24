@@ -1,0 +1,299 @@
+---
+title: "KYI Widget SDK"
+description: "Embed Bluprynt's KYI (Know Your Issuer) verification directly into your web application."
+---
+
+Embed Bluprynt's KYI (Know Your Issuer) verification directly into your web application. The KYI Widget SDK lets partners offer token authentication to their users without redirecting them to the Bluprynt platform.
+
+<Info>
+  The KYI Widget SDK is available as an npm package: [`@bluprynt/kyi-widget-sdk`](https://www.npmjs.com/package/@bluprynt/kyi-widget-sdk). Use the [playground](https://blupryntco.github.io/kyi-widget-sdk) to test the widget before integrating.
+</Info>
+
+***
+
+### How It Works
+
+1. **Get your credentials** — request a `SECRET_KEY` and partner ID from Bluprynt as part of your integration onboarding.
+2. **Generate access tokens** — implement JWT generation on your backend using your secret key. Tokens are short-lived and scoped to individual users.
+3. **Embed the widget** — use the SDK on your frontend to render the KYI flow in a modal, drawer, or inline container.
+
+The widget runs in a secure iframe and communicates with your application via `postMessage`. Your users complete the entire KYI process without leaving your platform.
+
+***
+
+### Installation
+
+```bash
+npm install @bluprynt/kyi-widget-sdk
+```
+
+```bash
+yarn add @bluprynt/kyi-widget-sdk
+```
+
+```bash
+pnpm add @bluprynt/kyi-widget-sdk
+```
+
+***
+
+### Quick Start
+
+#### 1. Generate an Access Token (Server-Side)
+
+Access tokens authenticate widget sessions. Generate them on your backend — never expose your secret key to the client.
+
+If you're using Node.js, the SDK includes a server-side helper:
+
+```typescript
+// server.ts (Node.js)
+import { generateToken } from "@bluprynt/kyi-widget-sdk/server";
+
+const accessToken = await generateToken({
+  issuer: "your-partner-id",
+  secretKey: process.env.BLUPRYNT_SECRET_KEY!,
+  userId: "user-123", // Your internal user identifier
+  expiresIn: 3600,    // Optional: token expiry in seconds (default: 1 hour)
+});
+
+// Return token to your frontend
+res.json({ accessToken });
+```
+
+**Using a different backend language?** Generate a JWT signed with your `SECRET_KEY` using any JWT library. The token payload must follow this structure:
+
+```json
+{
+  "sub": "user-123",
+  "iss": "your-partner-id",
+  "iat": 1766146154,
+  "exp": 1766149754
+}
+```
+
+#### 2. Embed the Widget (Client-Side)
+
+Use the access token to render the KYI widget in your frontend:
+
+```typescript
+// client.ts (Browser)
+import { kyi } from "@bluprynt/kyi-widget-sdk";
+
+// Fetch token from your backend
+const { accessToken } = await fetch("/api/kyi-token").then((r) => r.json());
+
+// Embed the widget
+const widget = kyi("modal", "kyi", accessToken, {
+  onComplete: () => {
+    console.log("KYI verification completed!");
+  },
+  onClose: () => {
+    console.log("Widget closed");
+  },
+  onError: (error) => {
+    console.error("Error:", error);
+  },
+});
+
+// Later: clean up when done
+widget.destroy();
+```
+
+***
+
+### Display Modes
+
+The widget supports three display modes depending on your UI needs.
+
+#### Modal
+
+Displays the widget in a centered modal overlay. Best for primary user flows where KYI is the main action.
+
+```typescript
+const widget = kyi("modal", "kyi", accessToken, {
+  onComplete: () => console.log("Done!"),
+  onClose: () => console.log("Modal closed"),
+});
+```
+
+#### Drawer
+
+Displays the widget in a slide-in panel from the right. Good for secondary flows or multi-step UIs where the user may want to reference other content.
+
+```typescript
+const widget = kyi("drawer", "kyi", accessToken, {
+  onComplete: () => console.log("Done!"),
+  onClose: () => console.log("Drawer closed"),
+});
+```
+
+#### Inline
+
+Embeds the widget directly into a specified container element. Best for dedicated verification pages or when the widget should be part of the page layout.
+
+```typescript
+const container = document.getElementById("kyi-container");
+
+const widget = kyi("inline", "kyi", accessToken, {
+  parentElement: container,
+  onComplete: () => console.log("Done!"),
+});
+```
+
+```html
+<div id="kyi-container" style="height: 600px;"></div>
+```
+
+***
+
+### Widget Scopes
+
+The `scope` parameter determines which view the widget displays. This lets you use the same SDK for different parts of the KYI workflow.
+
+| Scope                 | Description                                                        |
+| --------------------- | ------------------------------------------------------------------ |
+| `kyi`                 | New KYI application flow — the full verification process           |
+| `asset-list`          | View the list of the user's verified assets                        |
+| `wallet-verification` | Tokenless wallet verification without associating a specific token |
+| `wallet-list`         | View the list of the user's connected wallets                      |
+
+```typescript
+// Start a new KYI application
+kyi("modal", "kyi", accessToken);
+
+// View verified assets
+kyi("modal", "asset-list", accessToken);
+
+// Verify a wallet
+kyi("drawer", "wallet-verification", accessToken);
+
+// View connected wallets
+kyi("inline", "wallet-list", accessToken, { parentElement: container });
+```
+
+***
+
+### Checking KYI Status (Server-Side)
+
+Query the current KYI verification status for a user from your backend:
+
+```typescript
+import { checkStatus } from "@bluprynt/kyi-widget-sdk/server";
+
+const status = await checkStatus({
+  issuer: "your-partner-id",
+  secretKey: process.env.BLUPRYNT_SECRET_KEY!,
+  userId: "user-123",
+});
+
+console.log(status);
+```
+
+This is useful for checking whether a user has already completed KYI before showing the widget, or for updating your own records after verification.
+
+***
+
+### Framework Examples
+
+#### React
+
+```tsx
+import { useEffect, useRef } from "react";
+import { kyi, type KYIWidget } from "@bluprynt/kyi-widget-sdk";
+
+function KYIButton({ accessToken }: { accessToken: string }) {
+  const widgetRef = useRef<KYIWidget | null>(null);
+
+  const openWidget = () => {
+    widgetRef.current = kyi("modal", "kyi", accessToken, {
+      onComplete: () => {
+        console.log("Completed!");
+        widgetRef.current?.destroy();
+      },
+    });
+  };
+
+  useEffect(() => {
+    return () => widgetRef.current?.destroy();
+  }, []);
+
+  return <button onClick={openWidget}>Start KYI</button>;
+}
+```
+
+***
+
+### API Reference
+
+#### `kyi(mode, scope, accessToken, options?)`
+
+Creates a KYI widget instance.
+
+**Parameters:**
+
+| Parameter     | Type                                                              | Description                           |
+| ------------- | ----------------------------------------------------------------- | ------------------------------------- |
+| `mode`        | `'inline' \| 'modal' \| 'drawer'`                                 | Widget display mode                   |
+| `scope`       | `'kyi' \| 'asset-list' \| 'wallet-verification' \| 'wallet-list'` | Which view to display                 |
+| `accessToken` | `string`                                                          | JWT access token from `generateToken` |
+| `options`     | `KYIOptions`                                                      | Optional configuration                |
+
+**Options:**
+
+| Option          | Type                     | Description                                                                |
+| --------------- | ------------------------ | -------------------------------------------------------------------------- |
+| `parentElement` | `HTMLElement`            | Container element. Required for inline mode. Ignored for modal and drawer. |
+| `onComplete`    | `() => void`             | Called when the KYI flow completes successfully                            |
+| `onClose`       | `() => void`             | Called when the widget is closed by the user                               |
+| `onError`       | `(error: Error) => void` | Called when an error occurs                                                |
+| `onReady`       | `() => void`             | Called when the widget iframe is loaded and ready                          |
+
+**Returns:** `KYIWidget`
+
+| Property  | Type                | Description                                                   |
+| --------- | ------------------- | ------------------------------------------------------------- |
+| `iframe`  | `HTMLIFrameElement` | Reference to the widget iframe element                        |
+| `destroy` | `() => void`        | Removes the widget from the DOM and cleans up event listeners |
+
+#### `generateToken(options)` — Server-Side
+
+Generates a JWT access token for widget authentication.
+
+| Option      | Type     | Description                                  |
+| ----------- | -------- | -------------------------------------------- |
+| `issuer`    | `string` | Your partner identifier provided by Bluprynt |
+| `secretKey` | `string` | Your Bluprynt secret key                     |
+| `userId`    | `string` | Your internal user identifier                |
+| `expiresIn` | `number` | Token expiry in seconds. Defaults to `3600`. |
+
+**Returns:** `Promise<string>`
+
+#### `checkStatus(options)` — Server-Side
+
+Checks the KYI verification status for a user.
+
+| Option      | Type     | Description                   |
+| ----------- | -------- | ----------------------------- |
+| `issuer`    | `string` | Your partner identifier       |
+| `secretKey` | `string` | Your Bluprynt secret key      |
+| `userId`    | `string` | Your internal user identifier |
+
+**Returns:** `Promise<KYIStatus>`
+
+***
+
+### Security
+
+* **Never expose your `SECRET_KEY` on the client side.** Token generation must happen on your backend.
+* **Access tokens are short-lived.** Generate a fresh token for each widget session. The default expiry is 1 hour.
+* **The widget uses `postMessage`** for secure iframe communication. It does not require cookies or local storage.
+
+***
+
+### Resources
+
+* **npm:** [`@bluprynt/kyi-widget-sdk`](https://www.npmjs.com/package/@bluprynt/kyi-widget-sdk)
+* **Playground:** [blupryntco.github.io/kyi-widget-sdk](https://blupryntco.github.io/kyi-widget-sdk)
+* **GitHub:** [github.com/blupryntco/kyi-widget-sdk](https://github.com/blupryntco/kyi-widget-sdk)
+
+For integration support or to request your partner credentials, contact **<product@bluprynt.com>**.

@@ -1,0 +1,59 @@
+---
+title: "Key Concepts & Glossary"
+description: "This page defines the core terms used throughout Bluprynt's documentation."
+---
+
+This page defines the core terms used throughout Bluprynt's documentation. If you encounter an unfamiliar term elsewhere in the docs, it should be defined here.
+
+***
+
+### Core Entities
+
+* **Asset Issuer** — An organization that creates and registers digital or tokenized assets onchain. Asset issuers are the primary users of Bluprynt's compliance tools. Every asset issuer on the platform has a verified identity linked to their legal entity, issuing wallets, and token contracts.
+* **Asset** — A tokenized representation of value or rights, issued by a verified asset issuer. In Bluprynt's system, each asset has its own identity, linked attestations, and credential status.
+* **Compliance OS** — Bluprynt's operating layer for digital assets. It brings identity, disclosures, supervision, and credentials into one machine-readable system.
+* **Digital Asset Operating System (daOS)** — A control layer that makes digital assets operable at scale by coordinating issuance, disclosures, supervision, and verifiable status across participants and systems.
+* **Onchain Legibility** — The condition where an asset's relevant legal and economic attributes are represented in a standardized, machine-readable, and verifiable form.
+
+***
+
+### Identity
+
+* **KYI (Know Your Issuer)** — Bluprynt's token authentication system. KYI creates a cryptographic link between a legal entity, its issuing wallet, and its token contract — producing an onchain attestation that anyone can verify. KYI is free for all qualifying assets.
+* **KYB (Know Your Business)** — The business verification step within KYI. The asset issuer provides incorporation documents, registration details, and legal entity information, which is checked against company registries and sanctions lists.
+* **DID (Decentralized Identifier)** — A W3C standard for self-sovereign digital identity. Bluprynt assigns each asset issuer and asset a DID that can be resolved to their verification status and linked attestations.
+* **ONCHAINID** — An identity standard based on ERC-734 (key management) and ERC-735 (claim management) that enables onchain identity verification. Bluprynt creates ONCHAINID-compatible identities alongside W3C DIDs.
+* **CCID (Compliance Chain ID)** — Bluprynt's internal unique identifier for each entity in the system. The CCID is used to track and link all attestations, credentials, and form submissions across products and jurisdictions for a given issuer or asset.
+
+***
+
+### Attestations & Credentials
+
+**Attestation** — An onchain record that a verified fact is true. Attestations are published to IPFS (for the document content) and to the asset's blockchain network (for the onchain reference). There are three types:
+
+* **Informational Attestation** — A disclosure voluntarily submitted by the issuer to inform users (e.g., white papers, audit reports). Does not require regulatory approval.
+* **Regulatory Attestation** — A verified proof of compliance with specific legal or jurisdictional requirements (e.g., an approved MiCA white paper, a granted license). Requires regulatory review.
+* **Operational Attestation** — A dynamic assertion about the issuer's technical or business activity (e.g., reserve audit results, oracle verification). Can be updated programmatically.
+
+**Credential** — A verifiable onchain claim that authorizes specific token actions. Unlike attestations (which record facts), credentials grant permissions. When a credential expires or is revoked, the associated permissions are automatically gated by the Compliance Hub. Bluprynt issues four credential types:
+
+* **Know Your Issuer (KYI)** — Verifies the entity behind a token
+* **Proof of Collateral** — Verifies asset backing
+* **Proof of Insurance** — Verifies coverage
+* **Proof of Integrity** — Verifies security posture (via the four-partner ecosystem: Bluprynt, Dowsers Finance, Circuit Security, Howden Group)
+
+***
+
+### Products
+
+* **KYI (Know Your Issuer)** — Bluprynt's issuer identity product. It links a verified legal entity, its controlling wallet, and its asset onchain, creating the identity foundation for disclosures, credentials, and supervisory workflows.
+* **Smart Disclosures** — Bluprynt's AI-assisted disclosure creation and validation engine. Transforms complex legal documents into structured, jurisdiction-compliant disclosures. Previously referred to as "SmartDocs" in some contexts — Smart Disclosures is the current name.
+* **Compliance Hub** — Bluprynt's regulator-facing supervisory workspace. It gives regulators and supervisory teams a place to create forms, review submissions, issue credentials, and monitor digital asset issuers.
+* **MiCA Checker** — A free diagnostic tool that evaluates whether a white paper meets MiCA Article 4 and 5 disclosure requirements. Open to anyone, no account required.
+
+***
+
+### Billing
+
+* **Credit** — Bluprynt's billing unit. One credit = one published Smart Disclosures document or one generated onchain attestation. KYI is free and does not consume credits.
+* **Account Tier** — Bluprynt offers Free (KYI only), Starter, Pro, and Enterprise tiers. Each paid tier includes a number of credits, with additional credits available for purchase. See [Pricing](/getting-started/creating-a-bluprynt-account) for current rates.

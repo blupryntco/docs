@@ -1,0 +1,364 @@
+---
+title: "Attestation Schemas"
+description: "Attestation Schemas"
+---
+
+<Info>
+  The following provides an overview of the attestation and identity data schemas that Bluprynt uses across our product stack to ensure ecosystem wide compatibility with pre-existing attestation and identity systems.
+</Info>
+
+## Data Structure Overview
+
+<Frame>
+  <img src="/images/gitbook/6d3dcfe87b41.png" alt="" />
+</Frame>
+
+All Bluprynt compliance data structures are compatible with existing market standards, including W3C verifiable credentials (e.g., DID), ONCHAINID, the Ethereum Attestation Service (EAS), and the Solana Attestation Service (SAS). Specifically, we focus on standardizing data structures for the following entities:
+
+| Entities           | Description                                                                                                                           |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| **Asset Issuers**  | Entities that create and register digital or tokenized assets on-chain.                                                               |
+| **Assets**         | Tokenized representations of value or rights issued by verified asset issuers.                                                        |
+| **Attestations**   | Informational Attestations - Disclosures voluntarily submitted by issuers to inform users (e.g., white papers, audits).               |
+|                    | Regulatory Attestations - Verified proofs of compliance with specific legal or jurisdictional requirements.                           |
+|                    | Operational Attestations - Assertions about technical or business activity (e.g., reserve audits, oracle usage).                      |
+| **Policy Modules** | Configurable rule sets that automate validation, review, and enforcement of compliance based on asset type, jurisdiction, and action. |
+
+<Info>
+  Bluprynt uses an issuer-centric architecture to align off- and onchain compliance.
+
+* **Asset Issuers** are linked to **Assets** via KYI attestations
+* **Informational** and **Regulatory Attestations** link to both Issuers and Assets
+* Only **Asset Issuers** receive **Credentials** (Claims) for executing token actions
+
+**Policy Modules** are separate from the issuer-centric architecture. The Compliance Hub uses them to check issuers, assets, and their associated attestations before allowing onchain actions.
+</Info>
+
+***
+
+## Asset Issuers (Organizations)
+
+Asset Issuers are organizations that issue tokenized assets (i.e., tokens). Asset Issuer identities are at the core of off- and onchain compliance, as asset issuers are responsible for filing disclosures and licenses with regulators relevant to the assets they're looking to issue.
+
+The following is a well-structured, interoperable data schema for a Bluprynt Asset Issuer Identity that aligns with the following identity standards:
+
+* **ONCHAINID (ERC-734 / ERC-735)**
+* **DID (W3C Decentralized Identifier)**
+* **vLEI / LEI (GLEIF format)**
+
+<Info>
+  It's incredibly important to note that, for Bluprynt, all disclosures, licenses, and compliance assertions are cryptographically linked to the primary Asset Issuer Identity.
+</Info>
+
+```json
+{ "@context": [ 
+  "https://www.w3.org/ns/did/v1", 
+  "https://w3id.org/gleif/vlei-context/v1", 
+  "https://onchainid.org/context/v1" 
+], 
+  "id": "did:example:issuer123", 
+  "type": ["LegalEntity", "vLEIIssuer", "ONCHAINIDIdentity"], 
+  "controller": "0xF...123", 
+  "onchainid": { 
+    "identity": "0xF...123", 
+    "keyPurpose": [ 
+      { 
+        "id": "0x01", 
+        "type": "MANAGEMENT_KEY" 
+      }, 
+      { 
+        "id": "0x02", 
+        "type": "CLAIM_SIGNER_KEY" 
+      } 
+    ], 
+    "claims": [ 
+      { 
+        "topic": "KYC", 
+        "data": "0xHASHEDKYCINFO", 
+        "issuer": "0xIssuer",  
+        "signature": "0xSignature" 
+      } 
+    ] 
+}, 
+"verificationMethod": [ 
+  { 
+    "id": "did:example:issuer123#key-1", 
+    "type": "EcdsaSecp256k1RecoveryMethod2020", 
+    "controller": "did:example:issuer123", 
+    "blockchainAccountId": "eip155:1:0xF...123" 
+  }
+], 
+"service": [ 
+  { 
+    "id": "did:example:issuer123#asset-registry", 
+    "type": "AssetRegistryService", 
+    "serviceEndpoint": "https://bluprynt.com/registry/issuer123" 
+  } 
+], 
+"lei": { 
+  "leiCode": "5493001KJTIIGC8Y1R12", 
+  "legalName": "Bluprynt Inc.", 
+  "legalAddress": { 
+    "line1": "123 Example Street", 
+    "city": "New York", 
+    "country": "US", 
+    "postalCode": "10001" 
+  }, 
+  "entityStatus": "ACTIVE", 
+  "registrationAuthority": { 
+    "id": "RA000001", 
+    "name": "Delaware Secretary of State" 
+   } 
+  } 
+}
+```
+
+### **Attribute Definitions** <a href="#b6dedab6-dd8d-46ea-8d70-99a5dc9a0064" id="b6dedab6-dd8d-46ea-8d70-99a5dc9a0064"></a>
+
+| Attribute                   | Type             | Description                                                                      | Standards Used                |
+| --------------------------- | ---------------- | -------------------------------------------------------------------------------- | ----------------------------- |
+| `@context`                  | array of strings | Declares semantic definitions from DID, vLEI, and ONCHAINID vocabularies         | W3C DID, GLEIF, ONCHAINID     |
+| `id`                        | string           | DID of the asset issuer (e.g., `did:example:issuer123`)                          | W3C DID                       |
+| `type`                      | array of strings | Classifies the identity (e.g., `LegalEntity`, `vLEIIssuer`, `ONCHAINIDIdentity`) | W3C DID, GLEIF                |
+| `controller`                | string           | DID or blockchain address controlling the identity                               | W3C DID, ONCHAINID            |
+| `onchainid.identity`        | string           | Ethereum address that serves as the ONCHAINID root identity                      | ONCHAINID (ERC-734)           |
+| `onchainid.keyPurpose`      | array of objects | Keys and their roles (e.g., management, claim signer)                            | ONCHAINID (ERC-734)           |
+| `onchainid.claims`          | array of objects | Signed assertions (e.g., KYC, jurisdiction)                                      | ONCHAINID (ERC-735)           |
+| `attestations`              | array of objects | General-purpose disclosures, licenses, credentials linked to the issuer          | W3C VC, ONCHAINID, GLEIF vLEI |
+| `verificationMethod`        | array of objects | Public keys or blockchain accounts used for verifying control of the DID         | W3C DID                       |
+| `service`                   | array of objects | Service endpoints associated with the identity (e.g., registry, compliance API)  | W3C DID                       |
+| `lei.leiCode`               | string           | Legal Entity Identifier (LEI) issued by GLEIF                                    | GLEIF                         |
+| `lei.legalName`             | string           | Official name of the legal entity                                                | GLEIF                         |
+| `lei.legalAddress`          | object           | Legal address of the entity                                                      | GLEIF                         |
+| `lei.entityStatus`          | string           | Status of the entity (e.g., ACTIVE, RETIRED)                                     | GLEIF                         |
+| `lei.registrationAuthority` | object           | National registry issuing the legal status                                       | GLEIF                         |
+
+***
+
+## Asset (Token)
+
+The **Bluprynt Asset Schema** represents a token or digital asset issued by a verified entity. This schema should be tightly linked to:
+
+* The **Asset Issuer’s identity (DID/onchainid)**
+* One or more **attestations or claims** about the asset (e.g. MiCA compliance, permissions, risk level)
+* Standardized metadata for regulatory and smart contract use
+
+```json
+{
+  "id": "did:bluprynt:asset:pyusd-001",
+  "type": ["DigitalAsset", "Token"],
+  
+  "assetSymbol": "PYUSD",
+  "assetName": "PayPal USD",
+  "network": "Solana",
+  "tokenAddress": "So11111111111111111111111111111111111111112",
+  
+  "issuer": "did:bluprynt:issuer-001",
+
+  "category": "Fiat-Backed Stablecoin",
+  "jurisdiction": "EU",
+
+  "disclosures": [
+    {
+      "title": "MiCA-Compliant Whitepaper",
+      "attestationId": "did:bluprynt:attestation:regulatory-001"
+    }
+  ],
+
+  "claims": [
+    {
+      "id": "claim-mica-001",
+      "topic": "MiCA_WHITEPAPER_APPROVED",
+      "data": "0xHashOfWhitepaperDocCID",
+      "issuer": "0xABC123...",
+      "signature": "0x..."
+    }
+  ],
+
+  "riskRating": "Low",
+  "complianceStatus": "Verified",
+
+  "createdAt": "2025-07-01T12:00:00Z",
+  "lastUpdated": "2025-07-01T12:00:00Z"
+}
+```
+
+### Attribute Definitions <a href="#id-96aa44ad-f357-4289-8f3c-1538421cf3a8" id="id-96aa44ad-f357-4289-8f3c-1538421cf3a8"></a>
+
+| Field              | Type     | Description                                                               |
+| ------------------ | -------- | ------------------------------------------------------------------------- |
+| `id`               | string   | Unique DID for the asset                                                  |
+| `type`             | array    | Describes the object (e.g., `DigitalAsset`, `Token`)                      |
+| `assetSymbol`      | string   | Ticker (e.g., `PYUSD`)                                                    |
+| `assetName`        | string   | Full name of the asset                                                    |
+| `network`          | string   | Blockchain network the asset is on (e.g., Solana, Ethereum)               |
+| `tokenAddress`     | string   | Contract or mint address of the token                                     |
+| `issuer`           | string   | DID of the entity issuing the token                                       |
+| `category`         | string   | Type of asset (e.g., Stablecoin, Utility Token, Security Token)           |
+| `jurisdiction`     | string   | Primary regulatory jurisdiction                                           |
+| `disclosures[]`    | array    | List of relevant attestations (title + attestation ID)                    |
+| `claims[]`         | array    | Onchain claim objects with topic, hash, issuer, and signature             |
+| `riskRating`       | string   | Risk classification (`Low`, `Medium`, `High`)                             |
+| `complianceStatus` | string   | Current compliance state (`Unverified`, `Pending`, `Verified`, `Revoked`) |
+| `createdAt`        | datetime | When this asset record was created                                        |
+| `lastUpdated`      | datetime | Timestamp for last update                                                 |
+
+***
+
+## Attestations
+
+Bluprynt supports three types of attestations: Informational (disclosures), Regulatory (licenses), and Operational (credentials - i.e., token action enabling):
+
+1. **Informational Attestation (Disclosure) -** Verifies factual claims (e.g. white papers, financials) not approved by a regulator (Example: Smart Disclosures MiCA white paper.)
+2. **Regulatory Attestation (License) -** Verifies regulated status, submitted and approved by an authority (e.g. license, registration) (VASP registration, SEC exemption filing)
+3. **Operational Attestation (Credential/Claim)** - Operational attestations (i.e., credentials) grants permission to perform token actions like mint, transfer, or freeze based on validated disclosures or licenses (Example: A transfer agent credential scoped to a token).
+
+The Attestations schema must support:
+
+* All 3 attestation types: **Informational**, **Regulatory**, and **Operational**
+* W3C Verifiable Credential (VC) compliance for interoperability
+* Optional fields for expiration, revocation, and cross-chain use
+* Ethereum Attestation Service (EAS) compatible
+
+```json
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://schema.bluprynt.com/attestation/v1"
+  ],
+  "id": "did:bluprynt:attestation:unique-id-001",
+  "type": ["VerifiableCredential", "Regulatory"],
+
+  "issuer": "did:bluprynt:issuer-001",
+  "issuanceDate": "2025-07-01T12:00:00Z",
+  "expirationDate": "2025-08-01T12:00:00Z",
+
+  "credentialSubject": {
+    "id": "did:bluprynt:issuer-001",
+    "wallet": "0xABC123...",
+    "assetSymbol": "PYUSD",
+    "jurisdiction": "EU",
+    "permission": "mint",  // for operational types
+    "complianceType": "MiCAWhitepaper",  // for regulatory
+    "documentCID": "ipfs://Qm...Whitepaper"  // optional
+  },
+
+  "credentialStatus": {
+    "id": "https://bluprynt.com/status/attestation/unique-id-001",
+    "type": "StatusList2021Entry"
+  },
+
+  "proof": {
+    "type": "EcdsaSecp256k1Signature2020",
+    "created": "2025-07-01T12:00:00Z",
+    "proofPurpose": "assertionMethod",
+    "verificationMethod": "did:bluprynt:issuer-001#key-1",
+    "jws": "eyJ...signedPayload"
+  }
+}
+```
+
+### **Attribute Definitions** <a href="#id-3379e5f0-40bc-4a8b-9710-d4d26dab7665" id="id-3379e5f0-40bc-4a8b-9710-d4d26dab7665"></a>
+
+| Field               | Type                | Description                                                                                    |
+| ------------------- | ------------------- | ---------------------------------------------------------------------------------------------- |
+| `@context`          | array               | W3C VC context + Bluprynt schema for type validation                                           |
+| `id`                | string              | Globally unique ID for this attestation                                                        |
+| `type`              | array               | Includes `VerifiableCredential` + one or more of: `Informational`, `Regulatory`, `Operational` |
+| `issuer`            | string              | DID of the attesting authority (e.g., Bluprynt compliance oracle, KYC vendor)                  |
+| `issuanceDate`      | datetime            | When the attestation was created                                                               |
+| `expirationDate`    | datetime (optional) | When the attestation becomes invalid (for operational types)                                   |
+| `credentialSubject` | object              | The entity this applies to — usually the asset issuer’s DID or wallet                          |
+| `credentialStatus`  | object (optional)   | Status endpoint for revocation or live-state checks                                            |
+| `proof`             | object              | Digital signature over the entire attestation                                                  |
+
+***
+
+## Policy Modules
+
+Policy Modules are the core enforcement units used by the Compliance Hub. Each module represents a specific compliance rule tied to a jurisdiction, asset type, and token action (e.g., transfer, mint). These modules evaluate whether a given credential, issued by Bluprynt and held by the transacting agent, satisfies the regulatory conditions required for the transaction to proceed.
+
+**Responsibilities:**
+
+* Validate that the transacting wallet holds a valid, unexpired credential.
+* Check jurisdictional scope, asset type, and allowed actions.
+* Support multi-role logic (e.g., issuer, operator, beneficiary).
+* Optionally validate external data inputs (e.g., ZK residency proofs, sanctions lists).
+
+```json
+{
+  "id": "did:bluprynt:policy:eu-mica-kyi-001",
+  "name": "MiCA + KYI Compliance (EU)",
+  "description": "Verifies that an asset has a MiCA-compliant whitepaper and linked issuer identity with wallet verification.",
+  
+  "version": "1.0",
+  "author": "Bluprynt Compliance Team",
+  "createdAt": "2025-07-01T00:00:00Z",
+  "lastUpdated": "2025-07-01T00:00:00Z",
+
+  "jurisdiction": "EU",
+  "appliesTo": {
+    "assetTypes": ["Stablecoin", "SecurityToken"],
+    "networks": ["Solana", "Ethereum"]
+  },
+
+  "policyLogic": {
+    "requiredAttestations": [
+      {
+        "type": "Regulatory",
+        "complianceType": "MiCAWhitepaper"
+      },
+      {
+        "type": "Operational",
+        "permission": "mint"
+      },
+      {
+        "type": "Informational",
+        "field": "jurisdiction",
+        "expectedValue": "EU"
+      }
+    ],
+    "requiredClaims": [
+      {
+        "topic": "MiCA_WHITEPAPER_APPROVED"
+      }
+    ]
+  },
+
+  "outputs": {
+    "result": ["PASS", "FAIL"],
+    "reasonCodes": [
+      { "code": "MISSING_WHITEPAPER", "description": "No valid MiCA whitepaper attestation found." },
+      { "code": "MISSING_KYI", "description": "Issuer wallet is not verified." },
+      { "code": "CLAIM_INVALID", "description": "Onchain MiCA claim missing or malformed." }
+    ]
+  },
+
+  "runtime": {
+    "format": "BlupryntPolicy",
+    "compatibleEngines": ["ChainlinkACE", "BlupryntValidator"],
+    "onChainExecution": false
+  }
+}
+```
+
+### Attribute Definitions <a href="#id-33f30d19-94ae-4513-96eb-091d16e2d061" id="id-33f30d19-94ae-4513-96eb-091d16e2d061"></a>
+
+| Field                                | Type     | Description                                                                         |
+| ------------------------------------ | -------- | ----------------------------------------------------------------------------------- |
+| `id`                                 | string   | Unique DID or registry ID of the policy                                             |
+| `name`                               | string   | Human-readable policy name                                                          |
+| `description`                        | string   | Purpose and coverage of this module                                                 |
+| `version`                            | string   | Version control for governance and upgrades                                         |
+| `author`                             | string   | Maintainer or publisher of the policy                                               |
+| `createdAt` / `lastUpdated`          | datetime | Timestamps for lifecycle tracking                                                   |
+| `jurisdiction`                       | string   | Jurisdictional applicability (e.g., EU, US)                                         |
+| `appliesTo.assetTypes`               | array    | List of asset classes this policy covers                                            |
+| `appliesTo.networks`                 | array    | Compatible blockchain networks                                                      |
+| `policyLogic.requiredAttestations[]` | array    | Expected Bluprynt attestations (with filters like type, field, value)               |
+| `policyLogic.requiredClaims[]`       | array    | Onchain claim topics expected for compliance                                        |
+| `outputs.result`                     | enum     | `PASS`, `FAIL`, `WARN`, etc.                                                        |
+| `outputs.reasonCodes[]`              | array    | Machine-readable error codes and human explanations                                 |
+| `runtime.format`                     | string   | Interpreter format (e.g., BlupryntPolicy)                                           |
+| `runtime.compatibleEngines`          | array    | Infrastructure this policy can run on (e.g., Chainlink ACE, Bluprynt custom engine) |
+| `runtime.onChainExecution`           | boolean  | Whether the policy is executable fully on-chain                                     |

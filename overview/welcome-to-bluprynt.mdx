@@ -1,7 +1,9 @@
 ---
-title: "What is Bluprynt?"
-description: "Bluprynt is the Compliance OS of digital assets."
+title: "Welcome to Bluprynt"
+description: "Welcome to Bluprynt"
 ---
+
+## What is Bluprynt?
 
 Bluprynt is the Compliance OS of digital assets.
 
@@ -29,9 +31,9 @@ It does this across four core product layers:
 
 Every asset issuer on Bluprynt receives a verifiable onchain identity that's compatible with W3C DID, ONCHAINID (ERC-734/735), and vLEI/LEI standards. This identity is cryptographically linked to:
 
-* The legal entity (via KYB verification)
-* The issuing wallet (via cryptographic challenge)
-* The token contract (via onchain attestation)
+* The legal entity, via KYB verification
+* The issuing wallet, via cryptographic challenge
+* The token contract, via onchain attestation
 
 This is what **Know Your Issuer (KYI)** produces — a foundational identity attestation that everything else builds on.
 
@@ -39,10 +41,10 @@ This is what **Know Your Issuer (KYI)** produces — a foundational identity att
 
 **Smart Disclosures** turns regulatory requirements into structured digital workflows instead of static documents. Issuers can:
 
-* Pre-fills jurisdiction-specific disclosure forms using AI extraction
-* Guides completion with AI-assisted editing and compliance checks
-* Produces finished documents in XBRL, PDF, and DOCX formats
-* Publishes the disclosure as an onchain attestation linked to the issuer's identity
+* Pre-fill jurisdiction-specific disclosure forms using AI extraction
+* Complete filings with AI-assisted guidance
+* Produce structured outputs in XBRL, PDF, and DOCX
+* Publish disclosures as verifiable attestations linked to the issuer
 
 The system is built on a taxonomy of standardized concepts, so the same issuer data can be reused across forms, jurisdictions, and workflows.
 
@@ -60,7 +62,7 @@ This replaces fragmented review across email, spreadsheets, and static documents
 
 #### 4. Credentials
 
-Attestations record facts. **Credentials** authorize actions. Bluprynt currently issues two types of verification credentials, with many more to come:
+Attestations record facts. **Credentials** authorize actions. Bluprynt issues four types of verification credentials:
 
 | Credential              | Purpose               | Key Question It Answers                            |
 | ----------------------- | --------------------- | -------------------------------------------------- |
@@ -103,12 +105,10 @@ ASSET ISSUER (Organization)
    │
    └── Credentials ───────── Verifiable onchain records
        ├── KYI
-       ├── Proof of Collateral
-       ├── Proof of Insurance
-       └── Proof of Integrity
+       └── Proof of Collateral
 ```
 
-All identities, attestations, and credentials are registered on the **Bluprynt Registry** and are publicly queryable — excluding sensitive issuer data.
+All identities, attestations, and credentials are registered on the **Bluprynt Registry** and are publicly queryable, excluding sensitive issuer data.
 
 ***
 
@@ -122,7 +122,7 @@ Understanding these terms will help you navigate the rest of the documentation:
 * **Credential** — A verifiable permission or status record issued after a review or filing workflow.
 * **CCID (Compliance Chain ID)** — A unique identifier used to track issuers, credentials, and submissions across workflows.
 * **Taxonomy Concept** — A standardized compliance data point used to structure forms and reuse data across workflows.
-* **Credit** — Bluprynt's billing unit. Each credit grants the ability to publish one Smart Disclosures document or generate one onchain attestation.
+* **Credit** — Bluprynt's billing unit. One credit covers one published Smart Disclosures document or one generated attestation.
 
 ***
 

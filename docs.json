@@ -21,9 +21,11 @@
             "group": "Overview",
             "pages": [
               "index",
+              "overview/welcome-to-bluprynt",
               "overview/what-is-bluprynt",
-              "overview/architecture",
-              "overview/key-concepts",
+              "overview/core-products",
+              "overview/who-this-is-for",
+              "overview/key-concepts-and-glossary",
               "overview/standards-compatibility"
             ]
           },
@@ -31,53 +33,56 @@
             "group": "Getting started",
             "pages": [
               "quickstart",
-              "getting-started/create-account",
+              "getting-started/creating-a-bluprynt-account",
+              "getting-started/onboarding-checklist",
               "getting-started/your-first-attestation"
             ]
           },
           {
-            "group": "Core products",
+            "group": "Know Your Issuer (KYI)",
             "pages": [
-              {
-                "group": "Know Your Issuer (KYI)",
-                "icon": "id-card",
-                "pages": [
-                  "core-products/kyi/introduction",
-                  "core-products/kyi/how-it-works",
-                  "core-products/kyi/widget-embed"
-                ]
-              },
-              {
-                "group": "Smart Disclosures",
-                "icon": "file-contract",
-                "pages": [
-                  "core-products/smart-disclosures/introduction",
-                  "core-products/smart-disclosures/document-lifecycle"
-                ]
-              },
-              {
-                "group": "Compliance Hub",
-                "icon": "shield-halved",
-                "pages": [
-                  "core-products/compliance-hub/introduction"
-                ]
-              },
-              {
-                "group": "MiCA Checker",
-                "icon": "circle-check",
-                "pages": [
-                  "core-products/mica-checker/introduction"
-                ]
-              }
+              "kyi-know-your-issuer/what-is-kyi",
+              "kyi-know-your-issuer/how-it-works",
+              "kyi-know-your-issuer/kyi-api",
+              "kyi-know-your-issuer/kyi-widget-sdk",
+              "kyi-know-your-issuer/integration-options"
             ]
           },
           {
-            "group": "Architecture",
+            "group": "Smart Disclosures",
             "pages": [
-              "architecture/system-overview",
-              "architecture/attestation-schemas",
-              "architecture/policy-engine",
-              "architecture/ccid"
+              "smart-disclosures/what-is-smart-disclosures",
+              "smart-disclosures/how-it-works",
+              "smart-disclosures/integration-options"
+            ]
+          },
+          {
+            "group": "MiCA Checker",
+            "pages": [
+              "mica-checker/mica-checker"
+            ]
+          },
+          {
+            "group": "Compliance Hub",
+            "pages": [
+              "compliance-hub/compliance-hub-coming-soon"
+            ]
+          },
+          {
+            "group": "Credentials",
+            "pages": [
+              "credentials/credentials-overview",
+              "credentials/kyi"
+            ]
+          },
+          {
+            "group": "Architecture & Standards",
+            "pages": [
+              "architecture-and-standards/system-overview",
+              "architecture-and-standards/attestation-schemas",
+              "architecture-and-standards/chain-compatibility",
+              "architecture-and-standards/ccid",
+              "architecture-and-standards/policy-engine"
             ]
           },
           {
@@ -86,6 +91,12 @@
               "integration-guides/overview",
               "integration-guides/kyi-widget",
               "integration-guides/public-api"
+            ]
+          },
+          {
+            "group": "Support",
+            "pages": [
+              "support-and-contact/support"
             ]
           }
         ]

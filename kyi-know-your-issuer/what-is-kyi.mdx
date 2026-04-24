@@ -1,0 +1,156 @@
+---
+title: "What Is KYI?"
+description: "What Is KYI?"
+---
+
+**Know Your Issuer (KYI)** is Bluprynt’s token authentication tool. It enables projects to cryptographically prove that a token was issued by a verified legal entity and that the controlling wallet holds legitimate minting authority.
+
+<Info>
+  KYI eliminates one of the most common vectors for fraud in crypto: the ease with which bad actors can deploy copycat tokens that mimic legitimate projects. It also reduces the listing and compliance risk for exchanges, dApps, and DeFi protocols by linking each token to a verified, on-chain identity.
+</Info>
+
+{% embed url="<https://supercut.ai/share/0c6bdef5-7019-4450-933d-575f0c25e3cb/Ypk_W0uzyT-mCjPedouGim>" %}
+
+***
+
+## Why KYI Matters
+
+In traditional finance, securities are tied to registered issuers and disclosures. In crypto, any wallet can deploy a token with no link to a verified identity or legal entity.
+
+This results in:
+
+* Impersonation of legitimate projects
+* Fraudulent airdrops and token listings
+* Increased regulatory exposure for platforms and investors
+
+KYI fixes this by publishing a verifiable attestation that ties:
+
+1. A **token contract address**
+2. To a **minting wallet address**
+3. Controlled by a **verified legal entity**
+
+***
+
+## Key Benefits
+
+**For projects:**
+
+* Establish official token provenance
+* Prevent copycats from undermining your market or confusing users
+* Improve eligibility for exchange listings and institutional capital
+
+**For platforms:**
+
+* Easily verify whether a token is official
+* Use KYI as a listing requirement or policy gating mechanism
+* Reduce exposure to reputational and compliance risk
+
+**For regulators:**
+
+* Identify issuers responsible for token deployment
+* Trace wallet activity linked to registered entities
+
+***
+
+## How It Works
+
+The following steps show how to complete a KYI submission.
+
+### Step 1: Start a KYI application
+
+From the home page of your account, click **Authenticate Asset** in the **Know Your Issuer (KYI)** card.
+
+<Frame>
+  <img src="/images/gitbook/a23474e36044.png" alt="" />
+</Frame>
+
+### Step 2: Enter asset details
+
+Complete the **Token Details** section with the core information for the asset.
+
+<Frame>
+  <img src="/images/gitbook/fc274a9fc9cb.png" alt="" />
+</Frame>
+
+### Step 3: Verify the controlling wallet(s)
+
+To complete KYI, the asset issuer must prove control over a wallet with mint authority by signing a Bluprynt-generated message through a wallet extension, CLI flow, or HSM workflow.
+
+<Frame>
+  <img src="/images/gitbook/aa033a7cb4d2.png" alt="" />
+</Frame>
+
+<Info>
+  Bluprynt supports several wallet verification methods:
+
+* **Wallet Extension:** Sign via MetaMask or Phantom (non-transactional, no asset risk)
+* **Command Line:** Sign with CLI from a wallet with mint authority (non-transactional)
+* **HSM:** Send a no-op transaction using an HSM with a Bluprynt ID-linked signature
+</Info>
+
+### Step 4: Complete business verification
+
+Complete the business details section for the asset issuer. This includes KYB (Know Your Business) verification if it was not already completed when the organization account was created.
+
+In order to complete KYB, you will need to provide the following information:
+
+1. **Company Data:**
+   1. Company name
+   2. Country
+   3. Registration number
+   4. Location of registration
+   5. Website
+   6. Legal address
+   7. *Optional*: Legal Entity Identifier (LEI)
+2. **Company Documents (any one of the following):**
+   1. Certificate of incorporation/registration;
+   2. Memorandum/articles of incorporation / association / registration; or
+   3. Recent excerpt from a state company registry
+3. **Email verification:** The system will send a confirmation email with a code to enter on the platform.
+
+Once submitted, the information is reviewed against company registries and sanctions lists before the business appears as `Verified`.
+
+<Frame>
+  <img src="/images/gitbook/82732004ae65.png" alt="" />
+</Frame>
+
+### Step 5: Submit for review
+
+After the earlier sections are complete, press **Submit** to finalize the KYI application. The asset then moves into a `Pending` state until approval.
+
+<Frame>
+  <img src="/images/gitbook/28a82d902201.png" alt="" />
+</Frame>
+
+### Step 6: Receive the KYI attestation
+
+Once the asset is approved, two things happen:
+
+1. The asset receives a `W3C (DID)` and `ONCHAINID` compatible identity.
+2. A KYI attestation linking the asset issuer's onchain identity and the asset's onchain identity is created and published on the asset's blockchain network.
+
+Anyone can verify the KYI attestation from the asset details page. The attestation and asset identity are also surfaced through the Bluprynt Registry and the [KYI API](/kyi-know-your-issuer/kyi-api).
+
+<Frame>
+  <img src="/images/gitbook/7bb5d26e0bcd.png" alt="" />
+</Frame>
+
+***
+
+## What’s in a KYI Attestation?
+
+KYI (Know Your Issuer) brings verifiable identity and accountability to token issuance—without compromising composability or the permissionless nature of Web3. It creates the foundational link between:
+
+1. **The off-chain entity** (the asset issuer and its legal status)
+2. **The on-chain asset** (the token contract and issuing wallet)
+3. **The asset’s disclosures and licenses** (via Smart Disclosures attestations)
+
+Without KYI, there's no cryptographically provable relationship between the legal issuer and the asset they claim to issue. This breaks the compliance chain and introduces risk to both users and regulators. KYI solves this by generating a signed, tamper-proof attestation containing:
+
+* **Token contract address**
+* **Mint-authority wallet address**
+* **Verified entity name, jurisdiction, and registration number**
+* **Timestamp and expiration**
+* **Optional link to related Smart Disclosures disclosures and licenses**
+
+These attestations are machine-readable and interoperable with major block explorers, token registries, and compliance systems. KYI enables automated policy enforcement, investor trust, and regulatory alignment—all while preserving the permissionless flexibility that makes Web3 powerful.

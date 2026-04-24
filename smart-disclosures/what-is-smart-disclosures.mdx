@@ -1,0 +1,155 @@
+---
+title: "What is Smart Disclosures?"
+description: "What is Smart Disclosures?"
+---
+
+## Smart Disclosures
+
+Smart Disclosures is Bluprynt's AI-assisted engine for creating, validating, and publishing regulatory disclosures for tokenized assets.
+
+It transforms complex legal and technical documents — white papers, token terms, economic models, regulatory filings — into structured, jurisdiction-compliant disclosures that can be verified onchain.
+
+<Info>
+  By uploading supporting documents, asset issuers can complete 60% to 80% of their disclosures before manually filling in a single field. Smart Disclosures uses AI to extract structured data from your existing materials and map it to the specific requirements of your chosen jurisdiction and document type.
+</Info>
+
+### Why It Exists
+
+Most jurisdictions now require formal disclosures for tokenized assets. In the EU, MiCA mandates that crypto-asset issuers publish white papers covering detailed legal, operational, and risk information under Articles 4 and 5. Similar frameworks are emerging in the UAE, Singapore, and the United States.
+
+The problem is that creating these disclosures is expensive, slow, and manual. Legal teams spend weeks producing documents from scratch, often without clear templates or automated compliance checks. The result: incomplete filings, delayed launches, and unnecessary legal spend.
+
+Smart Disclosures solves this by providing pre-structured templates aligned to regulatory rules, AI-powered document analysis that pre-fills disclosure forms, guided composition with real-time compliance feedback, and multi-format output (XBRL, PDF, DOCX) with onchain attestation publishing.
+
+***
+
+### How It Works
+
+#### Step 1: Choose Your Document Type
+
+From the Bluprynt dashboard, select the jurisdiction and document type you need to create. Smart Disclosures currently supports MiCA-aligned documents for the European Union:
+
+* **E-Money Token (EMT)** — for e-money token white papers
+* **Asset-Referenced Token (ART)** — for asset-referenced token white papers
+* **Other Token (OT)** — for other crypto-asset white papers
+
+Not sure which document type applies to your asset? Use the **MiCA Asset Classifier** — answer a few questions about your asset and Smart Disclosures will recommend the appropriate classification.
+
+Each document type maps to a specific regulatory template with jurisdiction-specific requirements. As Bluprynt expands to additional jurisdictions, new document types will appear in the selector.
+
+#### Step 2: Upload Supporting Documents
+
+Before you start filling in fields manually, Smart Disclosures can analyze your existing documentation to pre-populate the form.
+
+Upload any combination of: white papers, technical summaries, terms and conditions, corporate documents, audit reports, or other relevant materials. Supported formats include PDF, DOCX, DOC, ODT, RTF, TXT, and PNG.
+
+This step is optional — you can skip it and enter everything manually — but uploading documents dramatically reduces the time to completion.
+
+#### Step 3: AI Document Analysis
+
+After upload, Smart Disclosures processes your documents and extracts structured information. The system finds data points that match the disclosure form's requirements and pre-fills the corresponding fields.
+
+You'll see a processing summary showing how many fields were completed for each section. For example, a MiCA EMT white paper has sections for Summary, Risk Factors, Issuer Information, Token Details, Public Offer and Trading, Rights and Obligations, Underlying Technology, and Sustainability Indicators — each showing how many fields the AI successfully extracted.
+
+Fields that couldn't be filled from your documents remain empty for manual completion.
+
+#### Step 4: Digital Composition
+
+This is where you review and complete the disclosure. The composition interface shows:
+
+* **Pre-filled fields** marked as "Autofilled" — review these for accuracy and confirm or edit
+* **Empty fields** — fill these in manually
+* **Section progress** — a sidebar shows completion status for each section
+* **AI assistance** — for each response, you can use three AI tools:
+  * **First Draft** — generates an initial answer based on your uploaded documents and the question's requirements
+  * **Restate** — rewrites your answer for clarity and regulatory alignment
+  * **Evaluate** — checks your answer against the jurisdiction's specific requirements and flags potential issues
+
+Each field also has **Answer Guidelines** that explain what the regulator expects, helping you provide complete and appropriately structured responses.
+
+#### Step 5: Submission
+
+Once all required fields are complete, submit the disclosure form. Submitting consumes **one credit** from your account. If you don't have available credits, you'll be prompted to purchase one before submission is allowed.
+
+By clicking "Submit Form," you authorize the system to debit one credit and initiate the publishing process. You can always go back to edit your answers and re-generate the document after submission.
+
+#### Step 6: Document Generation
+
+After submission, Smart Disclosures processes your answers and generates the final disclosure document. The system extracts the data, transforms it into the required format, and produces a finished document ready for review.
+
+You'll receive:
+
+* A **"View Document"** button to access the generated disclosure
+* A preview of the completed form
+* **Download options** in XBRL, PDF, and DOCX formats
+* The ability to **publish the disclosure as an onchain attestation**
+
+#### Step 7: Onchain Attestation
+
+Once your document is complete, you can publish it as an onchain attestation by clicking "Publish On Chain" on the document details page. Select which blockchain networks you'd like to publish to — currently supported networks include Stellar, Solana, Avalanche, and Aptos.
+
+After selecting your networks and confirming, the system:
+
+1. Uploads the disclosure metadata to **IPFS** (content-addressed, tamper-proof storage)
+2. Publishes an **onchain attestation** referencing the IPFS content
+3. Links the attestation to your **asset issuer identity** (established via KYI)
+
+The document details page will show the On-Chain Publishing status, including transaction details and the IPFS link.
+
+<Info>
+  Bluprynt assigns each issuer a W3C (DID) and ONCHAINID-compatible onchain identity. Smart Disclosures generates either "Informational" (standard) or "Regulatory" (licensed) attestations for asset issuers. All attestations are published off-chain to IPFS and on-chain to the issuer's asset chain. Wallets holding these attestations may receive dynamic Operational Attestations (Credentials) defining allowed token actions.
+</Info>
+
+***
+
+### Policy Translation and Enforcement
+
+For chains and applications that integrate Bluprynt's Compliance Hub, Smart Disclosures attestations enable automated onchain compliance enforcement. Token pre-hooks reference the transacting wallet's credentials and the asset's policy modules to determine whether a transaction proceeds or reverts.
+
+In this model:
+
+* Token actions (mint, burn, transfer, claim) are blocked until valid disclosures exist
+* Attestation expirations can trigger automatic credential revocation
+* Operational Credentials are dynamically issued to wallets based on their linked disclosure and license attestations
+* Projects that fall out of compliance lose credentials and are automatically gated
+
+This transforms compliance from a static, point-in-time check into a dynamic, continuously enforced standard.
+
+***
+
+### Global Scalability
+
+Smart Disclosures is designed to support disclosures from any regulatory regime. The framework is jurisdiction-agnostic and adaptable for:
+
+* **Emerging digital asset frameworks** — UAE, Singapore
+* **Legacy securities regimes** — SEC Reg D, Reg S, Reg CF
+* **Stablecoin-specific rules** — EU e-money token disclosures
+* **Financial market oversight** — UK FCA, MAS, FSRA, CFTC
+
+New jurisdictions and document types are added based on regulatory developments and market demand.
+
+***
+
+### Integration Options
+
+Smart Disclosures is designed to integrate with platforms that rely on verifiable disclosures for token listings, regulatory compliance, or DeFi protocol participation.
+
+Attestations produced by Smart Disclosures can be:
+
+* Embedded in token metadata
+* Queried via API for gating smart contract actions
+* Displayed in explorer interfaces for compliance visibility
+* Submitted to centralized exchanges as proof of disclosure readiness
+
+#### Integration Partners
+
+Bluprynt actively supports integration with:
+
+* **Centralized exchanges (CEXs)** — streamline token listing due diligence
+* **Regulatory sandboxes** — automated document intake and approval tracking
+* **DeFi protocols and launchpads** — enforce minimum disclosure standards for participation
+* **Block explorers and wallets** — display disclosure status and prevent user interaction with non-compliant tokens
+
+#### Partner With Us
+
+To bring Smart Disclosures to your platform, contact us at **<team@bluprynt.com>**. We offer flexible integration support for technical, legal, and regulatory teams looking to embed disclosure integrity into their workflows.
