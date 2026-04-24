@@ -1,0 +1,75 @@
+---
+title: "Your first attestation"
+description: "From an empty document to an on-chain attestation in under 10 minutes."
+---
+
+This guide walks a new user through publishing their first attestation. You'll need a verified organization — if you haven't set that up, start with [Creating a Bluprynt account](/getting-started/create-account).
+
+<Steps>
+  <Step title="Create a Smart Disclosure">
+    From the dashboard, click **New document**. Pick:
+    - **Jurisdiction** (e.g. EU, US, UK, Singapore)
+    - **Regulation** (filtered by jurisdiction)
+    - **Asset type** (filtered by regulation)
+    - **Document type** (the specific filing — e.g. White Paper, Prospectus)
+
+    Bluprynt only shows document types valid for that jurisdiction / regulation / asset combination.
+  </Step>
+  <Step title="Upload source documents">
+    If you have existing drafts, upload them. Bluprynt's AI-assisted **autofill** extracts structured fields from the source and pre-populates the form. You'll review every field before proceeding.
+  </Step>
+  <Step title="Author the disclosure">
+    Work through the form. Each field shows regulator-specific guidance. Validation happens as you type.
+
+    <Tip>
+      Stuck on a field? Click the ✨ icon to see **AI help** — inline suggestions grounded in your source documents.
+    </Tip>
+  </Step>
+  <Step title="Validate and submit">
+    Click **Validate** to run the full schema check. Fix any errors, then click **Submit**.
+  </Step>
+  <Step title="Publish on-chain">
+    Once submitted, click **Publish**. Select the chain(s):
+    - **Ethereum / Plume / Avalanche** via EAS
+    - **Solana** via SAS
+    - **Stellar**
+    - **Aptos**, **XRPL**
+
+    Bluprynt uploads the artifact to IPFS, then writes the attestation on each chain you selected.
+  </Step>
+  <Step title="Verify">
+    Click **View on-chain data**. You'll see:
+    - The transaction hash + block explorer link
+    - The IPFS CID for the artifact
+    - The attestation's schema + payload
+
+    The attestation's status should read `published`.
+  </Step>
+</Steps>
+
+## What just happened
+
+<AccordionGroup>
+  <Accordion icon="database" title="Under the hood">
+    1. **Form validation** ran against the JSON schema from [`blupryntco/schemas`](https://github.com/blupryntco/schemas).
+    2. **`bluprynt-api`** generated a signed PDF using Prawn + wkhtmltopdf.
+    3. Rails enqueued an attestation job via Sidekiq.
+    4. The job posted to **`bluprynt-attestation`** with the CAIP-addressed attestation type (e.g. `eip155:1:kyi`).
+    5. `bluprynt-attestation` uploaded the PDF to IPFS, returned the CID, then wrote the attestation via the appropriate chain adapter (EAS, SAS, Stellar AS, etc.).
+    6. On confirmation, the status transitioned to `published`.
+  </Accordion>
+  <Accordion icon="eye" title="Who can see it">
+    Once `published`, anyone can read the attestation using the chain's native tooling (EAS SDK, SAS program calls, etc.) — **you do not need Bluprynt to verify**. The `registry.bluprynt.com` DID resolver turns CCIDs into human-readable issuer records.
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="Embed the KYI widget" icon="window" href="/integration-guides/kyi-widget">
+    Let partners see your attestation from their own site.
+  </Card>
+  <Card title="Browse attestation schemas" icon="file-code" href="/architecture/attestation-schemas">
+    Understand the on-chain shape of each attestation type.
+  </Card>
+</Columns>

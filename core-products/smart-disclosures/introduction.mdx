@@ -1,0 +1,72 @@
+---
+title: "What are Smart Disclosures?"
+description: "Regulator-ready disclosures generated, validated, and published on-chain — with the authoring workflow baked in."
+---
+
+**Smart Disclosures** are Bluprynt's structured, on-chain-anchored regulatory filings. They replace the traditional PDF-then-email workflow with a version-controlled, schema-validated, cryptographically verifiable document lifecycle.
+
+## What makes them "smart"
+
+<Columns cols={2}>
+  <Card title="Schema-validated" icon="square-check">
+    Every field is validated against a JSON schema tied to the jurisdiction, regulation, and asset type. Bluprynt refuses to submit incomplete or inconsistent filings.
+  </Card>
+  <Card title="Version-controlled" icon="code-branch">
+    Each disclosure has a hash, a timestamp, and an author trail. Amendments are first-class: you file a revision, it's linked to the original.
+  </Card>
+  <Card title="On-chain-anchored" icon="link">
+    The final PDF is uploaded to IPFS, and a cryptographic attestation is written on the asset's chain. Anyone can verify the filing without calling Bluprynt.
+  </Card>
+  <Card title="AI-assisted" icon="sparkles">
+    Autofill pulls structured fields from your source documents. Inline AI help grounds every answer in your uploaded materials.
+  </Card>
+</Columns>
+
+## Who files Smart Disclosures
+
+- **Token issuers** filing white papers, prospectuses, and ongoing disclosures.
+- **Compliance officers** at crypto platforms needing to certify asset due diligence.
+- **Legal counsel** preparing regulator-ready filings on behalf of clients.
+- **Issuers subject to MiCA** — see the dedicated [MiCA Checker](/core-products/mica-checker/introduction) workflow.
+
+## Supported filing types
+
+The set grows regularly. Current coverage:
+
+<Columns cols={2}>
+  <Card title="Initial disclosures">
+    White papers, prospectuses, token-offering documents.
+  </Card>
+  <Card title="Ongoing disclosures">
+    Quarterly reports, material event notifications, reserves attestations.
+  </Card>
+  <Card title="Regulator notifications">
+    Pre-filed templates for direct regulator outreach.
+  </Card>
+  <Card title="Custom forms">
+    Jurisdiction-specific forms defined by Bluprynt's legal team + ingested via `@bluprynt/forms-core`.
+  </Card>
+</Columns>
+
+## What you get after publishing
+
+- A **signed PDF** — traditional format for counterparties that still need paper.
+- An **IPFS CID** — the content-addressed location of the artifact.
+- An **on-chain attestation** — cryptographic proof that the disclosure exists and is authentic. Writable to Ethereum (via EAS), Solana (via SAS), Stellar, Aptos, or XRPL.
+- A **public-facing KYI record** — the attestation surfaces in the KYI widget and API automatically.
+
+## Why this matters
+
+Regulatory filings have historically been opaque: a PDF emailed to a regulator, cached somewhere internal, pointed to via a weak link. Smart Disclosures make the filing:
+- **Tamper-evident** — any modification invalidates the on-chain hash.
+- **Globally queryable** — regulators and counterparties read from chains, not portals.
+- **Reproducible** — the source form + JSON schema means you can re-derive the PDF.
+
+<CardGroup cols={2}>
+  <Card title="Document lifecycle" icon="timeline" href="/core-products/smart-disclosures/document-lifecycle">
+    Draft → submit → publish → attest. Step-by-step.
+  </Card>
+  <Card title="Attestation schemas" icon="file-code" href="/architecture/attestation-schemas">
+    The on-chain shape each disclosure commits to.
+  </Card>
+</CardGroup>

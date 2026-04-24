@@ -1,0 +1,78 @@
+---
+title: "MiCA Checker"
+description: "A purpose-built workflow for issuers subject to the EU Markets in Crypto-Assets Regulation."
+---
+
+**MiCA Checker** is Bluprynt's dedicated compliance workflow for issuers subject to the [EU Markets in Crypto-Assets Regulation (MiCA)](https://eur-lex.europa.eu/eli/reg/2023/1114/oj). It streamlines the five filing obligations most MiCA issuers face into a single guided authoring flow.
+
+## What it covers
+
+<Columns cols={2}>
+  <Card title="Pre-issuance disclosures" icon="scroll">
+    White paper publication with the MiCA-compliant structure, validated against the ESMA technical standards.
+  </Card>
+  <Card title="Classification review" icon="magnifying-glass">
+    Asset-reference token, e-money token, or utility token? MiCA Checker runs the classification test so you file under the right regime.
+  </Card>
+  <Card title="Ongoing obligations" icon="calendar-check">
+    Material event notifications, periodic disclosures, and reserves attestations for ART / EMT issuers.
+  </Card>
+  <Card title="Regulator notification" icon="envelope">
+    Pre-filled templates for direct outreach to ESMA and national competent authorities.
+  </Card>
+</Columns>
+
+## Who should use it
+
+- Issuers based in the EU launching tokens subject to MiCA.
+- Non-EU issuers with EU distribution that triggers MiCA obligations.
+- Legal counsel filing on behalf of token issuers.
+
+## How it differs from standard Smart Disclosures
+
+| | Standard Smart Disclosures | MiCA Checker |
+|---|---|---|
+| Jurisdiction coverage | Multi-jurisdiction | EU MiCA only |
+| Signup flow | `/signup` | `/signup-mica` (streamlined) |
+| AI assistant | General OpenAI Assistant | Dedicated `MICA_CHECKER_ASSISTANT_ID` tuned for MiCA |
+| Form templates | Broad | Pre-loaded with MiCA-specific field sets |
+| Classification | Generic | Interactive ART / EMT / utility classifier |
+| Regulator templates | Generic | ESMA + NCA specific |
+
+## Getting started
+
+<Steps>
+  <Step title="Sign up via the MiCA flow">
+    Go to [app.bluprynt.com/signup-mica](https://app.bluprynt.com/signup-mica). The flow is tailored for MiCA issuers.
+  </Step>
+  <Step title="Complete KYB">
+    Standard Sumsub flow. ART / EMT issuers may need to provide additional authorization documents from their NCA.
+  </Step>
+  <Step title="Classify your token">
+    Use the classification tool before drafting. Your result drives which templates you see next.
+  </Step>
+  <Step title="Draft + publish">
+    Follow the standard Smart Disclosure lifecycle — see [Document lifecycle](/core-products/smart-disclosures/document-lifecycle) — with MiCA-specific templates.
+  </Step>
+</Steps>
+
+## Reserves attestations (ART / EMT issuers)
+
+Asset-referenced token and e-money token issuers have recurring reserves-attestation obligations. MiCA Checker automates this:
+
+- **Monthly proof-of-collateral attestations** written on-chain using the `proof-of-collateral` attestation type.
+- **Audit integration** — link an approved audit firm's report as the attestation payload.
+- **Public verification** — any counterparty can verify reserves via the on-chain attestation without calling Bluprynt.
+
+<Note>
+  Need to discuss your MiCA compliance setup? [Book a call](https://bluprynt.com/#contact) with our compliance team.
+</Note>
+
+<CardGroup cols={2}>
+  <Card title="Smart Disclosures" icon="file-contract" href="/core-products/smart-disclosures/introduction">
+    The underlying authoring engine.
+  </Card>
+  <Card title="KYI" icon="id-card" href="/core-products/kyi/introduction">
+    Issuer verification that underpins every MiCA filing.
+  </Card>
+</CardGroup>

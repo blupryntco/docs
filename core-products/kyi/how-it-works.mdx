@@ -1,0 +1,87 @@
+---
+title: "How KYI works"
+description: "The end-to-end flow: issuer onboarding → CCID minting → asset attestation → lookup resolution."
+---
+
+<Info>
+  This page explains the **lifecycle** of a KYI-verified asset. For hands-on setup, see [Embed the KYI widget](/core-products/kyi/widget-embed) or [API reference](/api-reference/kyi).
+</Info>
+
+## The four phases
+
+<Steps>
+  <Step title="Issuer onboards and completes KYB">
+    The issuer signs up via `app.bluprynt.com`, completes Sumsub KYB (including beneficial-owner verification), and provides operating-jurisdiction documentation. Once verified, their organization record is marked KYB-complete.
+  </Step>
+  <Step title="CCID is minted">
+    Bluprynt derives the issuer's CCID from canonical organizational data, writes it to the `identities` table in the attestation service, and publishes it to every enabled on-chain identity registry via Chainlink-ACE-compatible contracts.
+  </Step>
+  <Step title="Asset attestation is written">
+    When the issuer registers a token, Bluprynt writes a `kyi` attestation against the issuer's CCID on the asset's chain (EAS for EVM, SAS for Solana, Stellar AS, etc.). The attestation references the asset's on-chain address and the issuer's CCID.
+  </Step>
+  <Step title="Consumers resolve the lookup">
+    A partner (exchange, wallet, analytics platform) queries KYI with a wallet or asset address. KYI resolves the CCID, pulls the attestation set, and returns the verified issuer record.
+  </Step>
+</Steps>
+
+## The underlying stack
+
+```
+Partner site / exchange / wallet
+            │
+            │ embedded widget OR REST call
+            ▼
+   KYI Widget SDK / KYI API
+            │
+            ▼
+        bluprynt-kyi (NestJS)
+            │
+            │ resolves CCID, reads cached attestations
+            ▼
+  bluprynt-attestation (multi-chain)
+            │
+            ├─► reads from Postgres (fast path)
+            └─► reads from chain (authoritative path)
+```
+
+## Resolution sources
+
+A KYI lookup can resolve a query from:
+
+- **Wallet address** — e.g. an EVM address holding a token.
+- **Contract address** — e.g. an ERC-20 or SPL token program.
+- **CCID** — the canonical Bluprynt identifier.
+- **On-chain account** — Solana account pubkeys, XRPL account IDs.
+
+Internally, all addresses are normalized to **CAIP-10** (`{namespace}:{reference}:{address}`) before resolution. See [Key concepts](/overview/key-concepts) for background.
+
+## What you get back
+
+Every KYI response includes:
+
+- `issuer`: name, legal entity, jurisdiction, KYB status.
+- `ccid`: the canonical identifier.
+- `wallets`: every on-chain wallet the issuer has attested.
+- `accounts`: chain-native account IDs (Solana, Aptos, XRPL).
+- `attestations[]`: active attestations with type, status, chain, tx hash, IPFS CID.
+- `credentials[]`: licenses, exemptions, and other credentials.
+- `registryDeployments[]`: where the issuer's CCID is published across chains.
+
+## Caching and freshness
+
+KYI caches resolution data in Postgres for low-latency lookups. Cache invalidation happens on:
+
+- **Attestation events** — when `bluprynt-attestation` writes or revokes an attestation.
+- **Webhook notifications** — from the chain-specific finalization webhooks (e.g., `POST /web3/sas/kyi_webhook`).
+- **TTL** — default 5 minutes for listings, 60 seconds for identity pages.
+
+For **authoritative** reads (must-be-current), set `?authoritative=true` on the API call to bypass cache and hit the chain directly.
+
+<CardGroup cols={2}>
+  <Card title="Widget integration" icon="window" href="/core-products/kyi/widget-embed">
+    Ship the partner-facing flow.
+  </Card>
+  <Card title="API reference" icon="terminal" href="/api-reference/kyi">
+    Schemas, query params, error codes.
+  </Card>
+</CardGroup>

@@ -1,97 +1,78 @@
 ---
 title: "Introduction"
-description: "Welcome to the new home for your documentation"
+description: "Bluprynt is the Compliance OS for Digital Assets — institutional-grade infrastructure for identity, disclosures, supervision, and credentials."
 ---
 
-## Setting up
+<Tip>
+  **New to Bluprynt?** Start with [What is Bluprynt?](/overview/what-is-bluprynt), then jump to the [Quickstart](/quickstart) when you're ready to build.
+</Tip>
 
-Get your documentation site up and running in minutes.
+## The four pillars
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
+Bluprynt turns jurisdictional regulations, issuer disclosures, and regulator licenses into programmable enforcement logic for tokenized assets. Four products compose the platform.
 
 <Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+  <Card title="Know Your Issuer (KYI)" icon="id-card" href="/core-products/kyi/introduction">
+    Cryptographic proof-of-issuance that prevents fraud in digital asset issuance by establishing verifiable links between issuers and their tokens.
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="Smart Disclosures" icon="file-contract" href="/core-products/smart-disclosures/introduction">
+    Regulator-ready disclosure documents generated, validated, and published on-chain — with the authoring workflow baked in.
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="Compliance Hub" icon="shield-halved" href="/core-products/compliance-hub/introduction">
+    End-to-end supervision surface for regulators, compliance officers, and counterparties to review regulated asset activity in real time.
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="MiCA Checker" icon="circle-check" href="/core-products/mica-checker/introduction">
+    Purpose-built compliance workflow for issuers subject to the EU Markets in Crypto-Assets Regulation.
   </Card>
 </Columns>
 
-## Create beautiful pages
+## Pick your path
 
-Everything you need to create world-class documentation.
+Choose the starting point that matches what you're trying to do.
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
+<Columns cols={3}>
+  <Card title="I'm a new user" icon="rocket" href="/quickstart">
+    Create an account, set up your organization, and file your first disclosure.
   </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
+  <Card title="I'm an integrator" icon="code" href="/integration-guides/overview">
+    Embed the KYI widget, call the public API, or subscribe to attestations.
   </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
+  <Card title="I'm a regulator" icon="gavel" href="/core-products/compliance-hub/introduction">
+    Review supervised assets, monitor attestations, and access audit trails.
   </Card>
 </Columns>
 
-## Need inspiration?
+## Build with Bluprynt
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+<Columns cols={3}>
+  <Card title="KYI Widget" icon="window" href="/integration-guides/kyi-widget">
+    Drop an iframe into your site to verify asset issuers. Ships as `@bluprynt/kyi-widget-sdk` on npm.
+  </Card>
+  <Card title="Public API" icon="terminal" href="/api-reference/overview">
+    REST endpoints for KYI lookups, attestation reads, and integration webhooks.
+  </Card>
+  <Card title="Attestation schemas" icon="file-code" href="/architecture/attestation-schemas">
+    On-chain attestation shapes across Ethereum, Solana, Stellar, Aptos, and XRPL.
+  </Card>
+</Columns>
+
+## How Bluprynt fits together
+
+<CardGroup cols={2}>
+  <Card title="System overview" icon="diagram-project" href="/overview/architecture">
+    The identity, disclosure, supervision, and credential layers — and how they compose.
+  </Card>
+  <Card title="Key concepts" icon="book-open" href="/overview/key-concepts">
+    CCIDs, attestations, policy modules, and the vocabulary you'll see across the docs.
+  </Card>
+  <Card title="Standards compatibility" icon="list-check" href="/overview/standards-compatibility">
+    W3C DIDs, EAS, SAS, and the open standards Bluprynt interoperates with.
+  </Card>
+  <Card title="Policy Engine white paper" icon="scroll" href="https://github.com/blupryntco/policy-engine">
+    The technical framing for programmable compliance at the token-operation level.
+  </Card>
+</CardGroup>
+
+<Note>
+  **Need help?** Reach us at [support@bluprynt.com](mailto:support@bluprynt.com) or [book a demo](https://bluprynt.com/#contact).
+</Note>

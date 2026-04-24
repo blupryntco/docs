@@ -1,0 +1,78 @@
+---
+title: "API overview"
+description: "Base URLs, versioning, and how the Bluprynt API is organized."
+---
+
+## Base URL
+
+| Environment | URL |
+|---|---|
+| Production | `https://api.bluprynt.com` |
+| Staging | `https://api.staging.bluprynt.com` |
+
+## Versioning
+
+Every endpoint is prefixed with a version: `/v1/...`. Breaking changes introduce a new major version (`/v2`) and the previous version remains available for at least 12 months. Non-breaking additions (new optional fields, new endpoints) go into the current version.
+
+## Surface map
+
+<Columns cols={2}>
+  <Card title="KYI" icon="id-card" href="/api-reference/kyi">
+    `/v1/kyi/*` — verified-issuer lookups by CCID, wallet, or contract address.
+  </Card>
+  <Card title="Attestations" icon="file-shield" href="/api-reference/attestations">
+    `/v1/attestations/*` — read, write, revoke on-chain attestations.
+  </Card>
+  <Card title="Identities" icon="fingerprint" href="/api-reference/identities">
+    `/v1/identities/*` — CCID-keyed identity records with wallets and accounts.
+  </Card>
+  <Card title="Credentials" icon="award" href="/api-reference/credentials">
+    `/v1/credentials/*` — licenses and disclosures bound to identities.
+  </Card>
+</Columns>
+
+## Request / response format
+
+- Requests and responses are **JSON** (`application/json`).
+- File uploads use `multipart/form-data`.
+- Timestamps are **ISO-8601** in UTC.
+- IDs are strings unless the underlying type is numeric.
+
+## Authentication
+
+Every non-health endpoint requires `Authorization: Bearer YOUR_API_KEY`. See [Authentication](/api-reference/authentication) for details.
+
+## Errors
+
+Uniform error envelope:
+
+```json
+{
+  "error": "Human-readable message",
+  "code": "invalid_parameter",
+  "details": { "field": "ccid", "issue": "not found" }
+}
+```
+
+Status codes follow HTTP conventions — see [Errors](/api-reference/errors) for the full list.
+
+## Machine-readable spec
+
+An OpenAPI 3.1 spec is available at `https://api.bluprynt.com/openapi.json`. Feed it to your favorite generator for typed clients.
+
+## Quick links
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/api-reference/authentication">
+    API keys, scopes, rotation.
+  </Card>
+  <Card title="Rate limits" icon="gauge" href="/api-reference/rate-limits">
+    Per-plan quotas and backoff guidance.
+  </Card>
+  <Card title="Errors" icon="triangle-exclamation" href="/api-reference/errors">
+    Status codes, error shapes, retry logic.
+  </Card>
+  <Card title="Webhooks" icon="webhook" href="/integration-guides/public-api#webhooks">
+    Subscribe to attestation lifecycle events.
+  </Card>
+</CardGroup>

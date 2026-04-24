@@ -1,0 +1,64 @@
+---
+title: "What is Bluprynt?"
+description: "Bluprynt transforms regulatory requirements into programmable enforcement logic for tokenized assets."
+---
+
+Bluprynt is a **programmable compliance enforcement layer** for blockchain networks. It enables regulated digital assets to operate within existing legal frameworks while preserving the decentralization and transparency benefits of public ledgers.
+
+## Why Bluprynt exists
+
+The tokenized real-world-assets (RWA) market is projected to exceed **$16 trillion**, but institutional adoption has stalled because the underlying infrastructure cannot enforce regulatory requirements at the transaction level. Traditional Web3 systems can't check:
+
+<Columns cols={2}>
+  <Card title="Identity" icon="user-shield">
+    Whether a wallet holder has met KYC / AML requirements in their jurisdiction.
+  </Card>
+  <Card title="Disclosures" icon="file-shield">
+    Whether an asset has the regulator-ready disclosures that match its classification.
+  </Card>
+  <Card title="Licenses" icon="certificate">
+    Whether the issuer holds the licenses required to operate in the markets they list in.
+  </Card>
+  <Card title="Policy" icon="gavel">
+    Whether a given token operation (mint, transfer, burn) is compliant with jurisdiction-specific rules *at the time of transfer*.
+  </Card>
+</Columns>
+
+Bluprynt fills each of those gaps with a dedicated product layer.
+
+## What Bluprynt does
+
+Four composable products form the **Compliance OS** for digital assets:
+
+<Columns cols={2}>
+  <Card title="Identity" icon="id-card" href="/core-products/kyi/introduction">
+    **Know Your Issuer (KYI)** — cryptographically verifiable links between token issuers and the assets they issue.
+  </Card>
+  <Card title="Disclosures" icon="file-contract" href="/core-products/smart-disclosures/introduction">
+    **Smart Disclosures** — regulator-ready filings generated, validated, and published on-chain.
+  </Card>
+  <Card title="Supervision" icon="shield-halved" href="/core-products/compliance-hub/introduction">
+    **Compliance Hub** — the regulator- and counterparty-facing surface for real-time asset oversight.
+  </Card>
+  <Card title="Credentials" icon="award" href="/core-products/mica-checker/introduction">
+    **MiCA Checker** and related workflows — pre-built credential flows for specific regulatory regimes.
+  </Card>
+</Columns>
+
+## Bluprynt as an operating system
+
+The four products compose cleanly because they sit on top of a shared platform:
+
+- A **policy engine** that translates legal requirements into machine-readable modules. ([White paper](https://github.com/blupryntco/policy-engine))
+- An **attestation service** that writes verifiable attestations across six blockchains. ([Repo](https://github.com/blupryntco/bluprynt-attestation))
+- A **schema layer** that defines the shape of every identity, credential, and disclosure. ([Repo](https://github.com/blupryntco/schemas))
+- A **public API** for programmatic integration. ([Repo](https://github.com/blupryntco/public-api))
+
+<CardGroup cols={2}>
+  <Card title="Architecture at a glance" icon="diagram-project" href="/overview/architecture">
+    How the layers compose at runtime.
+  </Card>
+  <Card title="Key concepts" icon="book-open" href="/overview/key-concepts">
+    CCIDs, attestations, policy modules — the vocabulary.
+  </Card>
+</CardGroup>

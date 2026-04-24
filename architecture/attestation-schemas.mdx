@@ -1,0 +1,139 @@
+---
+title: "Attestation schemas"
+description: "The on-chain shapes Bluprynt writes across supported blockchains."
+---
+
+Bluprynt writes attestations in four predefined types, each with its own JSON schema + on-chain encoding. This page documents each type. The canonical schema repository is [`blupryntco/schemas`](https://github.com/blupryntco/schemas).
+
+## The four attestation types
+
+<Columns cols={2}>
+  <Card title="KYI" icon="id-card">
+    Binds an asset to its verified issuer. Written once at asset registration, updated on issuer-side changes.
+  </Card>
+  <Card title="MiCA" icon="eu">
+    Certifies an asset's classification and filing status under the EU Markets in Crypto-Assets Regulation.
+  </Card>
+  <Card title="Reg D" icon="flag-usa">
+    US Regulation D exemption attestation — asset is offered under Rule 506(b) or 506(c).
+  </Card>
+  <Card title="Proof of Collateral" icon="coins">
+    Reserves / collateral attestation, typically monthly, for ART / EMT / stablecoin issuers.
+  </Card>
+</Columns>
+
+## Common envelope
+
+Every attestation shares a common envelope on every chain:
+
+```typescript
+interface AttestationEnvelope {
+  type: 'kyi' | 'mica' | 'regd' | 'proof-of-collateral';
+  issuer: CCID;
+  subject: CAIP10;         // the asset or account being attested about
+  issuedAt: ISO8601;
+  expiresAt?: ISO8601;     // optional, per attestation type
+  payload: { ... };        // type-specific; may be IPFS-referenced
+  schemaVersion: string;   // semver
+  signature: string;       // issuer's signature
+}
+```
+
+Large payloads (PDF documents, reserve reports) are uploaded to IPFS and referenced by CID in the `payload.artifacts[]` field.
+
+## Per-chain encoding
+
+<Tabs>
+  <Tab title="EVM (EAS)">
+    EAS schema registered via the EAS Schema Registrar. One schema UID per attestation type. Bluprynt's adapter serializes the envelope to the EAS schema's field order and submits via the EAS SDK's `attest()`.
+  </Tab>
+  <Tab title="Solana (SAS)">
+    SAS program instructions with a borsh-serialized payload. Bluprynt uses `sas-lib` (an internal package) to build the instruction. Payloads exceeding Solana's transaction size limits are uploaded to a dedicated IPFS bucket (`IPFS_SAS_BUCKET_NAME`) and referenced by CID.
+  </Tab>
+  <Tab title="Stellar">
+    Stellar Attestation Service — Bluprynt uses `@attestprotocol/stellar-sdk`. Attestations are native Stellar ledger entries keyed by the issuer's Stellar account.
+  </Tab>
+  <Tab title="Aptos (legacy)">
+    Legacy oracle adapter — writes via the Aptos TS SDK to the configured oracle address. Being phased out as the new Aptos adapter lands.
+  </Tab>
+  <Tab title="XRPL">
+    On-ledger memos via `xrpl.js`. Low payload size — heavy payloads always go to IPFS.
+  </Tab>
+</Tabs>
+
+## Type-specific schemas (summary)
+
+<AccordionGroup>
+  <Accordion icon="id-card" title="KYI">
+    ```typescript
+    interface KyiPayload {
+      assetCcid: CCID;
+      issuerCcid: CCID;
+      assetType: 'fungible' | 'non-fungible' | 'art' | 'emt' | 'utility';
+      jurisdiction: ISO3166;
+      licenses: Array<LicenseRef>;
+      artifacts?: Array<{ cid: string; description: string }>;
+    }
+    ```
+    Full schema: [`blupryntco/schemas/kyi/*`](https://github.com/blupryntco/schemas).
+  </Accordion>
+  <Accordion icon="eu" title="MiCA">
+    ```typescript
+    interface MicaPayload {
+      classification: 'art' | 'emt' | 'utility' | 'crypto-asset';
+      whitePaperCid: string;
+      ncaNotification: { authority: string; notifiedAt: ISO8601 };
+      reservesAttestationCid?: string;  // for ART / EMT
+      ongoingDisclosures: Array<{ kind: string; cid: string; filedAt: ISO8601 }>;
+    }
+    ```
+  </Accordion>
+  <Accordion icon="flag-usa" title="Reg D">
+    ```typescript
+    interface RegDPayload {
+      rule: '506(b)' | '506(c)';
+      formDCid: string;      // Form D filing IPFS CID
+      filedAt: ISO8601;
+      accreditedInvestorsOnly: boolean;
+    }
+    ```
+  </Accordion>
+  <Accordion icon="coins" title="Proof of Collateral">
+    ```typescript
+    interface ProofOfCollateralPayload {
+      asOf: ISO8601;
+      totalCollateralUSD: string;    // decimal string, not number
+      collateralBreakdown: Array<{ asset: string; amount: string; source: string }>;
+      auditorCcid?: CCID;
+      reportCid: string;             // IPFS CID of the audit report
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Reading attestations without Bluprynt
+
+**All on-chain attestations are readable with native chain tooling.** You don't need Bluprynt to verify:
+
+<Tabs>
+  <Tab title="EAS (EVM)">
+    ```typescript
+    import { EAS } from '@ethereum-attestation-service/eas-sdk';
+    const eas = new EAS(EAS_CONTRACT_ADDRESS);
+    const attestation = await eas.getAttestation(uid);
+    ```
+  </Tab>
+  <Tab title="SAS (Solana)">
+    ```typescript
+    import { SolanaAttestationService } from 'sas-lib';
+    const sas = new SolanaAttestationService(connection);
+    const attestations = await sas.getAttestationsByCredential(ccid);
+    ```
+  </Tab>
+</Tabs>
+
+## Versioning
+
+Schemas use **semantic versioning**. Breaking changes introduce a new `schemaVersion` — old attestations remain readable under their original schema. Minor versions add optional fields. Patch versions are documentation-only.
+
+Subscribe to schema releases: [`blupryntco/schemas/releases`](https://github.com/blupryntco/schemas/releases).

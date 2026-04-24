@@ -1,0 +1,125 @@
+---
+title: "KYI endpoints"
+description: "Lookup verified-issuer data by CCID, wallet, or contract address."
+---
+
+## `GET /v1/kyi/{ccid}`
+
+Resolve a CCID to its full KYI record.
+
+```bash
+curl https://api.bluprynt.com/v1/kyi/bprnt_abc123 \
+  -H "Authorization: Bearer YOUR_KEY"
+```
+
+**Response:**
+```json
+{
+  "issuer": {
+    "name": "Example Issuer Inc.",
+    "ccid": "bprnt_abc123",
+    "jurisdiction": "US",
+    "kybStatus": "verified",
+    "verifiedAt": "2024-08-12T14:22:00Z"
+  },
+  "attestations": [
+    {
+      "type": "kyi",
+      "status": "published",
+      "chain": "ethereum",
+      "caip2": "eip155:1",
+      "txHash": "0x...",
+      "ipfsCid": "Qm..."
+    }
+  ],
+  "credentials": [
+    {
+      "kind": "license",
+      "type": "mica-emt-authorization",
+      "issuedBy": "AMF",
+      "issuedAt": "2024-06-01T00:00:00Z"
+    }
+  ],
+  "wallets": [
+    { "caip10": "eip155:1:0xabc..." },
+    { "caip10": "solana:5eykt4...:pubkey..." }
+  ]
+}
+```
+
+## `GET /v1/kyi/by-wallet/{caip10}`
+
+Resolve a wallet to the issuer who attested it. Returns 404 if the wallet has no KYI attestation.
+
+```bash
+curl https://api.bluprynt.com/v1/kyi/by-wallet/eip155:1:0xabc... \
+  -H "Authorization: Bearer YOUR_KEY"
+```
+
+## `GET /v1/kyi/by-contract/{caip10}`
+
+Resolve a token contract to the issuer who deployed it.
+
+```bash
+curl https://api.bluprynt.com/v1/kyi/by-contract/eip155:1:0x... \
+  -H "Authorization: Bearer YOUR_KEY"
+```
+
+## `POST /v1/kyi/batch`
+
+Resolve up to 100 CCIDs / wallets in a single request. Counts as **one** rate-limit hit.
+
+```bash
+curl https://api.bluprynt.com/v1/kyi/batch \
+  -H "Authorization: Bearer YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "queries": [
+      { "type": "ccid", "value": "bprnt_abc123" },
+      { "type": "wallet", "value": "eip155:1:0xabc..." }
+    ]
+  }'
+```
+
+**Response:**
+```json
+{
+  "results": [
+    { "query": { "type": "ccid", "value": "bprnt_abc123" }, "found": true, "data": { /* full record */ } },
+    { "query": { "type": "wallet", "value": "eip155:1:0xabc..." }, "found": false }
+  ]
+}
+```
+
+## Caching
+
+KYI endpoints return `ETag` and `Cache-Control: max-age=60`. Send `If-None-Match` for cache-friendly polling:
+
+```bash
+curl https://api.bluprynt.com/v1/kyi/bprnt_abc123 \
+  -H "Authorization: Bearer YOUR_KEY" \
+  -H "If-None-Match: \"abc123\""
+```
+
+A 304 response uses **no** quota.
+
+For authoritative, cache-bypassing reads (must-be-current):
+
+```bash
+curl https://api.bluprynt.com/v1/kyi/bprnt_abc123?authoritative=true
+```
+
+<Note>
+  Authoritative reads bypass cache and hit the chain directly. 2–5× slower. Use sparingly.
+</Note>
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Attestations endpoint" icon="file-shield" href="/api-reference/attestations">
+    Read the raw attestation records underneath a KYI response.
+  </Card>
+  <Card title="KYI widget integration" icon="window" href="/integration-guides/kyi-widget">
+    UI alternative if you don't want to call the API directly.
+  </Card>
+</CardGroup>

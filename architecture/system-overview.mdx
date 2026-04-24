@@ -1,0 +1,115 @@
+---
+title: "System overview"
+description: "How the Bluprynt services compose into a runtime platform."
+---
+
+<Info>
+  For a top-down view with every repo in the org, see the [Architecture at a glance](/overview/architecture) page. This page goes deeper into the service-to-service interactions.
+</Info>
+
+## Service roster
+
+| Service | Stack | Role |
+|---|---|---|
+| `bluprynt-fe` | Next.js 15 · MobX · Tailwind | The authenticated Admin Console + customer app, plus the `/widget/*` iframe routes |
+| `bluprynt-api` | Rails 8 · Postgres · Redis · Sidekiq | Primary backend — documents, forms, organizations, billing, AI jobs |
+| `bluprynt-attestation` | NestJS 11 · Prisma · Postgres | Multi-chain attestation hub (EAS, SAS, Stellar, Aptos, XRPL) |
+| `bluprynt-kyi` | NestJS · Prisma | KYI core product |
+| `registry` | NestJS · Drizzle · Postgres · BullMQ | Issuer / asset-class / asset catalog |
+| `public-api` | NestJS · Fastify | Partner-facing gateway proxying KYI + third-party RWA APIs |
+| `compliance-hub` | bun monorepo · Next.js · NestJS · Postgres · Redis · MinIO | Supervision surface and next-gen issuer compliance workflows |
+| `compliance-explorer` | Next.js · Foundry | Chainlink-ACE-compatible on-chain identity registry dashboard |
+
+## Runtime interactions
+
+```
+      browsers / partners
+              │
+              ▼
+     ┌──────────────────┐     iframe + CSP gate     ┌─────────────────┐
+     │   bluprynt-fe     │◄────────────────────────│ kyi-widget-sdk  │
+     │   Next.js         │                          │ @npm            │
+     └────────┬──────────┘                          └─────────────────┘
+              │ OAuth + WebSocket
+              ▼
+     ┌───────────────────────┐
+     │   bluprynt-api         │◄──────── Stripe webhooks
+     │   Rails + Sidekiq      │
+     └──────┬────┬────┬───────┘
+            │    │    │
+            │    │    │  catalog reads
+            │    │    └─────────────────────────┐
+            │    │                              ▼
+            │    │                      ┌──────────────┐
+            │    │                      │   registry   │
+            │    │                      └──────────────┘
+            │    │
+            │    │  KYI resolution
+            │    └────────────────┐
+            │                     ▼
+            │              ┌──────────────┐
+            │              │ bluprynt-kyi │◄── public-api ─── partners
+            │              └──────────────┘
+            │
+            │  attestation writes (REST)
+            ▼
+     ┌───────────────────────────┐
+     │   bluprynt-attestation    │◄──────── SAS finalize webhook
+     │                           │                  │
+     │   Chain adapters →        │                  │
+     │   EAS · SAS · Stellar     │                  │
+     │   Aptos · XRPL            │──────────────────┘
+     └───────────────────────────┘
+```
+
+## Communication patterns
+
+<AccordionGroup>
+  <Accordion icon="server" title="REST between services">
+    `bluprynt-api` calls `bluprynt-attestation` and `registry` over REST with API-key auth. `bluprynt-fe` calls `bluprynt-api` with OAuth Bearer tokens. `public-api` reverse-proxies partner calls to `bluprynt-kyi` with its own API-key layer.
+  </Accordion>
+  <Accordion icon="bolt" title="WebSocket for real-time">
+    `bluprynt-fe` subscribes to the `AiResponseChannel` on `bluprynt-api`'s ActionCable endpoint for live streaming of OpenAI Assistant responses during document analysis.
+  </Accordion>
+  <Accordion icon="webhook" title="Webhooks for async finalization">
+    Chain finalizations from `bluprynt-attestation` → `bluprynt-api` via `POST /web3/sas/kyi_webhook`. Stripe billing events → `bluprynt-api` via `POST /api/stripe/webhook`.
+  </Accordion>
+  <Accordion icon="database" title="Shared Postgres schemas? No">
+    **Every service owns its own database.** Cross-service reads happen via REST, not SQL joins. Schema evolution in one service cannot break another.
+  </Accordion>
+</AccordionGroup>
+
+## Deployment fabric
+
+All services run on a single EKS Fargate cluster provisioned by `bluprynt-iac`. Each service ships its own Helm chart under `helm/<service>/`. Shared platform components — Gateway API, ALB controller, External Secrets Operator, ADOT, Temporal — are provisioned by `bluprynt-iac/k8s-platform/terraform/`.
+
+Runtime region: **AWS us-west-1**. State: **`s3://terraform-bluprynt/`** (one key per tier).
+
+## Security layers
+
+<Steps>
+  <Step title="Transport">
+    TLS via ACM-issued wildcard certs (`*.staging.bluprynt.com`, `*.test.bluprynt.com`).
+  </Step>
+  <Step title="Auth">
+    OAuth2 (Doorkeeper) between `bluprynt-fe` and `bluprynt-api`. API keys between services. JWT for the KYI widget.
+  </Step>
+  <Step title="Secrets">
+    Every runtime secret is in AWS Secrets Manager. Pods receive secrets via External Secrets Operator → native Kubernetes `Secret`. No secrets in images, values, or environment files.
+  </Step>
+  <Step title="Network">
+    EKS control plane is private. Only bastion self-hosted runners can apply k8s-tier Terraform.
+  </Step>
+  <Step title="WAF">
+    Rate-based WAF rules on the Gateway ALB in production. Configurable per-rule thresholds.
+  </Step>
+</Steps>
+
+<CardGroup cols={2}>
+  <Card title="Attestation schemas" icon="file-code" href="/architecture/attestation-schemas">
+    The on-chain shapes that travel through the attestation hub.
+  </Card>
+  <Card title="CCID deep-dive" icon="fingerprint" href="/architecture/ccid">
+    How CCIDs are derived and resolved.
+  </Card>
+</CardGroup>

@@ -1,0 +1,70 @@
+---
+title: "Authentication"
+description: "API keys, scopes, and rotation."
+---
+
+## API keys
+
+Every Bluprynt API call requires an API key in the `Authorization` header:
+
+```bash
+curl https://api.bluprynt.com/v1/kyi/{ccid} \
+  -H "Authorization: Bearer bprnt_live_..."
+```
+
+## Key format
+
+API keys are structured:
+
+- `bprnt_live_xxx` — production keys
+- `bprnt_staging_xxx` — staging keys
+- `bprnt_test_xxx` — sandbox keys (no real writes)
+
+## Requesting keys
+
+Email [partners@bluprynt.com](mailto:partners@bluprynt.com) with:
+
+- Your organization name + primary contact
+- Expected use case (KYI lookups, attestation reads, webhooks)
+- Environments needed (production, staging, sandbox)
+
+We issue keys after partner vetting. Turnaround is typically 1–3 business days.
+
+## Scopes
+
+API keys are scoped. When you request a key, specify one or more:
+
+| Scope | Permits |
+|---|---|
+| `kyi:read` | `GET /v1/kyi/*` |
+| `attestations:read` | `GET /v1/attestations/*` |
+| `attestations:write` | `POST /v1/attestations/*` (partner-issued attestations; rare) |
+| `identities:read` | `GET /v1/identities/*` |
+| `credentials:read` | `GET /v1/credentials/*` |
+| `webhooks:manage` | Register and manage webhook subscriptions |
+
+Multi-scope keys are available for integrations needing several surfaces.
+
+## Key rotation
+
+Keys do not expire by default but can be rotated anytime:
+
+1. Email [partners@bluprynt.com](mailto:partners@bluprynt.com) with your key ID and reason.
+2. We issue a replacement key.
+3. You deploy the replacement.
+4. After confirmation, we revoke the old key.
+
+<Warning>
+  If you believe a key has been compromised, email [security@bluprynt.com](mailto:security@bluprynt.com) immediately. We revoke on request without vetting.
+</Warning>
+
+## Storing keys
+
+<Check>Store keys in a secrets manager (AWS Secrets Manager, Vault, GCP Secret Manager), never in source code.</Check>
+<Check>Use environment variables at runtime.</Check>
+<Check>Rotate on staff changes.</Check>
+<Check>Use per-environment keys — never reuse production keys in staging.</Check>
+
+## Rate limits
+
+Rate limits are per-key — see [Rate limits](/api-reference/rate-limits).

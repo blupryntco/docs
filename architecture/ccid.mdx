@@ -1,0 +1,103 @@
+---
+title: "CCID — Cross-Chain Identity"
+description: "How Bluprynt derives and resolves identity identifiers across chains."
+---
+
+A **CCID** (Cross-Chain Identity) is the canonical Bluprynt identifier for any participant in the compliance system — an issuer, an asset, a regulator.
+
+## Design goals
+
+<Columns cols={2}>
+  <Card title="Single identity, many chains" icon="globe">
+    The same issuer has one CCID. It carries wallets on Ethereum, Solana, Stellar, Aptos, and XRPL simultaneously.
+  </Card>
+  <Card title="Content-addressed" icon="fingerprint">
+    Derivable from canonical identity data — recomputing from the same inputs yields the same CCID.
+  </Card>
+  <Card title="Resolvable without Bluprynt" icon="key">
+    Published to on-chain identity registries so anyone can resolve a CCID without calling our API.
+  </Card>
+  <Card title="DID-compatible" icon="link">
+    CCIDs map cleanly to W3C Decentralized Identifiers via the `registry.bluprynt.com` DID-web resolver.
+  </Card>
+</Columns>
+
+## How a CCID is derived
+
+A CCID is a hash of:
+
+- The **identity type** (`asset` / `issuer` / `regulator`)
+- The **canonical name** (legal entity name for issuers; contract address for assets)
+- The **origin chain** (the chain where the identity was first registered)
+- The **creation timestamp** (resolved to UTC seconds)
+
+The hashing function produces a stable, base58-encoded identifier — human-copyable, chain-agnostic.
+
+## CCID lifecycle
+
+<Steps>
+  <Step title="Derivation">
+    On identity creation in `bluprynt-attestation`, the `ccid.ts` helper derives the CCID from canonical data. The CCID is stored in the `identities.ccid` column.
+  </Step>
+  <Step title="Publication">
+    A `CreateIdentityCommand` fans out to every enabled identity-registry contract (one per chain). Each registry stores: `{ ccid, wallets[], accounts[] }`.
+  </Step>
+  <Step title="Updates">
+    Adding or removing a wallet / account triggers a CQRS command → on-chain update to each registry. The CCID itself is immutable.
+  </Step>
+  <Step title="Unpublication">
+    `DELETE /v1/identities/:ccid` writes an unpublish attestation on every registry. The CCID remains resolvable but returns `unpublished: true`.
+  </Step>
+</Steps>
+
+## Resolving a CCID
+
+Three ways:
+
+<Tabs>
+  <Tab title="Via Bluprynt API">
+    ```bash
+    curl https://api.bluprynt.com/v1/identities/{ccid} \
+      -H "Authorization: Bearer TOKEN"
+    ```
+    Returns the full identity object: wallets, accounts, active deployments, attestations.
+  </Tab>
+  <Tab title="Via DID resolver">
+    ```bash
+    curl https://registry.bluprynt.com/.well-known/did.json?ccid={ccid}
+    ```
+    Returns a W3C DID Document. Compatible with any DID-web resolver.
+  </Tab>
+  <Tab title="Directly on-chain">
+    Read from the identity-registry contract on the chain you care about:
+    ```solidity
+    IIdentityRegistry(REGISTRY_ADDRESS).resolve(ccid);
+    ```
+    Bypasses Bluprynt entirely. The returned struct has the same wallets / accounts the API would return.
+  </Tab>
+</Tabs>
+
+## Wallets vs accounts
+
+A CCID can carry two kinds of address:
+
+- **`wallets[]`** — EVM-style hex addresses (`0x...`). Used on Ethereum and any EVM chain.
+- **`accounts[]`** — chain-native account IDs (Solana pubkey, Aptos account, XRPL address). Used where EVM-style addresses don't apply.
+
+Both are addressed in **CAIP-10** format (`{namespace}:{reference}:{address}`) for uniform routing.
+
+## Security
+
+- **CCID derivation is deterministic** — two calls with the same inputs produce the same CCID.
+- **CCIDs cannot collide** — the derivation uses a collision-resistant hash; the origin-chain + timestamp components guarantee uniqueness for independently registered identities.
+- **Identity updates are signed** — only the CCID holder (or Bluprynt acting as authority) can add/remove wallets or accounts.
+- **Unpublish is auditable** — `DELETE` writes an on-chain unpublication, preserving the original publication record.
+
+<CardGroup cols={2}>
+  <Card title="Attestation schemas" icon="file-code" href="/architecture/attestation-schemas">
+    How attestations reference CCIDs.
+  </Card>
+  <Card title="Standards compatibility" icon="list-check" href="/overview/standards-compatibility">
+    W3C DIDs, CAIP standards, and more.
+  </Card>
+</CardGroup>

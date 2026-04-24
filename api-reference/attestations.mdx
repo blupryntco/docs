@@ -1,0 +1,120 @@
+---
+title: "Attestations endpoints"
+description: "Read and write on-chain attestations via the Bluprynt API."
+---
+
+<Note>
+  Most integrators only **read** attestations through the public API. Writing attestations is reserved for verified partners and Bluprynt itself.
+</Note>
+
+## `GET /v1/attestations/{caip2_namespace}/{caip2_reference}/{address}`
+
+List all attestations for a CAIP-10 address.
+
+```bash
+curl https://api.bluprynt.com/v1/attestations/eip155/1/0xabc... \
+  -H "Authorization: Bearer YOUR_KEY"
+```
+
+**Response:**
+```json
+{
+  "attestations": [
+    {
+      "id": "bprnt_att_...",
+      "type": "kyi",
+      "status": "published",
+      "issuer": "bprnt_issuer_...",
+      "subject": "eip155:1:0xabc...",
+      "chain": "ethereum",
+      "txHash": "0x...",
+      "ipfsCid": "Qm...",
+      "issuedAt": "2024-08-12T14:22:00Z",
+      "expiresAt": null,
+      "schemaVersion": "1.0.0"
+    }
+  ]
+}
+```
+
+Query params:
+- `type` — filter by attestation type (`kyi`, `mica`, `regd`, `proof-of-collateral`)
+- `status` — filter by status (`published`, `revoked`, `expired`)
+- `since` — ISO-8601 timestamp; returns only attestations issued after
+
+## `POST /v1/attestations/{caip2_namespace}/{caip2_reference}/{attestationType}` (restricted)
+
+Write an attestation. Requires `attestations:write` scope + partner vetting.
+
+```bash
+curl https://api.bluprynt.com/v1/attestations/eip155/1/kyi \
+  -H "Authorization: Bearer YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "issuer": "bprnt_abc123",
+    "subject": "eip155:1:0xabc...",
+    "payload": { /* per attestation type */ },
+    "expiresAt": "2025-08-12T00:00:00Z"
+  }'
+```
+
+**Response:**
+```json
+{
+  "id": "bprnt_att_...",
+  "status": "uploaded_to_ipfs",
+  "ipfsCid": "Qm...",
+  "chain": "ethereum",
+  "trackingUrl": "https://api.bluprynt.com/v1/attestations/bprnt_att_.../status"
+}
+```
+
+On-chain finalization is async. Poll the `trackingUrl` or subscribe to `attestation.published` webhooks.
+
+## `GET /v1/attestations/{id}/status`
+
+Check the status of a pending attestation.
+
+```json
+{
+  "id": "bprnt_att_...",
+  "status": "published",
+  "txHash": "0x...",
+  "blockNumber": 20123456,
+  "confirmations": 12
+}
+```
+
+## `DELETE /v1/attestations/{caip2_namespace}/{caip2_reference}/{address}` (restricted)
+
+Revoke an attestation. Writes a revocation attestation on-chain; the original attestation remains readable but marked `revoked`.
+
+```bash
+curl -X DELETE https://api.bluprynt.com/v1/attestations/eip155/1/0xabc... \
+  -H "Authorization: Bearer YOUR_KEY"
+```
+
+## Status values
+
+| Status | Meaning |
+|---|---|
+| `initialized` | Created, not yet processed |
+| `uploaded_to_ipfs` | Payload uploaded, chain write pending |
+| `pending_approval` | Chain TX submitted, awaiting confirmation |
+| `published` | Confirmed on-chain |
+| `revoked` | A revocation attestation has been written |
+| `rejected` | Failed validation or chain rejection |
+| `expired` | Past its `expiresAt` |
+
+## Reading without Bluprynt
+
+All Bluprynt attestations are readable via native chain tooling. See [Attestation schemas → Reading attestations without Bluprynt](/architecture/attestation-schemas) for SDK examples.
+
+<CardGroup cols={2}>
+  <Card title="Attestation schemas" icon="file-code" href="/architecture/attestation-schemas">
+    Per-type payload structures.
+  </Card>
+  <Card title="Webhooks" icon="webhook" href="/integration-guides/public-api#webhooks">
+    Subscribe to lifecycle events instead of polling.
+  </Card>
+</CardGroup>

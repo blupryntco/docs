@@ -1,0 +1,148 @@
+---
+title: "Public API integration"
+description: "Programmatic access to KYI, attestations, and webhook subscriptions."
+---
+
+The Bluprynt Public API is a REST interface at `https://api.bluprynt.com`. Use it for:
+
+- **KYI lookups** — `GET /v1/kyi/{ccid}` or by wallet address
+- **Attestation reads** — the full set of active / historical attestations for an identity
+- **Webhook subscriptions** — register to receive events
+- **Partner-only proxies** — Phantom, Tally, Chainlink, Solscan, Plume Nest, and other RWA data sources
+
+## Authentication
+
+Every request requires an API key in the `Authorization` header.
+
+```bash
+curl https://api.bluprynt.com/v1/kyi/{ccid} \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+Request keys via [partners@bluprynt.com](mailto:partners@bluprynt.com). Keys are environment-specific (staging vs production).
+
+## Quick examples
+
+<Tabs>
+  <Tab title="KYI lookup by wallet">
+    ```bash
+    curl https://api.bluprynt.com/v1/kyi/by-wallet/eip155:1:0xabc... \
+      -H "Authorization: Bearer YOUR_KEY"
+    ```
+
+    Response:
+    ```json
+    {
+      "issuer": {
+        "name": "Example Issuer Inc.",
+        "ccid": "bprnt_abc123...",
+        "jurisdiction": "US",
+        "kybStatus": "verified"
+      },
+      "attestations": [
+        {
+          "type": "kyi",
+          "status": "published",
+          "chain": "ethereum",
+          "txHash": "0x...",
+          "ipfsCid": "Qm..."
+        }
+      ]
+    }
+    ```
+  </Tab>
+  <Tab title="Attestation by CAIP-10">
+    ```bash
+    curl https://api.bluprynt.com/v1/attestations/eip155/1/0xabc... \
+      -H "Authorization: Bearer YOUR_KEY"
+    ```
+  </Tab>
+  <Tab title="Identity registries">
+    ```bash
+    curl https://api.bluprynt.com/v1/identity-registries \
+      -H "Authorization: Bearer YOUR_KEY"
+    ```
+    Returns the per-chain identity-registry deployment list.
+  </Tab>
+</Tabs>
+
+## Rate limits
+
+Default limits per API key:
+
+| Plan | Requests / minute | Requests / day |
+|---|---|---|
+| Starter | 60 | 10,000 |
+| Growth | 300 | 100,000 |
+| Enterprise | Custom | Custom |
+
+429 responses include `Retry-After`. Rate limits are documented in detail at [API reference → Rate limits](/api-reference/rate-limits).
+
+## Webhooks
+
+Register webhooks to receive events:
+
+```bash
+curl https://api.bluprynt.com/v1/webhooks \
+  -H "Authorization: Bearer YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://your-server.example/bluprynt-webhook",
+    "events": ["attestation.published", "attestation.revoked"],
+    "secret": "your-shared-secret"
+  }'
+```
+
+Each event is POSTed to your URL with an HMAC signature in `X-Bluprynt-Signature`. Verify:
+
+```typescript
+import crypto from 'crypto';
+
+const expected = crypto
+  .createHmac('sha256', WEBHOOK_SECRET)
+  .update(rawBody)
+  .digest('hex');
+
+if (expected !== req.headers['x-bluprynt-signature']) {
+  return res.status(401).send('Invalid signature');
+}
+```
+
+## SDKs
+
+Official SDK coverage:
+
+- **TypeScript** — `@bluprynt/api-client` (npm; auto-generated from OpenAPI)
+- **Python** — `bluprynt` (coming soon)
+
+For any language, you can generate a client from our OpenAPI spec:
+
+```bash
+curl https://api.bluprynt.com/openapi.json > bluprynt-openapi.json
+# Then feed to your favorite OpenAPI codegen
+```
+
+## Errors
+
+| Status | Meaning | Retry? |
+|---|---|---|
+| 400 | Bad request (schema violation) | No |
+| 401 | Invalid API key | No |
+| 403 | Permission denied | No |
+| 404 | Not found | No |
+| 409 | Conflict (e.g. duplicate identity) | No |
+| 422 | Unprocessable (business-rule violation) | No |
+| 429 | Rate-limited | Yes, after `Retry-After` |
+| 500 | Internal error | Yes, with exponential backoff |
+| 503 | Dependent service degraded | Yes |
+
+See [API reference → Errors](/api-reference/errors).
+
+<CardGroup cols={2}>
+  <Card title="API reference" icon="terminal" href="/api-reference/overview">
+    Full endpoint and schema reference.
+  </Card>
+  <Card title="KYI widget" icon="window" href="/integration-guides/kyi-widget">
+    Drop-in UI instead of a custom integration.
+  </Card>
+</CardGroup>

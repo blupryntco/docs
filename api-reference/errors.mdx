@@ -1,0 +1,78 @@
+---
+title: "Errors"
+description: "Status codes, error shapes, and how to handle them."
+---
+
+## Error envelope
+
+Every error response has the same shape:
+
+```json
+{
+  "error": "Human-readable message",
+  "code": "invalid_parameter",
+  "details": { "field": "ccid", "issue": "not found" }
+}
+```
+
+- **`error`** — a one-line, user-safe description.
+- **`code`** — a machine-readable error code (kebab-case).
+- **`details`** — optional structured context.
+
+## Status codes
+
+| Status | Meaning | Retry? |
+|---|---|---|
+| **400** | Malformed request (wrong JSON, missing required field) | No |
+| **401** | Invalid or missing API key | No |
+| **403** | Key is valid but doesn't have the required scope | No |
+| **404** | Resource not found (e.g. unknown CCID) | No |
+| **409** | Conflict (e.g. duplicate identity, concurrent revocation) | Maybe (after reconciliation) |
+| **422** | Business-rule violation (e.g. identity in wrong state for action) | No |
+| **429** | Rate-limited — see `Retry-After` | Yes |
+| **500** | Unexpected server error | Yes, with exponential backoff |
+| **502/503/504** | Dependent service degraded (chain RPC, IPFS, etc.) | Yes, with exponential backoff |
+
+## Common error codes
+
+<AccordionGroup>
+  <Accordion title="invalid_parameter">
+    A field in your request failed validation. `details` names the offending field and the reason.
+  </Accordion>
+  <Accordion title="unauthorized">
+    API key is missing, revoked, or invalid.
+  </Accordion>
+  <Accordion title="insufficient_scope">
+    Your key doesn't have the scope needed for this endpoint. Request an additional scope at [partners@bluprynt.com](mailto:partners@bluprynt.com).
+  </Accordion>
+  <Accordion title="resource_not_found">
+    The resource (CCID, wallet, attestation) doesn't exist or isn't visible to your key.
+  </Accordion>
+  <Accordion title="rate_limited">
+    You've exceeded your per-minute or per-day quota. Retry after `Retry-After` seconds.
+  </Accordion>
+  <Accordion title="chain_unavailable">
+    The target chain's RPC is down or degraded. Only affects `POST /v1/attestations/*` during write operations. Retry with exponential backoff.
+  </Accordion>
+  <Accordion title="ipfs_unavailable">
+    IPFS gateway unreachable. Affects attestation writes. Retry with exponential backoff.
+  </Accordion>
+  <Accordion title="concurrent_modification">
+    Two operations tried to mutate the same identity concurrently. Re-fetch the identity state and retry.
+  </Accordion>
+</AccordionGroup>
+
+## Correlation IDs
+
+Every error response includes `X-Request-Id` in the response headers. Include this in any support email to accelerate investigation:
+
+```bash
+curl -v https://api.bluprynt.com/v1/kyi/unknown-ccid \
+  -H "Authorization: Bearer YOUR_KEY"
+# ...
+# < X-Request-Id: bprnt_req_abc123...
+```
+
+<Note>
+  If you hit a persistent error that doesn't match any code here, email [support@bluprynt.com](mailto:support@bluprynt.com) with the `X-Request-Id` and the request you made.
+</Note>

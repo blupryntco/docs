@@ -1,0 +1,51 @@
+---
+title: "Standards compatibility"
+description: "Open standards Bluprynt conforms to and interoperates with."
+---
+
+Bluprynt is built on open standards so your identity and attestation data stays usable outside our stack. Here's what we conform to today.
+
+| Standard | Role | Status |
+|---|---|---|
+| **W3C DIDs** | Decentralized identifiers for CCIDs | Supported |
+| **EAS (Ethereum Attestation Service)** | On-chain attestations on EVM chains | Supported — adapter ships in `bluprynt-attestation` |
+| **SAS (Solana Attestation Service)** | On-chain attestations on Solana | Supported |
+| **Stellar Attestation Service** | Stellar-native attestations | Supported (new); legacy oracle is being phased out |
+| **CAIP-2 / CAIP-10** | Chain and account addressing | Required — every attestation route uses it |
+| **JSON Schema 2020-12** | Disclosure + credential schema validation | Required |
+| **IPFS** | Off-chain payload storage | S3-compatible gateway in production |
+| **Chainlink ACE** | Automated Compliance Engine integration | Identity-registry contracts are ACE-compatible |
+| **DID-web** | Web-resolvable DIDs | `registry.bluprynt.com` is the default DID domain |
+
+## Chain coverage
+
+<Columns cols={3}>
+  <Card title="EVM" icon="ethereum">
+    Ethereum mainnet, Sepolia, Plume, Avalanche — anywhere EAS is deployable.
+  </Card>
+  <Card title="Solana" icon="circle-nodes">
+    Mainnet-beta and devnet, via SAS.
+  </Card>
+  <Card title="Stellar" icon="star">
+    New Stellar Attestation Service (preferred); legacy oracle maintained for migration.
+  </Card>
+  <Card title="Aptos" icon="infinity">
+    Legacy oracle adapter; next-gen adapter in planning.
+  </Card>
+  <Card title="XRPL" icon="arrow-right-arrow-left">
+    On-ledger memo-based attestations.
+  </Card>
+  <Card title="More chains" icon="plus">
+    The adapter interface is stable — new chains are a matter of implementing it.
+  </Card>
+</Columns>
+
+## Interoperability commitments
+
+- **Read access.** Any attestation written by Bluprynt is readable with the native chain's standard tooling (EAS SDK, SAS programs, Stellar SDK, etc.) — you do **not** need Bluprynt to verify an attestation.
+- **Schema stability.** Attestation type schemas are versioned. Breaking schema changes introduce a new type.
+- **Open-source schemas.** The canonical schema repository is [`blupryntco/schemas`](https://github.com/blupryntco/schemas).
+
+<Note>
+  Want Bluprynt to support a standard we don't yet cover? [Open an issue](https://github.com/blupryntco/docs/issues) or email [support@bluprynt.com](mailto:support@bluprynt.com).
+</Note>

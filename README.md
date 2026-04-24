@@ -1,55 +1,73 @@
-# Mintlify Starter Kit
+# Bluprynt Docs
 
-Use the starter kit to get your docs deployed and ready to customize.
+The source for [docs.bluprynt.com](https://docs.bluprynt.com) — the public documentation site for the Bluprynt compliance platform.
 
-Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
+Built with [Mintlify](https://mintlify.com) and deployed automatically on push to `main` via the Mintlify GitHub app.
 
-- Guide pages
-- Navigation
-- Customizations
-- API reference pages
-- Use of popular components
+## What's here
 
-**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
+- **Product docs** — Overview, KYI, Smart Disclosures, Compliance Hub, MiCA Checker.
+- **Architecture** — System overview, attestation schemas, CCID, Policy Engine thesis.
+- **Integration guides** — KYI widget embedding, public API, on-chain reads.
+- **API reference** — Every endpoint, grouped by resource.
+- **Getting started** — Account creation, first attestation walkthrough.
 
-## AI-assisted writing
-
-Set up your AI coding tool to work with Mintlify:
+## Local development
 
 ```bash
-npx skills add https://mintlify.com/docs
-```
-
-This command installs Mintlify's documentation skill for your configured AI tools like Claude Code, Cursor, Windsurf, and others. The skill includes component reference, writing standards, and workflow guidance.
-
-See the [AI tools guides](/ai-tools) for tool-specific setup.
-
-## Development
-
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
-
-```
+# Install the Mintlify CLI
 npm i -g mint
-```
 
-Run the following command at the root of your documentation, where your `docs.json` is located:
-
-```
+# Preview locally
 mint dev
+# → http://localhost:3000
+
+# Check for broken links before pushing
+mint broken-links
 ```
 
-View your local preview at `http://localhost:3000`.
+## File layout
 
-## Publishing changes
+```
+docs/
+├── docs.json                     # Mintlify config — navigation, theme, colors, logo
+├── index.mdx                     # Home page
+├── quickstart.mdx                # 15-minute first-time walkthrough
+├── overview/                     # What Bluprynt is, architecture, key concepts
+├── getting-started/              # Account creation + first attestation
+├── core-products/
+│   ├── kyi/                      # Know Your Issuer
+│   ├── smart-disclosures/        # Smart Disclosures
+│   ├── compliance-hub/           # Compliance Hub
+│   └── mica-checker/             # MiCA Checker
+├── architecture/                 # System overview, schemas, CCID, Policy Engine
+├── integration-guides/           # KYI widget, public API, on-chain reads
+├── api-reference/                # REST API reference per resource
+├── logo/                         # light.svg + dark.svg
+├── images/                       # Screenshots and diagrams
+├── snippets/                     # Reusable MDX
+└── favicon.svg
+```
 
-Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.
+## Writing conventions
 
-## Need help?
+- Use **sentence case** for page titles and H2 headings.
+- Active voice + second person (`you`).
+- One idea per sentence.
+- Bold for UI elements (`Click **Submit**`).
+- Code formatting for identifiers (`bluprynt-api`), env vars (`API_KEY`), commands, and paths.
+- Every new page adds a link from its parent to avoid orphans.
 
-### Troubleshooting
+See [`AGENTS.md`](./AGENTS.md) for the full style guide (also loaded by AI writing assistants).
 
-- If your dev environment isn't running: Run `mint update` to ensure you have the most recent version of the CLI.
-- If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
+## Contributing
 
-### Resources
-- [Mintlify documentation](https://mintlify.com/docs)
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+## Links
+
+- **Live docs:** [docs.bluprynt.com](https://docs.bluprynt.com)
+- **Product:** [bluprynt.com](https://bluprynt.com)
+- **Sign in:** [app.bluprynt.com](https://app.bluprynt.com)
+- **Support:** [support@bluprynt.com](mailto:support@bluprynt.com)
+- **GitHub org:** [github.com/blupryntco](https://github.com/blupryntco)

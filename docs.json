@@ -1,48 +1,91 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Bluprynt Docs",
+  "description": "The Compliance OS for Digital Assets. Documentation for Bluprynt's identity, disclosures, supervision, and credentials platform.",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#007BFF",
+    "light": "#3B9CFF",
+    "dark": "#0056B3"
   },
   "favicon": "/favicon.svg",
+  "seo": {
+    "indexing": "all"
+  },
   "navigation": {
     "tabs": [
       {
         "tab": "Guides",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Overview",
             "pages": [
               "index",
+              "overview/what-is-bluprynt",
+              "overview/architecture",
+              "overview/key-concepts",
+              "overview/standards-compatibility"
+            ]
+          },
+          {
+            "group": "Getting started",
+            "pages": [
               "quickstart",
-              "development"
+              "getting-started/create-account",
+              "getting-started/your-first-attestation"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Core products",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              {
+                "group": "Know Your Issuer (KYI)",
+                "icon": "id-card",
+                "pages": [
+                  "core-products/kyi/introduction",
+                  "core-products/kyi/how-it-works",
+                  "core-products/kyi/widget-embed"
+                ]
+              },
+              {
+                "group": "Smart Disclosures",
+                "icon": "file-contract",
+                "pages": [
+                  "core-products/smart-disclosures/introduction",
+                  "core-products/smart-disclosures/document-lifecycle"
+                ]
+              },
+              {
+                "group": "Compliance Hub",
+                "icon": "shield-halved",
+                "pages": [
+                  "core-products/compliance-hub/introduction"
+                ]
+              },
+              {
+                "group": "MiCA Checker",
+                "icon": "circle-check",
+                "pages": [
+                  "core-products/mica-checker/introduction"
+                ]
+              }
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Architecture",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
+              "architecture/system-overview",
+              "architecture/attestation-schemas",
+              "architecture/policy-engine",
+              "architecture/ccid"
             ]
           },
           {
-            "group": "AI tools",
+            "group": "Integration guides",
             "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "integration-guides/overview",
+              "integration-guides/kyi-widget",
+              "integration-guides/public-api"
             ]
           }
         ]
@@ -53,16 +96,19 @@
           {
             "group": "API documentation",
             "pages": [
-              "api-reference/introduction"
+              "api-reference/overview",
+              "api-reference/authentication",
+              "api-reference/rate-limits",
+              "api-reference/errors"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Endpoints",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/kyi",
+              "api-reference/attestations",
+              "api-reference/identities",
+              "api-reference/credentials"
             ]
           }
         ]
@@ -71,14 +117,19 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "Changelog",
+          "href": "https://github.com/blupryntco/docs/blob/main/CHANGELOG.md",
+          "icon": "timeline"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "GitHub",
+          "href": "https://github.com/blupryntco",
+          "icon": "github"
+        },
+        {
+          "anchor": "Website",
+          "href": "https://bluprynt.com",
+          "icon": "globe"
         }
       ]
     }
@@ -91,32 +142,62 @@
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:support@bluprynt.com"
+      },
+      {
+        "label": "Book a demo",
+        "href": "https://bluprynt.com/#contact"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Sign in",
+      "href": "https://app.bluprynt.com"
     }
   },
   "contextual": {
     "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
+      "x": "https://x.com/blupryntco",
+      "github": "https://github.com/blupryntco",
+      "linkedin": "https://www.linkedin.com/company/bluprynt"
+    },
+    "links": [
+      {
+        "header": "Product",
+        "items": [
+          { "label": "KYI", "href": "https://bluprynt.com/kyi" },
+          { "label": "Smart Disclosures", "href": "https://bluprynt.com/smart-disclosures" },
+          { "label": "Compliance Hub", "href": "https://bluprynt.com/compliance-dashboard" }
+        ]
+      },
+      {
+        "header": "Company",
+        "items": [
+          { "label": "Bluprynt.com", "href": "https://bluprynt.com" },
+          { "label": "News", "href": "https://bluprynt.com/news" },
+          { "label": "Research", "href": "https://bluprynt.com/research" }
+        ]
+      },
+      {
+        "header": "Developers",
+        "items": [
+          { "label": "GitHub", "href": "https://github.com/blupryntco" },
+          { "label": "KYI Widget SDK", "href": "https://github.com/blupryntco/kyi-widget-sdk" },
+          { "label": "Schemas", "href": "https://github.com/blupryntco/schemas" }
+        ]
+      }
+    ]
   }
 }

@@ -1,0 +1,128 @@
+---
+title: "KYI Widget integration"
+description: "Drop Bluprynt's verified-issuer view into your site with the KYI Widget SDK."
+---
+
+<Note>
+  This is a hands-on integration guide. For a conceptual introduction see [What is KYI?](/core-products/kyi/introduction).
+</Note>
+
+## Full example
+
+The pattern is:
+
+1. **Server** — hold your `BLUPRYNT_SECRET_KEY` and mint short-lived JWT access tokens for your users.
+2. **Client** — fetch a token per user, mount the widget with it.
+
+### Server
+
+<Tabs>
+  <Tab title="Node.js">
+    ```typescript server.ts
+    import express from 'express';
+    import { generateToken } from '@bluprynt/kyi-widget-sdk/server';
+
+    const app = express();
+
+    app.get('/api/kyi-token', requireAuth, async (req, res) => {
+      const token = await generateToken({
+        secretKey: process.env.BLUPRYNT_SECRET_KEY!,
+        subject: req.user.id,
+        walletAddress: req.query.wallet as string,
+        expiresInSeconds: 300,
+      });
+      res.json({ token });
+    });
+
+    app.listen(3001);
+    ```
+  </Tab>
+  <Tab title="Any backend (sign JWT yourself)">
+    ```typescript
+    import jwt from 'jsonwebtoken';
+
+    const token = jwt.sign(
+      {
+        sub: userId,
+        wallet: walletAddress,
+        iat: Math.floor(Date.now() / 1000),
+        exp: Math.floor(Date.now() / 1000) + 300,
+      },
+      process.env.BLUPRYNT_SECRET_KEY!,
+      { algorithm: 'HS256' }
+    );
+    ```
+
+    The JWT must be signed with your secret key and claim `sub` (user identifier) and `exp` (expiry, ≤ 15 min from issuance).
+  </Tab>
+</Tabs>
+
+### Client
+
+```typescript IssuerPanel.tsx
+import { useEffect, useState } from 'react';
+import { BlupryntKyiWidget } from '@bluprynt/kyi-widget-sdk';
+
+export function IssuerPanel({ walletAddress }: { walletAddress: string }) {
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch(`/api/kyi-token?wallet=${walletAddress}`)
+      .then(r => r.json())
+      .then(d => setToken(d.token));
+  }, [walletAddress]);
+
+  if (!token) return <IssuerPanelSkeleton />;
+
+  return (
+    <BlupryntKyiWidget
+      accessToken={token}
+      theme="auto"
+      primaryColor="#007BFF"
+      onError={(err) => console.error('KYI widget error', err)}
+    />
+  );
+}
+```
+
+## Configuration options
+
+| Prop | Type | Default | Purpose |
+|---|---|---|---|
+| `accessToken` | `string` | — | Short-lived JWT, required |
+| `theme` | `'light' \| 'dark' \| 'auto'` | `'auto'` | Match your site's color mode |
+| `primaryColor` | `string` | `'#007BFF'` | Bluprynt brand blue by default |
+| `showLogo` | `boolean` | `true` | Hide the "Verified by Bluprynt" footer logo |
+| `onError` | `(err) => void` | — | Error callback |
+| `onVerified` | `(issuer) => void` | — | Fires when a verified issuer is rendered |
+| `onUnverified` | `(address) => void` | — | Fires when no issuer is found |
+
+## Security checklist
+
+<Check>`BLUPRYNT_SECRET_KEY` is only on your server — never in frontend code or environment variables exposed to browsers.</Check>
+<Check>Token TTLs are ≤ 15 minutes.</Check>
+<Check>Your origin is registered in Bluprynt's `ALLOWED_EMBED_ORIGINS` list.</Check>
+<Check>You handle the `onUnverified` case gracefully — not every address has a verified issuer, and that's expected behavior.</Check>
+
+## Local development
+
+The widget respects `NODE_ENV=development` — pointing at Bluprynt's staging environment automatically. To force production:
+
+```typescript
+<BlupryntKyiWidget
+  accessToken={token}
+  environment="production"  // "staging" | "production"
+/>
+```
+
+## Try the playground
+
+See the widget live without writing any code: [blupryntco.github.io/kyi-widget-sdk](https://blupryntco.github.io/kyi-widget-sdk).
+
+## Troubleshooting
+
+See [Embedding the KYI widget → Troubleshooting](/core-products/kyi/widget-embed#troubleshooting).
+
+<Note>
+  Partner-specific setup issues? Email [partners@bluprynt.com](mailto:partners@bluprynt.com) with the exact origin, token TTL, and error message.
+</Note>

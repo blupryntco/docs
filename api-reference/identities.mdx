@@ -1,0 +1,136 @@
+---
+title: "Identities endpoints"
+description: "CCID-keyed identity records with wallets and accounts."
+---
+
+<Note>
+  Identity mutation endpoints (create, update, unpublish) are restricted to verified partners. Read endpoints are available to any authenticated key with `identities:read` scope.
+</Note>
+
+## `GET /v1/identities/{ccid}`
+
+Get a full identity record by CCID.
+
+```bash
+curl https://api.bluprynt.com/v1/identities/bprnt_abc123 \
+  -H "Authorization: Bearer YOUR_KEY"
+```
+
+**Response:**
+```json
+{
+  "ccid": "bprnt_abc123",
+  "type": "issuer",
+  "name": "Example Issuer Inc.",
+  "organizationId": "org_xyz",
+  "createdAt": "2024-08-12T14:22:00Z",
+  "wallets": [
+    { "caip10": "eip155:1:0xabc...", "addedAt": "2024-08-12T14:22:00Z" }
+  ],
+  "accounts": [
+    { "caip10": "solana:5eykt4...:pubkey...", "addedAt": "2024-08-14T10:00:00Z" }
+  ],
+  "deployments": [
+    {
+      "chain": "ethereum",
+      "registryAddress": "0x...",
+      "publishedAt": "2024-08-12T14:25:00Z",
+      "status": "published"
+    }
+  ]
+}
+```
+
+## `GET /v1/identities`
+
+List identities by type. Supports pagination.
+
+```bash
+curl "https://api.bluprynt.com/v1/identities?type=issuer&limit=20" \
+  -H "Authorization: Bearer YOUR_KEY"
+```
+
+Query params:
+- `type` — `asset`, `issuer`, `regulator`, `entities` (issuers + regulators)
+- `jurisdiction` — ISO 3166 country code filter
+- `limit` — default 50, max 500
+- `cursor` — pagination cursor
+
+Specialized shortcuts:
+- `GET /v1/identities/assets`
+- `GET /v1/identities/issuers`
+- `GET /v1/identities/regulators`
+- `GET /v1/identities/entities`
+
+## `POST /v1/identities` (restricted)
+
+Create an identity. Fans out to every enabled identity-registry contract.
+
+```bash
+curl https://api.bluprynt.com/v1/identities \
+  -H "Authorization: Bearer YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "asset",
+    "canonicalName": "Example Token",
+    "contractAddress": "0xabc...",
+    "chain": "eip155:1"
+  }'
+```
+
+Returns the new CCID and tracking URL for registry publications.
+
+## `POST /v1/identities/{ccid}/wallets` (restricted)
+
+Add a wallet to an identity. Publishes to the corresponding chain's identity registry.
+
+```bash
+curl https://api.bluprynt.com/v1/identities/bprnt_abc123/wallets \
+  -H "Authorization: Bearer YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "caip10": "eip155:1:0xdef..." }'
+```
+
+## `DELETE /v1/identities/{ccid}/wallets/{caip10}` (restricted)
+
+Remove a wallet — unpublishes from the corresponding registry.
+
+## `POST /v1/identities/{ccid}/accounts` (restricted)
+
+Add a chain-native account (Solana, Aptos, XRPL).
+
+## `DELETE /v1/identities/{ccid}` (restricted)
+
+Unpublish from all registries and tombstone the identity. The on-chain publications remain, marked `unpublished`.
+
+## `GET /v1/identity-registries`
+
+List per-chain identity-registry deployments.
+
+```json
+{
+  "registries": [
+    {
+      "chain": "ethereum",
+      "caip2": "eip155:1",
+      "contractAddress": "0x...",
+      "deployedAt": "2024-05-01T00:00:00Z"
+    },
+    {
+      "chain": "solana",
+      "caip2": "solana:5eykt4...",
+      "programAddress": "...",
+      "deployedAt": "2024-05-15T00:00:00Z"
+    }
+  ]
+}
+```
+
+<CardGroup cols={2}>
+  <Card title="CCID deep-dive" icon="fingerprint" href="/architecture/ccid">
+    How CCIDs are derived and resolved.
+  </Card>
+  <Card title="Credentials" icon="award" href="/api-reference/credentials">
+    Licenses and disclosures attached to identities.
+  </Card>
+</CardGroup>

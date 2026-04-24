@@ -1,0 +1,68 @@
+---
+title: "Creating a Bluprynt account"
+description: "Sign up, verify your organization, and invite your team."
+---
+
+## Who this is for
+
+Anyone who will **author** disclosures, operate assets, or supervise issuers. Integrators who just need to embed the KYI widget don't need a full account — see [KYI Widget integration](/integration-guides/kyi-widget) instead.
+
+## Sign up
+
+<Steps>
+  <Step title="Choose your signup path">
+    - **Standard signup:** [app.bluprynt.com/signup](https://app.bluprynt.com/signup)
+    - **MiCA-regulated issuer:** [app.bluprynt.com/signup-mica](https://app.bluprynt.com/signup-mica) — a streamlined flow tailored to EU Markets in Crypto-Assets Regulation requirements.
+  </Step>
+  <Step title="Enter your corporate email">
+    Use an email associated with the organization you'll file on behalf of — consumer emails (gmail, outlook, etc.) are blocked.
+  </Step>
+  <Step title="Confirm your email">
+    Click the link Bluprynt sends you. You'll land back on the app to complete onboarding.
+  </Step>
+  <Step title="Complete your profile">
+    Provide your name, phone, address, and the company you represent.
+  </Step>
+</Steps>
+
+## Verify your organization
+
+Before you can publish disclosures, your organization must complete **KYB (Know Your Business)** via Sumsub.
+
+<Tip>
+  KYB typically takes **under 24 hours** during business hours. You can continue with non-publishing work while verification is pending.
+</Tip>
+
+The flow is embedded directly in the Admin Console — follow the prompts. We ask for:
+- Company registration documents
+- Beneficial owner identity verification
+- Proof of address / operating-jurisdiction documentation
+
+## Pick a plan
+
+Plans range from *Starter* (one asset, one active disclosure) to *Enterprise* (unlimited, plus dedicated support). Billing is handled through Stripe. See [bluprynt.com/pricing](https://bluprynt.com) for current tiers.
+
+## Invite your team
+
+<Steps>
+  <Step title="Go to Settings → Members">
+    Only organization owners and admins can invite.
+  </Step>
+  <Step title="Add emails and pick roles">
+    Roles: **Owner** (everything), **Admin** (everything except billing), **Member** (author + file), **Viewer** (read-only).
+  </Step>
+  <Step title="Send invites">
+    Invitees receive a tokenized link. Clicking the link + creating an account auto-links them to your organization.
+  </Step>
+</Steps>
+
+## Next steps
+
+<Columns cols={2}>
+  <Card title="File your first disclosure" icon="file-plus" href="/core-products/smart-disclosures/document-lifecycle">
+    Walkthrough of the disclosure authoring → submission → on-chain publishing flow.
+  </Card>
+  <Card title="Run your first KYI lookup" icon="id-card" href="/core-products/kyi/introduction">
+    Verify an issuer and browse their attestation history.
+  </Card>
+</Columns>

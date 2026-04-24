@@ -1,0 +1,103 @@
+---
+title: "Policy Engine"
+description: "Programmable compliance at the token-operation level."
+---
+
+The **Bluprynt Policy Engine (BPE)** is the research thesis underlying the platform. It turns jurisdictional regulations, issuer disclosures, and regulator licenses into on-chain enforcement logic — so compliance happens **at transaction time**, not after the fact.
+
+<Info>
+  The full technical white paper lives at [`blupryntco/policy-engine`](https://github.com/blupryntco/policy-engine). This page summarizes the key ideas.
+</Info>
+
+## The problem
+
+Traditional Web3 tokens enforce no compliance. A token contract can mint, transfer, or burn freely, with no check that:
+
+- The recipient has the required KYC / AML posture
+- The issuer still holds the license required to operate
+- The jurisdiction of the transfer permits the asset type
+
+Off-chain compliance is brittle — it can be bypassed, it races against the chain, and it relies on every counterparty implementing their own checks.
+
+## The Policy Engine thesis
+
+> Compliance should be executed **before** a token operation, as a precondition for that operation, using on-chain-readable credentials.
+
+Three primitives:
+
+<Columns cols={3}>
+  <Card title="Attestations" icon="file-shield">
+    The raw evidence — KYI, MiCA, license, disclosure, jurisdiction.
+  </Card>
+  <Card title="Credentials" icon="award">
+    Typed attestations representing a specific compliance claim (e.g., "accredited investor", "ART-authorized").
+  </Card>
+  <Card title="Policy modules" icon="microchip">
+    On-chain programs that consume credentials and decide whether a token operation is permitted.
+  </Card>
+</Columns>
+
+## Pre-execution compliance
+
+A policy module is attached to a token contract. When someone calls `transfer`, `mint`, or `burn`:
+
+```
+  call transfer(from, to, amount)
+            │
+            ▼
+  policy module reads:
+     - from.credentials (KYC, jurisdiction, accreditation)
+     - to.credentials
+     - asset.attestations (active license, disclosure status)
+            │
+            ▼
+  evaluate against:
+     - jurisdiction-specific rules
+     - asset-type rules
+     - issuer-specific rules
+            │
+            ▼
+  permit or revert
+```
+
+The transfer either executes or reverts based on the policy decision. **No compliance is post-hoc.**
+
+## Programmability
+
+Policy modules are code — they can express arbitrary logic:
+
+- **Simple allowlist/denylist** (accredited investors only)
+- **Jurisdiction gating** (no transfers to sanctioned countries)
+- **Time-based** (lock-up periods per investor class)
+- **Reserves-dependent** (ART token: no transfers if reserves below X%)
+- **Composite** (all of the above, conjunction / disjunction)
+
+Bluprynt ships a library of pre-built modules for common regulations (MiCA, Reg D, Reg S, MiFID II). Issuers can author custom modules with Bluprynt's DSL.
+
+## Chain coverage
+
+Today, policy modules deploy to:
+
+- **EVM chains** via Solidity — the primary target; works with any ERC-20, ERC-721, or ERC-1155
+- **Solana** via program-composition — a reference implementation is in development
+
+The shared principle: the policy module is addressed by the token contract, reads credentials from Bluprynt's on-chain identity registry, and returns a boolean before the operation executes.
+
+## Why this matters
+
+Traditional regulated assets require trusted intermediaries to verify compliance at each step. Programmable compliance lets issuers **embed the regulator's rules directly into the asset** — removing a class of trust assumptions and making the regulated asset equivalent to a bearer instrument *under a rules framework*, rather than under a custodian's supervision.
+
+The consequence is that institutional capital can participate in crypto markets with the same compliance posture they have in traditional markets — but with the transparency and composability of on-chain assets.
+
+<Note>
+  Read the full white paper: [`blupryntco/policy-engine`](https://github.com/blupryntco/policy-engine).
+</Note>
+
+<CardGroup cols={2}>
+  <Card title="Attestation schemas" icon="file-code" href="/architecture/attestation-schemas">
+    The on-chain data policy modules read.
+  </Card>
+  <Card title="KYI" icon="id-card" href="/core-products/kyi/introduction">
+    The identity layer that credential-holders are pinned to.
+  </Card>
+</CardGroup>

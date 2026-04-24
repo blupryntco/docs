@@ -1,34 +1,68 @@
-> **Customize this file**: Tailor this template to your project by noting specific contribution types you're looking for, adding a Code of Conduct, or adjusting the writing guidelines to match your style.
+# Contributing to Bluprynt Docs
 
-# Contribute to the documentation
+Thanks for improving the docs. This guide covers the contribution workflow and writing conventions.
 
-Thank you for your interest in contributing to our documentation! This guide will help you get started.
+## Quick contribution flow
 
-## How to contribute
+1. Fork or branch off `main`.
+2. Run `mint dev` and make your changes.
+3. Run `mint broken-links` and fix any regressions.
+4. Open a PR against `main`. The Mintlify preview builds automatically.
+5. A reviewer merges and the site auto-deploys.
 
-### Option 1: Edit directly on GitHub
+## When to open an issue vs a PR
 
-1. Navigate to the page you want to edit
-2. Click the "Edit this file" button (the pencil icon)
-3. Make your changes and submit a pull request
+- **Issue** — typo, broken link, conceptual error, missing topic, suggestion for a new page.
+- **PR** — any of the above where you have the fix ready.
 
-### Option 2: Local development
+## Kinds of contribution we welcome
 
-1. Fork and clone this repository
-2. Install the Mintlify CLI: `npm i -g mint`
-3. Create a branch for your changes
-4. Make changes
-5. Navigate to the docs directory and run `mint dev`
-6. Preview your changes at `http://localhost:3000`
-7. Commit your changes and submit a pull request
+<!-- What to optimize for -->
 
-For more details on local development, see our [development guide](development.mdx).
+- **Onboarding clarity.** Is something confusing on the first read? Fix it or tell us.
+- **Code examples.** Real, runnable snippets beat prose every time.
+- **Missing content.** Each empty stub page has a TODO — pick one.
+- **API accuracy.** If an endpoint's behavior drifted, reflect it in the reference.
+- **Diagrams.** Replace ASCII with SVG if you can improve clarity.
 
-## Writing guidelines
+## Writing conventions
 
-- **Use active voice**: "Run the command" not "The command should be run"
-- **Address the reader directly**: Use "you" instead of "the user"
-- **Keep sentences concise**: Aim for one idea per sentence
-- **Lead with the goal**: Start instructions with what the user wants to accomplish
-- **Use consistent terminology**: Don't alternate between synonyms for the same concept
-- **Include examples**: Show, don't just tell
+- **Voice.** Active, second person (`you`). Not royal plural.
+- **Tense.** Present. `"Bluprynt returns…"`, not `"Bluprynt will return…"`.
+- **Headings.** Sentence case. One H1 per page (set via frontmatter `title:`). H2 for major sections, H3 for subsections.
+- **Sentence length.** One idea per sentence. Break long clauses.
+- **Terminology.** See [`AGENTS.md`](./AGENTS.md) for product-specific terms.
+- **Callouts.** Use them sparingly:
+  - `<Note>` — neutral information.
+  - `<Tip>` — optional, helpful advice.
+  - `<Warning>` — something the user must know to avoid damage.
+  - `<Info>` — context / caveat.
+  - `<Check>` — checklist item.
+- **Code blocks.** Always annotate language. Always include filename for multi-file examples.
+- **Links.** Use relative paths for internal docs, full URLs for external.
+
+## Components cheat sheet
+
+| Component | Use |
+|---|---|
+| `<Card>` | Entry-point tile with icon + description |
+| `<Columns cols={N}>` | Grid of Cards |
+| `<CardGroup cols={N}>` | Same — legacy alias |
+| `<AccordionGroup>` / `<Accordion>` | Progressive disclosure |
+| `<Steps>` / `<Step>` | Sequential walkthrough |
+| `<Tabs>` / `<Tab>` | Language / platform variants |
+
+## Style
+
+- Formatting is Prettier-style markdown. Wrap at natural paragraph boundaries, not at column limits.
+- Use **en-dashes** (`–`) for ranges, **em-dashes** (`—`) for asides. `-` is only for hyphens and code.
+- No trailing whitespace.
+- One blank line between sections.
+
+## Review
+
+All PRs need one reviewer. For substantive content changes, cc an engineer in the product area you're documenting.
+
+## Questions
+
+[support@bluprynt.com](mailto:support@bluprynt.com) for content questions. [partners@bluprynt.com](mailto:partners@bluprynt.com) for partner-specific examples.
