@@ -38,28 +38,28 @@ Every error response has the same shape:
 <AccordionGroup>
   <Accordion title="invalid_parameter">
     A field in your request failed validation. `details` names the offending field and the reason.
-  </Accordion>
+</Accordion>
   <Accordion title="unauthorized">
     API key is missing, revoked, or invalid.
-  </Accordion>
+</Accordion>
   <Accordion title="insufficient_scope">
     Your key doesn't have the scope needed for this endpoint. Request an additional scope at [partners@bluprynt.com](mailto:partners@bluprynt.com).
-  </Accordion>
+</Accordion>
   <Accordion title="resource_not_found">
     The resource (CCID, wallet, attestation) doesn't exist or isn't visible to your key.
-  </Accordion>
+</Accordion>
   <Accordion title="rate_limited">
     You've exceeded your per-minute or per-day quota. Retry after `Retry-After` seconds.
-  </Accordion>
+</Accordion>
   <Accordion title="chain_unavailable">
     The target chain's RPC is down or degraded. Only affects `POST /v1/attestations/*` during write operations. Retry with exponential backoff.
-  </Accordion>
+</Accordion>
   <Accordion title="ipfs_unavailable">
     IPFS gateway unreachable. Affects attestation writes. Retry with exponential backoff.
-  </Accordion>
+</Accordion>
   <Accordion title="concurrent_modification">
     Two operations tried to mutate the same identity concurrently. Re-fetch the identity state and retry.
-  </Accordion>
+</Accordion>
 </AccordionGroup>
 
 ## Correlation IDs

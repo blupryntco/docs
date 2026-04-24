@@ -4,7 +4,7 @@ description: "Drop Bluprynt's verified-issuer view into your site with the KYI W
 ---
 
 <Note>
-  This is a hands-on integration guide. For a conceptual introduction see [What is KYI?](/core-products/kyi/introduction).
+  This is a hands-on integration guide. For a conceptual introduction see [What is KYI?](/kyi-know-your-issuer/what-is-kyi).
 </Note>
 
 ## Full example
@@ -36,7 +36,7 @@ The pattern is:
 
     app.listen(3001);
     ```
-  </Tab>
+</Tab>
   <Tab title="Any backend (sign JWT yourself)">
     ```typescript
     import jwt from 'jsonwebtoken';
@@ -54,7 +54,7 @@ The pattern is:
     ```
 
     The JWT must be signed with your secret key and claim `sub` (user identifier) and `exp` (expiry, ≤ 15 min from issuance).
-  </Tab>
+</Tab>
 </Tabs>
 
 ### Client
@@ -121,7 +121,7 @@ See the widget live without writing any code: [blupryntco.github.io/kyi-widget-s
 
 ## Troubleshooting
 
-See [Embedding the KYI widget → Troubleshooting](/core-products/kyi/widget-embed#troubleshooting).
+See [Embedding the KYI widget → Troubleshooting](/kyi-know-your-issuer/kyi-widget-sdk#troubleshooting).
 
 <Note>
   Partner-specific setup issues? Email [partners@bluprynt.com](mailto:partners@bluprynt.com) with the exact origin, token TTL, and error message.

@@ -10,16 +10,16 @@ A **CCID** (Cross-Chain Identity) is the canonical Bluprynt identifier for any p
 <Columns cols={2}>
   <Card title="Single identity, many chains" icon="globe">
     The same issuer has one CCID. It carries wallets on Ethereum, Solana, Stellar, Aptos, and XRPL simultaneously.
-  </Card>
+</Card>
   <Card title="Content-addressed" icon="fingerprint">
     Derivable from canonical identity data — recomputing from the same inputs yields the same CCID.
-  </Card>
+</Card>
   <Card title="Resolvable without Bluprynt" icon="key">
     Published to on-chain identity registries so anyone can resolve a CCID without calling our API.
-  </Card>
+</Card>
   <Card title="DID-compatible" icon="link">
     CCIDs map cleanly to W3C Decentralized Identifiers via the `registry.bluprynt.com` DID-web resolver.
-  </Card>
+</Card>
 </Columns>
 
 ## How a CCID is derived
@@ -38,16 +38,16 @@ The hashing function produces a stable, base58-encoded identifier — human-copy
 <Steps>
   <Step title="Derivation">
     On identity creation in `bluprynt-attestation`, the `ccid.ts` helper derives the CCID from canonical data. The CCID is stored in the `identities.ccid` column.
-  </Step>
+</Step>
   <Step title="Publication">
     A `CreateIdentityCommand` fans out to every enabled identity-registry contract (one per chain). Each registry stores: `{ ccid, wallets[], accounts[] }`.
-  </Step>
+</Step>
   <Step title="Updates">
     Adding or removing a wallet / account triggers a CQRS command → on-chain update to each registry. The CCID itself is immutable.
-  </Step>
+</Step>
   <Step title="Unpublication">
     `DELETE /v1/identities/:ccid` writes an unpublish attestation on every registry. The CCID remains resolvable but returns `unpublished: true`.
-  </Step>
+</Step>
 </Steps>
 
 ## Resolving a CCID
@@ -61,20 +61,20 @@ Three ways:
       -H "Authorization: Bearer TOKEN"
     ```
     Returns the full identity object: wallets, accounts, active deployments, attestations.
-  </Tab>
+</Tab>
   <Tab title="Via DID resolver">
     ```bash
     curl https://registry.bluprynt.com/.well-known/did.json?ccid={ccid}
     ```
     Returns a W3C DID Document. Compatible with any DID-web resolver.
-  </Tab>
+</Tab>
   <Tab title="Directly on-chain">
     Read from the identity-registry contract on the chain you care about:
     ```solidity
     IIdentityRegistry(REGISTRY_ADDRESS).resolve(ccid);
     ```
     Bypasses Bluprynt entirely. The returned struct has the same wallets / accounts the API would return.
-  </Tab>
+</Tab>
 </Tabs>
 
 ## Wallets vs accounts
@@ -94,10 +94,10 @@ Both are addressed in **CAIP-10** format (`{namespace}:{reference}:{address}`) f
 - **Unpublish is auditable** — `DELETE` writes an on-chain unpublication, preserving the original publication record.
 
 <CardGroup cols={2}>
-  <Card title="Attestation schemas" icon="file-code" href="/architecture/attestation-schemas">
+  <Card title="Attestation schemas" icon="file-code" href="/architecture-and-standards/attestation-schemas">
     How attestations reference CCIDs.
-  </Card>
+</Card>
   <Card title="Standards compatibility" icon="list-check" href="/overview/standards-compatibility">
     W3C DIDs, CAIP standards, and more.
-  </Card>
+</Card>
 </CardGroup>

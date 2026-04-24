@@ -8,13 +8,13 @@ Bluprynt is designed to integrate at any level of your stack — from a dropped-
 <Columns cols={3}>
   <Card title="Embed the widget" icon="window" href="/integration-guides/kyi-widget">
     Partner sites embedding `@bluprynt/kyi-widget-sdk`. Lowest effort, visible UX.
-  </Card>
+</Card>
   <Card title="Call the public API" icon="terminal" href="/integration-guides/public-api">
     Programmatic access via `api.bluprynt.com`. KYI lookups, attestation reads, webhook subscriptions.
-  </Card>
-  <Card title="Read on-chain directly" icon="chain" href="/architecture/attestation-schemas">
+</Card>
+  <Card title="Read on-chain directly" icon="chain" href="/architecture-and-standards/attestation-schemas">
     Zero dependency on Bluprynt — read attestations with native chain tooling. Best for verification flows.
-  </Card>
+</Card>
 </Columns>
 
 ## Which integration do I need?
@@ -22,16 +22,16 @@ Bluprynt is designed to integrate at any level of your stack — from a dropped-
 <AccordionGroup>
   <Accordion icon="window" title="You run an exchange, wallet, or analytics platform and want to display verified-issuer info next to tokens">
     → **KYI Widget**. Ten-minute drop-in. No state on your side; Bluprynt handles caching and verification.
-  </Accordion>
+</Accordion>
   <Accordion icon="terminal" title="You run a compliance tool and need programmatic KYI + attestation data">
     → **Public API**. REST endpoints, API-key auth, per-query rate limits. Good for batch processing and ETL.
-  </Accordion>
+</Accordion>
   <Accordion icon="chain" title="You're building a verification-only service and don't want Bluprynt in your trust graph">
     → **Read on-chain directly**. All attestations are native chain reads via EAS, SAS, Stellar AS, etc. Zero dependency on Bluprynt.
-  </Accordion>
+</Accordion>
   <Accordion icon="webhook" title="You need to react to attestation events in real time">
     → **Public API** + webhook subscriptions. Register a webhook URL; Bluprynt posts attestation lifecycle events (`created`, `revoked`, `amended`) as they happen.
-  </Accordion>
+</Accordion>
 </AccordionGroup>
 
 ## What you'll need
@@ -49,11 +49,11 @@ Contact [partners@bluprynt.com](mailto:partners@bluprynt.com) to request credent
 <Steps>
   <Step title="Widget integration">
     [KYI Widget integration guide →](/integration-guides/kyi-widget)
-  </Step>
+</Step>
   <Step title="API integration">
     [Public API integration guide →](/integration-guides/public-api)
-  </Step>
+</Step>
   <Step title="On-chain verification">
-    [Attestation schemas + how to read →](/architecture/attestation-schemas)
-  </Step>
+    [Attestation schemas + how to read →](/architecture-and-standards/attestation-schemas)
+</Step>
 </Steps>

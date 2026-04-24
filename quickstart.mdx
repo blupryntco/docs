@@ -16,13 +16,13 @@ This guide takes you from zero to a live Bluprynt account with an asset under su
 
     <Tip>
       Using a MiCA-regulated workflow? Use the dedicated [MiCA signup](https://app.bluprynt.com/signup-mica) flow for a streamlined experience.
-    </Tip>
-  </Accordion>
+</Tip>
+</Accordion>
   <Accordion icon="building" title="Invite your team">
     1. Go to **Settings → Members**.
     2. Click **Invite members**, enter email addresses, and pick a role.
     3. Invitees receive a token link; accepting links their user to your organization.
-  </Accordion>
+</Accordion>
 </AccordionGroup>
 
 ## Step 2 — File your first disclosure
@@ -33,13 +33,13 @@ This guide takes you from zero to a live Bluprynt account with an asset under su
     2. Pick your jurisdiction, regulation, and asset type — Bluprynt filters available forms to only those relevant.
     3. Upload any source documents; we'll extract structured data automatically with AI-assisted autofill.
     4. Review, validate, and **Submit**.
-  </Accordion>
+</Accordion>
   <Accordion icon="rocket" title="Publish on-chain">
     1. Once submitted, click **Publish**.
     2. Pick the chain(s) — Ethereum, Solana, Stellar, Aptos, or XRPL.
     3. The artifact is uploaded to IPFS, then an attestation is written on-chain.
     4. Use **View onchain data** to confirm the transaction.
-  </Accordion>
+</Accordion>
 </AccordionGroup>
 
 ## Step 3 — Run your first KYI lookup
@@ -49,14 +49,14 @@ This guide takes you from zero to a live Bluprynt account with an asset under su
     1. Go to the **KYI** section.
     2. Enter a wallet address or asset CCID.
     3. View the issuer's verified identity, outstanding attestations, and credential history.
-  </Accordion>
+</Accordion>
   <Accordion icon="code" title="Via the API">
     ```bash
     curl https://api.bluprynt.com/v1/kyi/{ccid} \
       -H "Authorization: Bearer YOUR_API_KEY"
     ```
     See the [API reference](/api-reference/kyi) for the full schema.
-  </Accordion>
+</Accordion>
   <Accordion icon="window" title="Via the widget SDK">
     ```bash
     npm install @bluprynt/kyi-widget-sdk
@@ -68,7 +68,7 @@ This guide takes you from zero to a live Bluprynt account with an asset under su
     <BlupryntKyiWidget accessToken={token} />
     ```
     Full integration guide: [KYI Widget](/integration-guides/kyi-widget).
-  </Accordion>
+</Accordion>
 </AccordionGroup>
 
 ## Next steps
@@ -76,16 +76,16 @@ This guide takes you from zero to a live Bluprynt account with an asset under su
 <Columns cols={2}>
   <Card title="Learn the architecture" icon="diagram-project" href="/architecture-and-standards/system-overview">
     Understand how identity, disclosures, supervision, and credentials compose.
-  </Card>
+</Card>
   <Card title="Browse the API" icon="terminal" href="/api-reference/overview">
     Authentication, rate limits, and every endpoint in one place.
-  </Card>
+</Card>
   <Card title="Attestation schemas" icon="file-code" href="/architecture-and-standards/attestation-schemas">
     On-chain attestation shapes and how they're versioned.
-  </Card>
+</Card>
   <Card title="Embed the KYI widget" icon="window" href="/integration-guides/kyi-widget">
     Put verified-issuer information on your own site.
-  </Card>
+</Card>
 </Columns>
 
 <Note>
