@@ -30,7 +30,7 @@ Preferred terms across Bluprynt docs:
 | **Attestation** | certificate, assertion, credential (credential is distinct — see below) |
 | **Credential** | attestation (credentials are a *kind* of attestation) |
 | **Smart Disclosure** | disclosure (when referring to Bluprynt's specific product), filing, document |
-| **Policy module** | smart contract, rule, logic |
+| **V4 Hook** | smart contract, hook, rule, logic |
 | **Compliance Hub** | dashboard, supervisor UI |
 | **KYI** (Know Your Issuer) | not to be confused with KYC |
 | **On-chain** (hyphenated) | onchain |
@@ -52,7 +52,7 @@ Preferred terms across Bluprynt docs:
 
 - Customer-visible product behavior.
 - Integrator-facing APIs, SDKs, widgets.
-- Conceptual explanations of CCIDs, attestations, policy modules.
+- Conceptual explanations of CCIDs, attestations, credentials, and V4 Hooks.
 - Regulatory frameworks Bluprynt operates under.
 
 ## What NOT to document

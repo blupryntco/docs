@@ -8,6 +8,9 @@
     "light": "#3B9CFF",
     "dark": "#0056B3"
   },
+  "appearance": {
+    "default": "light"
+  },
   "favicon": "/favicon.svg",
   "seo": {
     "indexing": "all"
@@ -23,7 +26,6 @@
               "index",
               "overview/welcome-to-bluprynt",
               "overview/what-is-bluprynt",
-              "overview/core-products",
               "overview/who-this-is-for",
               "overview/key-concepts-and-glossary",
               "overview/standards-compatibility"
@@ -39,27 +41,39 @@
             ]
           },
           {
-            "group": "Know Your Issuer (KYI)",
+            "group": "Issuer Hub",
             "pages": [
-              "kyi-know-your-issuer/what-is-kyi",
-              "kyi-know-your-issuer/how-it-works",
-              "kyi-know-your-issuer/kyi-api",
-              "kyi-know-your-issuer/kyi-widget-sdk",
-              "kyi-know-your-issuer/integration-options"
-            ]
-          },
-          {
-            "group": "Smart Disclosures",
-            "pages": [
-              "smart-disclosures/what-is-smart-disclosures",
-              "smart-disclosures/how-it-works",
-              "smart-disclosures/integration-options"
-            ]
-          },
-          {
-            "group": "MiCA Checker",
-            "pages": [
-              "mica-checker/mica-checker"
+              "issuer-hub/overview",
+              {
+                "group": "Know Your Issuer (KYI)",
+                "pages": [
+                  "kyi-know-your-issuer/what-is-kyi",
+                  "kyi-know-your-issuer/how-it-works",
+                  "kyi-know-your-issuer/kyi-api",
+                  "kyi-know-your-issuer/kyi-widget-sdk",
+                  "kyi-know-your-issuer/integration-options"
+                ]
+              },
+              {
+                "group": "Smart Disclosures",
+                "pages": [
+                  "smart-disclosures/what-is-smart-disclosures",
+                  "smart-disclosures/how-it-works",
+                  "smart-disclosures/integration-options"
+                ]
+              },
+              {
+                "group": "MiCA Checker",
+                "pages": [
+                  "mica-checker/mica-checker"
+                ]
+              },
+              {
+                "group": "Proof of Collateral",
+                "pages": [
+                  "issuer-hub/proof-of-collateral"
+                ]
+              }
             ]
           },
           {
@@ -76,13 +90,18 @@
             ]
           },
           {
+            "group": "V4 Hooks",
+            "pages": [
+              "v4-hooks/overview"
+            ]
+          },
+          {
             "group": "Architecture & Standards",
             "pages": [
               "architecture-and-standards/system-overview",
               "architecture-and-standards/attestation-schemas",
               "architecture-and-standards/chain-compatibility",
-              "architecture-and-standards/ccid",
-              "architecture-and-standards/policy-engine"
+              "architecture-and-standards/ccid"
             ]
           },
           {

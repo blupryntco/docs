@@ -143,7 +143,7 @@ This enables decentralized systems to verify disclosure compliance without manua
 Wallets holding these attestations may receive dynamic *Operational Attestations* (i.e., **Credentials**) defining allowed token actions by the asset issuer. All identities (asset issuers, assets) and attestations (disclosures, licenses, credentials) are publicly referenceable via the Bluprynt Registry, excluding sensitive issuer data.
 </Info>
 
-For chains and applications that integrate Bluprynt’s Compliance Hub, Smart Disclosures attestations enable automated onchain compliance enforcement. Token pre-hooks reference the transacting wallet’s credentials and the asset’s policy modules—based on asset type and jurisdiction—to determine whether a transaction proceeds or reverts.
+For chains and applications that integrate Bluprynt via [V4 Hooks](/v4-hooks/overview), Smart Disclosures attestations enable automated onchain compliance enforcement. Hooks read the transacting wallet's credentials and the asset's attestation state — by asset type and jurisdiction — to determine whether a transaction proceeds or reverts.
 
 In this model:
 

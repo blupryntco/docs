@@ -1,0 +1,95 @@
+---
+title: "Proof of Collateral"
+description: "A verifiable onchain credential that confirms a tokenized asset is backed by audited reserves of the disclosed type and amount."
+---
+
+**Proof of Collateral** is the Issuer Hub credential that gives exchanges, custodians, regulators, and counterparties a verifiable signal that a tokenized asset is properly backed. Unlike a static reserve report, it is an onchain credential bound to the issuer's [KYI](/kyi-know-your-issuer/what-is-kyi) identity, with a defined lifecycle and machine-readable terms.
+
+<Info>
+  Proof of Collateral is built for stablecoins, tokenized money market funds, tokenized treasuries, and any asset whose value depends on a verifiable reserve.
+</Info>
+
+## What it answers
+
+<CardGroup cols={3}>
+  <Card title="What backs this asset?" icon="vault">
+    The disclosed reserve composition — cash, treasuries, money market instruments, or a defined mix.
+  </Card>
+  <Card title="By how much?" icon="scale-balanced">
+    The collateralization ratio reported as of the latest verification, with the methodology used to compute it.
+  </Card>
+  <Card title="Verified by whom?" icon="user-shield">
+    The independent verifier — Bluprynt or an approved third-party auditor — and the date of attestation.
+  </Card>
+</CardGroup>
+
+## How issuers obtain it
+
+<Steps>
+  <Step title="Complete KYI">
+    Proof of Collateral is bound to a verified issuer identity. Finish [KYI](/kyi-know-your-issuer/what-is-kyi) before you start the collateral workflow.
+  </Step>
+  <Step title="Submit collateral disclosure via Smart Disclosures">
+    Provide reserve composition, valuation methodology, custodian information, and the verification frequency you commit to. Outputs are structured for review.
+  </Step>
+  <Step title="Independent verification">
+    Bluprynt — or an approved verifier — reviews the disclosure against the supporting evidence, including auditor reports, custody confirmations, and reserve attestations.
+  </Step>
+  <Step title="Credential issuance">
+    Once approved, a Proof of Collateral credential is published to IPFS, registered onchain via EAS or SAS, and linked to your KYI-verified identity in the Bluprynt Registry.
+  </Step>
+  <Step title="Renewal">
+    The credential carries an expiration aligned with your verification cadence. Bluprynt notifies you in advance; renewal repeats the verification step against fresh evidence.
+  </Step>
+</Steps>
+
+## What the credential contains
+
+| Field | Description |
+| --- | --- |
+| **Issuer identity** | The KYI-verified legal entity and controlling wallet. |
+| **Asset reference** | The token contract, network, and Bluprynt asset CCID. |
+| **Reserve composition** | Structured breakdown of the assets backing the token. |
+| **Collateralization ratio** | The reported ratio at the time of verification. |
+| **Verifier** | Bluprynt or the approved third-party auditor. |
+| **Verified at / Expires at** | Issuance and expiration timestamps. |
+| **Evidence references** | IPFS CIDs for the supporting disclosure documents. |
+| **Status** | `active` · `expiring` · `expired` · `revoked`. |
+
+## Lifecycle
+
+<CardGroup cols={2}>
+  <Card title="Active" icon="circle-check">
+    Within its verified period. Queryable onchain and via the API. Counterparties can rely on it.
+  </Card>
+  <Card title="Expiring" icon="bell">
+    Within the renewal window. Issuer is notified; counterparties can see the upcoming expiration.
+  </Card>
+  <Card title="Expired" icon="clock">
+    Past the verified period without renewal. Treated as not-current by integrations until renewed.
+  </Card>
+  <Card title="Revoked" icon="ban">
+    Explicitly invalidated — for example after a failed audit or material change in reserves. Revocation is immediate and onchain.
+  </Card>
+</CardGroup>
+
+## Where it shows up
+
+<CardGroup cols={2}>
+  <Card title="Bluprynt Registry" icon="database">
+    The asset's public profile shows its current Proof of Collateral status alongside KYI and any other credentials.
+  </Card>
+  <Card title="Public API" icon="terminal" href="/api-reference/credentials">
+    Query Proof of Collateral by asset CCID or issuer identity.
+  </Card>
+  <Card title="V4 Hooks" icon="plug" href="/v4-hooks/overview">
+    Onchain integrations that read Proof of Collateral state to keep tokenized markets safe and free of contagion.
+  </Card>
+  <Card title="Compliance Hub" icon="shield-halved" href="/compliance-hub/compliance-hub-coming-soon">
+    Regulators and third-party compliance teams monitor Proof of Collateral state across supervised assets.
+  </Card>
+</CardGroup>
+
+<Note>
+  Want to walk through whether your asset qualifies, or which verifier fits your reserve structure? Reach out at [team@bluprynt.com](mailto:team@bluprynt.com).
+</Note>

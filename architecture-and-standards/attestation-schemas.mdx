@@ -22,7 +22,7 @@ All Bluprynt compliance data structures are compatible with existing market stan
 | **Attestations**   | Informational Attestations - Disclosures voluntarily submitted by issuers to inform users (e.g., white papers, audits).               |
 |                    | Regulatory Attestations - Verified proofs of compliance with specific legal or jurisdictional requirements.                           |
 |                    | Operational Attestations - Assertions about technical or business activity (e.g., reserve audits, oracle usage).                      |
-| **Policy Modules** | Configurable rule sets that automate validation, review, and enforcement of compliance based on asset type, jurisdiction, and action. |
+| **V4 Hooks** | Onchain integrations between Bluprynt credentials and DeFi protocols that read credential state at operation time and enforce a protocol's compliance ruleset. |
 
 <Info>
   Bluprynt uses an issuer-centric architecture to align off- and onchain compliance.
@@ -31,7 +31,7 @@ All Bluprynt compliance data structures are compatible with existing market stan
 * **Informational** and **Regulatory Attestations** link to both Issuers and Assets
 * Only **Asset Issuers** receive **Credentials** (Claims) for executing token actions
 
-**Policy Modules** are separate from the issuer-centric architecture. The Compliance Hub uses them to check issuers, assets, and their associated attestations before allowing onchain actions.
+**V4 Hooks** sit alongside the issuer-centric architecture. They read credentials and attestations at operation time so DeFi protocols can keep tokenized markets safe and free of contagion. See the [V4 Hooks overview](/v4-hooks/overview).
 </Info>
 
 ***
@@ -274,91 +274,16 @@ The Attestations schema must support:
 
 ***
 
-## Policy Modules
+## V4 Hooks
 
-Policy Modules are the core enforcement units used by the Compliance Hub. Each module represents a specific compliance rule tied to a jurisdiction, asset type, and token action (e.g., transfer, mint). These modules evaluate whether a given credential, issued by Bluprynt and held by the transacting agent, satisfies the regulatory conditions required for the transaction to proceed.
+[V4 Hooks](/v4-hooks/overview) are Bluprynt's onchain enforcement surface for DeFi. A hook reads the credential state of the assets and parties involved in a token operation — KYI, Proof of Collateral, and any future credentials — and the protocol allows or rejects the operation based on the ruleset it has published.
 
-**Responsibilities:**
+What a hook reads:
 
-* Validate that the transacting wallet holds a valid, unexpired credential.
-* Check jurisdictional scope, asset type, and allowed actions.
-* Support multi-role logic (e.g., issuer, operator, beneficiary).
-* Optionally validate external data inputs (e.g., ZK residency proofs, sanctions lists).
+* The transacting wallet's credentials (presence, validity, expiration).
+* The asset's KYI and Proof of Collateral state.
+* Any required jurisdictional or asset-type signals derived from the underlying attestations.
 
-```json
-{
-  "id": "did:bluprynt:policy:eu-mica-kyi-001",
-  "name": "MiCA + KYI Compliance (EU)",
-  "description": "Verifies that an asset has a MiCA-compliant whitepaper and linked issuer identity with wallet verification.",
-  
-  "version": "1.0",
-  "author": "Bluprynt Compliance Team",
-  "createdAt": "2025-07-01T00:00:00Z",
-  "lastUpdated": "2025-07-01T00:00:00Z",
+The hook returns a permit-or-revert decision. The protocol — not Bluprynt — defines the policy that decides which credentials are required for which actions, and the hook simply exposes the credential reads they need to make that call deterministically.
 
-  "jurisdiction": "EU",
-  "appliesTo": {
-    "assetTypes": ["Stablecoin", "SecurityToken"],
-    "networks": ["Solana", "Ethereum"]
-  },
-
-  "policyLogic": {
-    "requiredAttestations": [
-      {
-        "type": "Regulatory",
-        "complianceType": "MiCAWhitepaper"
-      },
-      {
-        "type": "Operational",
-        "permission": "mint"
-      },
-      {
-        "type": "Informational",
-        "field": "jurisdiction",
-        "expectedValue": "EU"
-      }
-    ],
-    "requiredClaims": [
-      {
-        "topic": "MiCA_WHITEPAPER_APPROVED"
-      }
-    ]
-  },
-
-  "outputs": {
-    "result": ["PASS", "FAIL"],
-    "reasonCodes": [
-      { "code": "MISSING_WHITEPAPER", "description": "No valid MiCA whitepaper attestation found." },
-      { "code": "MISSING_KYI", "description": "Issuer wallet is not verified." },
-      { "code": "CLAIM_INVALID", "description": "Onchain MiCA claim missing or malformed." }
-    ]
-  },
-
-  "runtime": {
-    "format": "BlupryntPolicy",
-    "compatibleEngines": ["ChainlinkACE", "BlupryntValidator"],
-    "onChainExecution": false
-  }
-}
-```
-
-### Attribute Definitions <a href="#id-33f30d19-94ae-4513-96eb-091d16e2d061" id="id-33f30d19-94ae-4513-96eb-091d16e2d061"></a>
-
-| Field                                | Type     | Description                                                                         |
-| ------------------------------------ | -------- | ----------------------------------------------------------------------------------- |
-| `id`                                 | string   | Unique DID or registry ID of the policy                                             |
-| `name`                               | string   | Human-readable policy name                                                          |
-| `description`                        | string   | Purpose and coverage of this module                                                 |
-| `version`                            | string   | Version control for governance and upgrades                                         |
-| `author`                             | string   | Maintainer or publisher of the policy                                               |
-| `createdAt` / `lastUpdated`          | datetime | Timestamps for lifecycle tracking                                                   |
-| `jurisdiction`                       | string   | Jurisdictional applicability (e.g., EU, US)                                         |
-| `appliesTo.assetTypes`               | array    | List of asset classes this policy covers                                            |
-| `appliesTo.networks`                 | array    | Compatible blockchain networks                                                      |
-| `policyLogic.requiredAttestations[]` | array    | Expected Bluprynt attestations (with filters like type, field, value)               |
-| `policyLogic.requiredClaims[]`       | array    | Onchain claim topics expected for compliance                                        |
-| `outputs.result`                     | enum     | `PASS`, `FAIL`, `WARN`, etc.                                                        |
-| `outputs.reasonCodes[]`              | array    | Machine-readable error codes and human explanations                                 |
-| `runtime.format`                     | string   | Interpreter format (e.g., BlupryntPolicy)                                           |
-| `runtime.compatibleEngines`          | array    | Infrastructure this policy can run on (e.g., Chainlink ACE, Bluprynt custom engine) |
-| `runtime.onChainExecution`           | boolean  | Whether the policy is executable fully on-chain                                     |
+See the [V4 Hooks overview](/v4-hooks/overview) for the integration surface, supported chains, and reference implementations.
