@@ -11,17 +11,11 @@ description: "A verifiable onchain credential that confirms a tokenized asset is
 
 ## What it answers
 
-<CardGroup cols={3}>
-  <Card title="What backs this asset?" icon="vault">
-    The disclosed reserve composition — cash, treasuries, money market instruments, or a defined mix.
-  </Card>
-  <Card title="By how much?" icon="scale-balanced">
-    The collateralization ratio reported as of the latest verification, with the methodology used to compute it.
-  </Card>
-  <Card title="Verified by whom?" icon="user-shield">
-    The independent verifier — Bluprynt or an approved third-party auditor — and the date of attestation.
-  </Card>
-</CardGroup>
+A Proof of Collateral credential answers three questions about an asset:
+
+- **What backs it?** The disclosed reserve composition — cash, treasuries, money market instruments, or a defined mix.
+- **By how much?** The collateralization ratio at the latest verification, with the methodology used to compute it.
+- **Verified by whom?** The independent verifier — Bluprynt or an approved third-party auditor — and the date of attestation.
 
 ## How issuers obtain it
 
@@ -58,20 +52,12 @@ description: "A verifiable onchain credential that confirms a tokenized asset is
 
 ## Lifecycle
 
-<CardGroup cols={2}>
-  <Card title="Active" icon="circle-check">
-    Within its verified period. Queryable onchain and via the API. Counterparties can rely on it.
-  </Card>
-  <Card title="Expiring" icon="bell">
-    Within the renewal window. Issuer is notified; counterparties can see the upcoming expiration.
-  </Card>
-  <Card title="Expired" icon="clock">
-    Past the verified period without renewal. Treated as not-current by integrations until renewed.
-  </Card>
-  <Card title="Revoked" icon="ban">
-    Explicitly invalidated — for example after a failed audit or material change in reserves. Revocation is immediate and onchain.
-  </Card>
-</CardGroup>
+| Status | Meaning |
+| --- | --- |
+| `active` | Within its verified period. Queryable onchain and via the API. Counterparties can rely on it. |
+| `expiring` | Within the renewal window. Issuer is notified; counterparties can see the upcoming expiration. |
+| `expired` | Past the verified period without renewal. Treated as not-current by integrations until renewed. |
+| `revoked` | Explicitly invalidated — for example after a failed audit or material change in reserves. Immediate and onchain. |
 
 ## Where it shows up
 
