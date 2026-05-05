@@ -11,17 +11,9 @@ description: "Onchain integrations between Bluprynt credentials and DeFi protoco
 
 ## Why V4 Hooks exist
 
-<CardGroup cols={3}>
-  <Card title="Stop contagion" icon="shield-virus">
-    Block exposure to assets whose Proof of Collateral has expired or been revoked before contagion spreads through a lending market.
-  </Card>
-  <Card title="Gate liquidity" icon="filter">
-    Restrict pool participation to KYI-verified assets, or to assets that satisfy a jurisdictional credential set.
-  </Card>
-  <Card title="Keep DeFi composable" icon="puzzle-piece">
-    Compliance becomes a credential read, not a re-deployment. The same hook works across pools and protocols.
-  </Card>
-</CardGroup>
+- **Stop contagion.** Block exposure to assets whose Proof of Collateral has expired or been revoked before it spreads through a lending market.
+- **Gate liquidity.** Restrict pool participation to KYI-verified assets, or to assets that satisfy a specific jurisdictional credential set.
+- **Keep DeFi composable.** Compliance becomes a credential read, not a re-deployment — the same hook works across pools and protocols.
 
 ## How it works
 
@@ -50,17 +42,9 @@ description: "Onchain integrations between Bluprynt credentials and DeFi protoco
 
 ## Who uses V4 Hooks
 
-<CardGroup cols={3}>
-  <Card title="DEXs and AMMs" icon="arrow-right-arrow-left">
-    Restrict pool creation to KYI-verified assets, or surface compliance state in the trading UI.
-  </Card>
-  <Card title="Lending and prime brokerage" icon="hand-holding-dollar">
-    Refuse collateral whose Proof of Collateral has lapsed; reduce LTV when a credential is expiring.
-  </Card>
-  <Card title="Tokenization platforms" icon="layer-group">
-    Compose hooks into custom token standards so credentials gate every transfer, mint, or burn.
-  </Card>
-</CardGroup>
+- **DEXs and AMMs** — restrict pool creation to KYI-verified assets, or surface compliance state in the trading UI.
+- **Lending and prime brokerage** — refuse collateral whose Proof of Collateral has lapsed; reduce LTV when a credential is expiring.
+- **Tokenization platforms** — compose hooks into custom token standards so credentials gate every transfer, mint, or burn.
 
 ## Status and roadmap
 

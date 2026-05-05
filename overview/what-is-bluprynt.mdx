@@ -1,133 +1,49 @@
 ---
 title: "What is Bluprynt?"
-description: "Bluprynt is the Compliance OS for digital assets — a machine-readable control layer for identity, disclosures, supervision, and credentials."
+description: "The Compliance OS for digital assets — a machine-readable control layer for identity, disclosures, supervision, and credentials."
 ---
 
-Bluprynt is the **Compliance OS for digital assets**. It gives issuers, regulators, and platforms a machine-readable control layer for identity, disclosures, credentials, and supervision — bound to verifiable onchain state.
+Bluprynt is the **Compliance OS for digital assets**: a machine-readable control layer that links off-chain compliance with on-chain identity, policy, and supervisory visibility.
 
 ## Why it exists
 
-Tokenized assets now move faster than document-based compliance can handle. Three gaps define the market.
+Tokenized assets move faster than document-based compliance can handle. Three concrete gaps shape the product:
 
-<CardGroup cols={3}>
-  <Card title="No issuer legibility" icon="circle-question">
-    Market participants often cannot verify who issued an asset, which entity controls it, or which wallet is authorized to act.
-  </Card>
-  <Card title="No machine-readable layer" icon="file-lines">
-    Disclosures, approvals, and supervisory actions still live across PDFs, spreadsheets, inboxes, and siloed systems.
-  </Card>
-  <Card title="No machine-speed supervision" icon="gauge-high">
-    Regulators and institutions need real-time visibility into issuer state — not post-facto reconciliation.
-  </Card>
-</CardGroup>
+- **No issuer legibility** — market participants often cannot verify who issued an asset, which entity controls it, or which wallet is authorized to act.
+- **No machine-readable layer** — disclosures, approvals, and supervisory actions still live across PDFs, spreadsheets, inboxes, and siloed systems.
+- **No machine-speed supervision** — regulators and institutions need real-time visibility into issuer state, not post-facto reconciliation.
 
 ## What Bluprynt does
 
-Bluprynt turns digital assets into machine-legible, governable market objects. The platform composes four pillars.
+The platform composes four pillars. The home page has the [side-by-side summary](/); the deeper view of each lives on its own page.
 
-### Identity — Know Your Issuer (KYI)
+### Identity — Know Your Issuer
 
-Every asset issuer on Bluprynt receives a verifiable onchain identity that is compatible with **W3C DID**, **ONCHAINID (ERC-734/735)**, and **vLEI/LEI** standards. The identity is cryptographically linked to:
-
-- The legal entity, via KYB verification.
-- The issuing wallet, via cryptographic challenge.
-- The token contract, via onchain attestation.
-
-This is what [KYI](/kyi-know-your-issuer/what-is-kyi) produces — the foundational identity attestation that everything else builds on.
+Every asset issuer on Bluprynt receives a verifiable onchain identity compatible with **W3C DID**, **ONCHAINID (ERC-734/735)**, and **vLEI/LEI**. The identity is cryptographically linked to the legal entity (via KYB), the issuing wallet (via cryptographic challenge), and the token contract (via onchain attestation). This is what [KYI](/kyi-know-your-issuer/what-is-kyi) produces, and it is the foundation every other product builds on.
 
 ### Disclosures — Smart Disclosures
 
-[Smart Disclosures](/smart-disclosures/what-is-smart-disclosures) turns regulatory requirements into structured digital workflows instead of static documents.
-
-- Pre-fill jurisdiction-specific disclosure forms using AI extraction.
-- Complete filings with AI-assisted guidance and live compliance checks.
-- Produce structured outputs in XBRL, PDF, and DOCX.
-- Publish disclosures as verifiable onchain attestations linked to the issuer's identity.
-
-The system is built on a taxonomy of standardized concepts, so the same issuer data can be reused across forms, jurisdictions, and workflows.
+[Smart Disclosures](/smart-disclosures/what-is-smart-disclosures) turns regulatory requirements into structured digital workflows: pre-fill jurisdiction-specific forms with AI extraction, complete filings with guided composition, produce structured outputs in XBRL, PDF, and DOCX, and publish each disclosure as an onchain attestation linked to the issuer's identity. The same issuer data is reused across forms and jurisdictions through a shared taxonomy.
 
 ### Supervision — Compliance Hub
 
-The [Compliance Hub](/compliance-hub/compliance-hub-coming-soon) gives regulators and supervisory teams an auditable operating environment to:
-
-- Create forms and publish them to issuers.
-- Review applications and filings.
-- Issue or revoke credentials.
-- Issue credentials directly when no form is needed.
-- Monitor regulated assets and supervisory activity.
-
-This replaces fragmented review across email, spreadsheets, and static documents with one auditable workspace.
+The [Compliance Hub](/compliance-hub/compliance-hub-coming-soon) gives regulators and supervisory teams an auditable workspace: create and publish forms to issuers, review submissions, issue or revoke credentials, issue credentials directly when no form is needed, and monitor regulated activity. It replaces fragmented review across email and spreadsheets with one operating environment.
 
 ### Credentials and onchain enforcement
 
-Attestations record facts. **Credentials** authorize actions. Bluprynt currently issues two verification credentials.
+Attestations record facts. **Credentials** authorize actions. Bluprynt currently issues two:
 
-| Credential | Purpose | Key question it answers |
-| --- | --- | --- |
-| **Know Your Issuer (KYI)** | Entity authentication | "Is this token issued by a verified legal entity?" |
-| **Proof of Collateral** | Backing verification | "Is this asset properly collateralized?" |
+- **Know Your Issuer (KYI)** — entity authentication.
+- **Proof of Collateral** — backing verification.
 
 Credentials become enforceable onchain through [V4 Hooks](/v4-hooks/overview): DeFi protocols read credential state at operation time so tokenized assets only move through venues that match their compliance posture.
 
-## Bluprynt as an operating system
+## What this is not
 
-Bluprynt is a digital asset operating system. It does not replace blockchains or legal systems — it makes them operable together at scale.
-
-In practice, that means Bluprynt helps market participants:
-
-- Standardize issuer identity and disclosure data.
-- Connect issuer workflows and regulator workflows.
-- Turn approvals into verifiable digital credentials.
-- Make asset status easier to observe across time and jurisdictions.
-
-## Architecture at a glance
-
-<CardGroup cols={2}>
-  <Card title="Issuer Hub" icon="building-columns" href="/issuer-hub/overview">
-    Where the issuer works: KYI → Smart Disclosures → MiCA Checker → Proof of Collateral, all bound to one verified identity.
-  </Card>
-  <Card title="Compliance Hub" icon="shield-halved" href="/compliance-hub/compliance-hub-coming-soon">
-    Where supervisors work: review filings, issue credentials, monitor regulated activity.
-  </Card>
-  <Card title="Credentials" icon="award" href="/credentials/credentials-overview">
-    The verifiable onchain artifacts: KYI and Proof of Collateral, with a defined lifecycle.
-  </Card>
-  <Card title="V4 Hooks" icon="plug" href="/v4-hooks/overview">
-    The onchain integration surface: DeFi protocols read credentials at operation time.
-  </Card>
-</CardGroup>
-
-All identities, attestations, and credentials are registered on the **Bluprynt Registry** and are publicly queryable, excluding sensitive issuer data.
-
-## Standards compatibility
-
-Bluprynt's data structures are designed for interoperability with existing identity and attestation standards.
-
-| Standard | How Bluprynt uses it |
-| --- | --- |
-| **W3C DID** | Decentralized identifiers for asset issuers and assets |
-| **W3C Verifiable Credentials** | Schema for attestations and credentials |
-| **ONCHAINID (ERC-734/735)** | Onchain identity and claim management |
-| **vLEI / LEI (GLEIF)** | Legal entity identification for institutional issuers |
-| **EAS (Ethereum Attestation Service)** | Attestation publishing on EVM chains |
-| **SAS (Solana Attestation Service)** | Attestation publishing on Solana |
-| **IPFS** | Content-addressed storage for disclosure documents |
-
-See [Standards compatibility](/overview/standards-compatibility) for the full matrix.
+Bluprynt is not a blockchain, a custody platform, or a legal-services provider. It does not replace legal systems — it makes them **operable** with on-chain markets at scale.
 
 ## What's next
 
-<CardGroup cols={2}>
-  <Card title="Create an account" icon="user-plus" href="/getting-started/creating-a-bluprynt-account">
-    Set up your organization and access the Issuer Hub.
-  </Card>
-  <Card title="Browse the Issuer Hub" icon="grid-2" href="/issuer-hub/overview">
-    KYI, Smart Disclosures, MiCA Checker, and Proof of Collateral side-by-side.
-  </Card>
-  <Card title="Read the API reference" icon="terminal" href="/api-reference/overview">
-    Endpoints for KYI lookups, attestation reads, and credential queries.
-  </Card>
-  <Card title="Explore credentials" icon="award" href="/credentials/credentials-overview">
-    The verifiable onchain artifacts and their lifecycle.
-  </Card>
-</CardGroup>
+- New to the platform? Read [Who this is for](/overview/who-this-is-for) to find your starting point.
+- Building an integration? Start at the [API overview](/api-reference/overview).
+- Need terminology? See [Key concepts & glossary](/overview/key-concepts-and-glossary). For interop with EAS, SAS, DIDs, and CAIP, see [Standards compatibility](/overview/standards-compatibility).
