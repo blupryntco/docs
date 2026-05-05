@@ -1,0 +1,78 @@
+---
+title: "V4 Hooks"
+description: "Onchain integrations between Bluprynt credentials and DeFi protocols — keeping tokenized markets safe and free of contagion."
+---
+
+**V4 Hooks** are Bluprynt's onchain integration layer for DeFi. They let any protocol read Bluprynt credentials — KYI, Proof of Collateral, and more — directly during a pool, swap, or lending operation, so tokenized assets only move through venues that match their compliance posture.
+
+<Tip>
+  V4 Hooks are how the Issuer Hub and Credentials pillars become enforceable on-chain. Without them, credentials are queryable; with them, credentials are *active*.
+</Tip>
+
+## Why V4 Hooks exist
+
+<CardGroup cols={3}>
+  <Card title="Stop contagion" icon="shield-virus">
+    Block exposure to assets whose Proof of Collateral has expired or been revoked before contagion spreads through a lending market.
+  </Card>
+  <Card title="Gate liquidity" icon="filter">
+    Restrict pool participation to KYI-verified assets, or to assets that satisfy a jurisdictional credential set.
+  </Card>
+  <Card title="Keep DeFi composable" icon="puzzle-piece">
+    Compliance becomes a credential read, not a re-deployment. The same hook works across pools and protocols.
+  </Card>
+</CardGroup>
+
+## How it works
+
+<Steps>
+  <Step title="A protocol attaches a Bluprynt hook">
+    The pool or vault references a Bluprynt hook contract that knows how to query the Bluprynt Registry on its chain.
+  </Step>
+  <Step title="The hook reads credentials at operation time">
+    On swap, deposit, borrow, or any other gated action, the hook fetches the credentials of the assets and parties involved.
+  </Step>
+  <Step title="The protocol enforces its rules">
+    The hook returns the credential state. The protocol allows or rejects the operation based on the rules it published — for example, "only KYI-verified assets" or "Proof of Collateral active and not expiring within 7 days".
+  </Step>
+</Steps>
+
+## What can be read
+
+<CardGroup cols={2}>
+  <Card title="KYI" icon="id-card" href="/kyi-know-your-issuer/what-is-kyi">
+    Whether the asset is bound to a verified legal entity, controlling wallet, and token contract.
+  </Card>
+  <Card title="Proof of Collateral" icon="vault" href="/issuer-hub/proof-of-collateral">
+    Whether the asset is currently backed by the audited reserves it claims.
+  </Card>
+</CardGroup>
+
+## Who uses V4 Hooks
+
+<CardGroup cols={3}>
+  <Card title="DEXs and AMMs" icon="arrow-right-arrow-left">
+    Restrict pool creation to KYI-verified assets, or surface compliance state in the trading UI.
+  </Card>
+  <Card title="Lending and prime brokerage" icon="hand-holding-dollar">
+    Refuse collateral whose Proof of Collateral has lapsed; reduce LTV when a credential is expiring.
+  </Card>
+  <Card title="Tokenization platforms" icon="layer-group">
+    Compose hooks into custom token standards so credentials gate every transfer, mint, or burn.
+  </Card>
+</CardGroup>
+
+## Status and roadmap
+
+<Info>
+  V4 Hooks are rolling out in stages. Reference implementations target Uniswap v4-style hooks on EVM and equivalent program-composition patterns on Solana. Reach out at [team@bluprynt.com](mailto:team@bluprynt.com) for early-access integrations and design partnerships.
+</Info>
+
+<CardGroup cols={2}>
+  <Card title="Credentials reference" icon="file-shield" href="/credentials/credentials-overview">
+    The credential framework hooks read from.
+  </Card>
+  <Card title="Public API" icon="terminal" href="/api-reference/credentials">
+    Off-chain credential queries — useful for building UIs that mirror what a hook will see on-chain.
+  </Card>
+</CardGroup>

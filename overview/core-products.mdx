@@ -1,30 +1,38 @@
 ---
 title: "Core Products"
-description: "Bluprynt is the Compliance OS of digital assets."
+description: "The four pillars of the Bluprynt Compliance OS — Issuer Hub, Compliance Hub, Credentials, and V4 Hooks."
 ---
 
-Bluprynt is the Compliance OS of digital assets.
+Bluprynt is the **Compliance OS for digital assets**. It combines issuer-facing tooling, supervisory workflows, verifiable credentials, and onchain integrations into one operating environment.
 
-It combines issuer identity, disclosure infrastructure, supervisory workflows, and verifiable credentials in one operating environment.
+The platform is composed of four pillars.
+
+<CardGroup cols={2}>
+  <Card title="Issuer Hub" icon="building-columns" href="/issuer-hub/overview">
+    The issuer dashboard — Smart Disclosures, KYI, MiCA Checker, and Proof of Collateral.
+  </Card>
+  <Card title="Compliance Hub" icon="shield-halved" href="/compliance-hub/compliance-hub-coming-soon">
+    The compliance dashboard for regulators and third-party compliance teams.
+  </Card>
+  <Card title="Credentials" icon="award" href="/credentials/credentials-overview">
+    Verifiable onchain attestations of KYI and Proof of Collateral.
+  </Card>
+  <Card title="V4 Hooks" icon="plug" href="/v4-hooks/overview">
+    Onchain integrations between Bluprynt credentials and DeFi protocols.
+  </Card>
+</CardGroup>
 
 ***
 
-## KYI (Know Your Issuer)
+## Issuer Hub
 
-[KYI](/kyi-know-your-issuer/what-is-kyi) verifies that a token is tied to a real legal entity and a verified controlling wallet.
+[Issuer Hub](/issuer-hub/overview) is the workspace where token issuers run their compliance program end-to-end. It houses every product an issuer needs to verify their identity, file regulator-ready disclosures, demonstrate collateralization, and check their assets against jurisdictional requirements — all linked to a single verified onchain identity.
 
-It helps platforms answer two critical questions:
+### KYI (Know Your Issuer)
 
-* Who stands behind this asset?
-* Does that entity control the wallet with mint or admin authority?
+[KYI](/kyi-know-your-issuer/what-is-kyi) verifies that a token is tied to a real legal entity and a verified controlling wallet. It helps platforms answer two critical questions: who stands behind this asset, and does that entity control the wallet with mint or admin authority?
 
-The KYI workflow includes:
-
-* Business verification and KYB review
-* Wallet signature verification
-* Onchain attestation linking entity, wallet, and token
-
-Partners can integrate KYI through the [KYI API](/kyi-know-your-issuer/kyi-api) or embed the flow directly with the [KYI Widget SDK](/kyi-know-your-issuer/kyi-widget-sdk).
+The KYI workflow includes business verification (KYB), wallet signature verification, and an onchain attestation linking entity, wallet, and token. Partners can integrate KYI through the [KYI API](/kyi-know-your-issuer/kyi-api) or embed the flow with the [KYI Widget SDK](/kyi-know-your-issuer/kyi-widget-sdk).
 
 KYI reduces impersonation risk, supports exchange due diligence, and gives wallets, explorers, and compliance teams a reliable token provenance signal.
 
@@ -32,76 +40,75 @@ KYI reduces impersonation risk, supports exchange due diligence, and gives walle
   <img src="/images/gitbook/c7f4ee9db13b.png" alt="" />
 </Frame>
 
-***
+### Smart Disclosures
 
-## Smart Disclosures
+[Smart Disclosures](/smart-disclosures/what-is-smart-disclosures) is Bluprynt's AI-assisted disclosure engine for tokenized assets. Teams can upload existing documents, auto-fill structured disclosure forms, and generate regulator-ready outputs in multiple formats.
 
-[Smart Disclosures](/smart-disclosures/what-is-smart-disclosures) is Bluprynt's AI-assisted disclosure engine for tokenized assets.
+Key capabilities:
 
-Teams can upload existing documents, auto-fill structured disclosure forms, and generate regulator-ready outputs in multiple formats.
-
-Key capabilities include:
-
-* AI extraction from white papers, terms, and supporting files
-* Guided composition with jurisdiction-specific requirements
-* Real-time feedback on missing or weak disclosure content
-* Final outputs in XBRL, PDF, and DOCX
-* Onchain publication of disclosure attestations
-
-Smart Disclosures is built for token issuers that need to prepare filings faster without sacrificing structure, traceability, or review quality.
+- AI extraction from white papers, terms, and supporting files.
+- Guided composition with jurisdiction-specific requirements.
+- Real-time feedback on missing or weak disclosure content.
+- Final outputs in XBRL, PDF, and DOCX.
+- Onchain publication of disclosure attestations.
 
 <Frame>
   <img src="/images/gitbook/bac90744432b.png" alt="" />
 </Frame>
 
-***
+### MiCA Checker
 
-## MiCA Checker
-
-[MiCA Checker](/mica-checker/mica-checker) is Bluprynt's free diagnostic tool for EU crypto-asset white paper compliance.
-
-It lets teams upload a draft white paper and quickly assess alignment with MiCA Articles 4 and 5.
+[MiCA Checker](/mica-checker/mica-checker) is Bluprynt's free diagnostic tool for EU crypto-asset white paper compliance. It lets teams upload a draft white paper and quickly assess alignment with MiCA Articles 4 and 5.
 
 It is designed for:
 
-* Founders preparing a launch
-* Legal teams reviewing disclosure completeness
-* Exchanges pre-screening listing candidates
-* Regulators and analysts running quick document checks
+- Founders preparing a launch.
+- Legal teams reviewing disclosure completeness.
+- Exchanges pre-screening listing candidates.
+- Regulators and analysts running quick document checks.
 
-MiCA Checker is the fastest way to identify disclosure gaps before moving into full drafting or submission workflows. Teams that need remediation can move from MiCA Checker into Smart Disclosures.
+Teams that need remediation can move from MiCA Checker into Smart Disclosures.
+
+### Proof of Collateral
+
+[Proof of Collateral](/issuer-hub/proof-of-collateral) is the verifiable onchain credential that confirms a tokenized asset is backed by audited reserves of the disclosed type and amount. It is built for stablecoins, tokenized money market funds, tokenized treasuries, and any asset whose value depends on a verifiable reserve.
 
 ***
 
 ## Compliance Hub
 
-[Compliance Hub](/compliance-hub/compliance-hub-coming-soon) is Bluprynt's regulator-facing supervisory workspace.
+[Compliance Hub](/compliance-hub/compliance-hub-coming-soon) is Bluprynt's regulator- and compliance-team-facing workspace. It is the operational center for form publishing, submission review, credential issuance, and ongoing supervision.
 
-It is the operational center for form publishing, submission review, credential issuance, and ongoing supervision.
+Core workflows:
 
-Core workflows include:
+- Reviewing disclosure submissions.
+- Managing license application pipelines.
+- Requesting clarification from applicants.
+- Approving or rejecting submissions.
+- Directly issuing credentials.
+- Monitoring issuer and asset activity.
 
-* Reviewing disclosure submissions
-* Managing license application pipelines
-* Requesting clarification from applicants
-* Approving or rejecting submissions
-* Directly issuing credentials
-* Monitoring issuer and asset activity
-
-Together, Smart Disclosures and Compliance Hub create a full issuer-to-regulator operating loop. Issuers submit structured data. Supervisors review, decide, and issue verifiable outcomes.
+Together, Smart Disclosures and Compliance Hub create a full issuer-to-regulator operating loop. Issuers submit structured data; supervisors review, decide, and issue verifiable outcomes.
 
 ***
 
-## Credentials and Attestations
+## Credentials
 
-Bluprynt’s products produce machine-readable trust signals that can be consumed by platforms, supervisors, and connected systems.
+[Credentials](/credentials/credentials-overview) are the verifiable onchain artifacts the rest of the platform produces. They are issued onchain, linked to the issuer's KYI-verified identity, and queryable from any system that needs to validate compliance state.
 
-These include:
+Bluprynt currently issues two credential types:
 
-* **KYI attestations** that link an asset to a verified issuer and wallet
-* **Disclosure attestations** that prove a document was completed and published
-* **Credentials** that show whether an issuer, asset, or wallet satisfies a required condition
+| Credential | Purpose |
+| --- | --- |
+| [Know Your Issuer (KYI)](/credentials/kyi) | Entity, wallet, and token-contract authentication. |
+| [Proof of Collateral](/issuer-hub/proof-of-collateral) | Verifiable backing for stablecoins and tokenized assets. |
 
-For example, the [Proof of Collateral Credential](/credentials/proof-of-collateral) gives platforms and counterparties a verifiable signal that an asset is backed by underlying reserves.
+Credentials are checked by [V4 Hooks](/v4-hooks/overview) before allowing onchain actions, and by the Compliance Hub for ongoing supervision.
 
-These records make issuer status and asset compliance easier to verify across wallets, exchanges, tokenization platforms, and regulatory systems.
+***
+
+## V4 Hooks
+
+[V4 Hooks](/v4-hooks/overview) are Bluprynt's onchain integration layer for DeFi. They let any protocol read Bluprynt credentials directly during a pool, swap, or lending operation, so tokenized assets only move through venues that match their compliance posture.
+
+V4 Hooks are how the Issuer Hub and Credentials pillars become enforceable on-chain. Without them, credentials are queryable; with them, credentials are *active*.

@@ -7,7 +7,7 @@ Built with [Mintlify](https://mintlify.com) and deployed automatically on push t
 ## What's here
 
 - **Product docs** — Overview, KYI, Smart Disclosures, Compliance Hub, MiCA Checker.
-- **Architecture** — System overview, attestation schemas, CCID, Policy Engine thesis.
+- **Architecture** — System overview, attestation schemas, CCID, chain compatibility.
 - **Integration guides** — KYI widget embedding, public API, on-chain reads.
 - **API reference** — Every endpoint, grouped by resource.
 - **Getting started** — Account creation, first attestation walkthrough.
@@ -40,7 +40,7 @@ docs/
 │   ├── smart-disclosures/        # Smart Disclosures
 │   ├── compliance-hub/           # Compliance Hub
 │   └── mica-checker/             # MiCA Checker
-├── architecture/                 # System overview, schemas, CCID, Policy Engine
+├── architecture-and-standards/   # System overview, attestation schemas, CCID, chain compatibility
 ├── integration-guides/           # KYI widget, public API, on-chain reads
 ├── api-reference/                # REST API reference per resource
 ├── logo/                         # light.svg + dark.svg
