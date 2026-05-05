@@ -1,70 +1,78 @@
 ---
 title: "Authentication"
-description: "API keys, scopes, and rotation."
+description: "API keys, the Authorization header, and where to get credentials."
 ---
 
-## API keys
+Asset endpoints in the Bluprynt Public API require an API key on every request. Badge endpoints are public and do not require authentication.
 
-Every Bluprynt API call requires an API key in the `Authorization` header:
+## How to send the key
 
-```bash
-curl https://api.bluprynt.com/v1/kyi/{ccid} \
-  -H "Authorization: Bearer bprnt_live_..."
+The API uses an `apiKey` security scheme. Send your key directly in the `Authorization` header — **without** a `Bearer` prefix.
+
+<CodeGroup>
+
+```bash curl
+curl https://integrations.bluprynt.com/assets \
+  -H "Authorization: YOUR_API_KEY"
 ```
 
-## Key format
+```javascript Node.js
+const res = await fetch("https://integrations.bluprynt.com/assets", {
+  headers: { Authorization: process.env.BLUPRYNT_API_KEY },
+});
+const { data, meta } = await res.json();
+```
 
-API keys are structured:
+```python Python
+import os, requests
 
-- `bprnt_live_xxx` — production keys
-- `bprnt_staging_xxx` — staging keys
-- `bprnt_test_xxx` — sandbox keys (no real writes)
+res = requests.get(
+    "https://integrations.bluprynt.com/assets",
+    headers={"Authorization": os.environ["BLUPRYNT_API_KEY"]},
+)
+res.raise_for_status()
+payload = res.json()
+```
 
-## Requesting keys
-
-Email [partners@bluprynt.com](mailto:partners@bluprynt.com) with:
-
-- Your organization name + primary contact
-- Expected use case (KYI lookups, attestation reads, webhooks)
-- Environments needed (production, staging, sandbox)
-
-We issue keys after partner vetting. Turnaround is typically 1–3 business days.
-
-## Scopes
-
-API keys are scoped. When you request a key, specify one or more:
-
-| Scope | Permits |
-|---|---|
-| `kyi:read` | `GET /v1/kyi/*` |
-| `attestations:read` | `GET /v1/attestations/*` |
-| `attestations:write` | `POST /v1/attestations/*` (partner-issued attestations; rare) |
-| `identities:read` | `GET /v1/identities/*` |
-| `credentials:read` | `GET /v1/credentials/*` |
-| `webhooks:manage` | Register and manage webhook subscriptions |
-
-Multi-scope keys are available for integrations needing several surfaces.
-
-## Key rotation
-
-Keys do not expire by default but can be rotated anytime:
-
-1. Email [partners@bluprynt.com](mailto:partners@bluprynt.com) with your key ID and reason.
-2. We issue a replacement key.
-3. You deploy the replacement.
-4. After confirmation, we revoke the old key.
+</CodeGroup>
 
 <Warning>
-  If you believe a key has been compromised, email [security@bluprynt.com](mailto:security@bluprynt.com) immediately. We revoke on request without vetting.
+  The header value is the key itself — `Authorization: YOUR_API_KEY` — not `Authorization: Bearer YOUR_API_KEY`. Adding `Bearer` will fail authentication with `401`.
 </Warning>
 
-## Storing keys
+## Getting an API key
 
-<Check>Store keys in a secrets manager (AWS Secrets Manager, Vault, GCP Secret Manager), never in source code.</Check>
-<Check>Use environment variables at runtime.</Check>
-<Check>Rotate on staff changes.</Check>
-<Check>Use per-environment keys — never reuse production keys in staging.</Check>
+Request a key from the Bluprynt integrations team at [team@bluprynt.com](mailto:team@bluprynt.com). Include:
 
-## Rate limits
+- The product or surface you intend to integrate with (exchange listing, wallet, dApp, explorer, etc.).
+- The expected request volume per day.
+- A primary contact for security and incident communication.
 
-Rate limits are per-key — see [Rate limits](/api-reference/rate-limits).
+Keys are scoped to your organization and rate-limited per key.
+
+## Failure modes
+
+| Status | When | Recover by |
+| --- | --- | --- |
+| `401 Unauthorized` | Missing, malformed, or revoked key. | Re-check the header; rotate the key if you suspect compromise. |
+| `500 Internal Server Error` | Unexpected server error. | Retry with exponential backoff; if it persists, contact support. |
+
+The error body for `401` is:
+
+```json
+{
+  "message": "Invalid API key",
+  "error": "Unauthorized",
+  "statusCode": 401
+}
+```
+
+See the [Errors](/api-reference/errors) page for every shape and code you can expect.
+
+## Rotating a key
+
+To rotate, request a new key, deploy it everywhere, then ask Bluprynt to revoke the old one. Old keys remain valid until explicitly revoked — there is no automatic expiry — so it is safe to run both keys in parallel during the rollout.
+
+<Note>
+  Treat your API key like a password. Never commit it to source control, never paste it into client-side code, and rotate immediately if you believe it has leaked.
+</Note>

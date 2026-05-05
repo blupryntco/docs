@@ -1,0 +1,73 @@
+---
+title: "List KYI-verified assets"
+description: "Paginated list of every asset KYI-verified by Bluprynt."
+openapi: "GET /assets"
+---
+
+Returns a paginated list of every asset KYI-verified by Bluprynt. Each item is a full `AssetInfo` record — token details, controlling authorities, business identity, and any associated URLs.
+
+Use this endpoint to power registry-style surfaces (a list of every verified token), to seed a local cache, or as a discovery tool for downstream lookup-by-address calls.
+
+## Pagination
+
+| Parameter | Default | Notes |
+| --- | --- | --- |
+| `page_size` | 20 | Items per page. Cap negotiated per integration tier. |
+| `page_number` | 1 | 1-based page index. |
+
+Pagination metadata is returned in the `meta` object on every response:
+
+```json
+{
+  "data": [/* AssetInfo[] */],
+  "meta": {
+    "total": 100,
+    "page_size": 20,
+    "page_number": 1
+  }
+}
+```
+
+Fetch all pages by iterating `page_number` until `page_number * page_size >= total`.
+
+## Example
+
+<CodeGroup>
+
+```bash curl
+curl "https://integrations.bluprynt.com/assets?page_size=20&page_number=1" \
+  -H "Authorization: YOUR_API_KEY"
+```
+
+```javascript Node.js
+const url = new URL("https://integrations.bluprynt.com/assets");
+url.searchParams.set("page_size", "20");
+url.searchParams.set("page_number", "1");
+
+const res = await fetch(url, {
+  headers: { Authorization: process.env.BLUPRYNT_API_KEY },
+});
+const { data, meta } = await res.json();
+```
+
+```python Python
+import os, requests
+
+res = requests.get(
+    "https://integrations.bluprynt.com/assets",
+    params={"page_size": 20, "page_number": 1},
+    headers={"Authorization": os.environ["BLUPRYNT_API_KEY"]},
+)
+res.raise_for_status()
+payload = res.json()
+```
+
+</CodeGroup>
+
+## Caching
+
+Results are stable in the short term. A 1–5 minute cache per `(page_size, page_number)` is safe for most surfaces. For registry mirrors, paginate on a schedule (e.g. hourly) and diff the results into your local store.
+
+<Note>
+  Want a single asset rather than the full list? Use [Get asset](/api-reference/endpoints/get-asset) (chain + address) or [Get asset by CAIP-10](/api-reference/endpoints/get-asset-by-caip-10).
+</Note>

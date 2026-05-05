@@ -1,0 +1,82 @@
+---
+title: "Get verification badge"
+description: "Pre-rendered Bluprynt verification badge image — public, cached, ready to embed."
+openapi: "GET /api/v1/badges/{credential_type}"
+---
+
+Returns a pre-rendered Bluprynt verification badge as a binary image. Use this to surface a credential status (KYI-verified, Proof of Collateral) on token listings, asset pages, wallet UI, and explorers.
+
+<Tip>
+  This endpoint is **public** — no API key required. Responses include `Cache-Control: public, max-age=31536000, immutable`, so CDNs and browsers can cache them forever.
+</Tip>
+
+## Credential types
+
+| Value | Meaning |
+| --- | --- |
+| `kyi_verified` | The asset has a KYI credential — issuer is bound to the token via cryptographic attestation. |
+| `proof_of_collateral` | The asset has an active Proof of Collateral credential. |
+
+Pass the credential type as the path segment.
+
+## Query parameters
+
+| Parameter | Values | Default | Notes |
+| --- | --- | --- | --- |
+| `size` | `16`, `24`, `32`, `64` | `32` | Pixel size for `variant=icon`. **`64` falls back to 32 px** because no 64 px icon asset exists. Ignored when `variant=full`. |
+| `format` | `svg`, `png`, `webp` | `svg` | `webp` currently returns `415 Unsupported Media Type`. |
+| `theme` | `dark`, `light` | `light` | Light or dark colour theme. Pick to match your surface. |
+| `variant` | `icon`, `full` | `icon` | `icon` = square icon. `full` = pill badge with text (size is ignored). |
+
+## Examples
+
+### Inline `<img>`
+
+```html
+<img
+  src="https://integrations.bluprynt.com/api/v1/badges/kyi_verified?size=24&format=svg&theme=dark&variant=icon"
+  alt="KYI verified"
+  width="24"
+  height="24"
+/>
+```
+
+### CSS background
+
+```css
+.kyi-badge {
+  background-image: url("https://integrations.bluprynt.com/api/v1/badges/kyi_verified?size=32&format=svg&theme=light&variant=icon");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+```
+
+### Curl (pipe to a file)
+
+```bash
+curl -o kyi-pill.svg \
+  "https://integrations.bluprynt.com/api/v1/badges/kyi_verified?format=svg&theme=dark&variant=full"
+```
+
+## Errors
+
+| Status | When |
+| --- | --- |
+| `400 Bad Request` | Unknown `credential_type` or an unsupported value on a query parameter. |
+| `415 Unsupported Media Type` | `format=webp` (not yet available). |
+
+There is no JSON body for badge errors — branch on status code.
+
+## Caching
+
+Because every response carries `Cache-Control: public, max-age=31536000, immutable`, you can:
+
+- Drop the URL into a CDN with no special configuration.
+- Inline the SVG once and reuse it indefinitely (a credential type's visual representation is stable).
+- Skip ETag round-trips entirely.
+
+If you ever need to bust the cache after a brand refresh, append a versioned query parameter the API will ignore (e.g. `&v=2`) — the cached entry is keyed on full URL.
+
+<Note>
+  The badge image is the visual representation of a credential's *type*, not its current state. Whether a particular asset has the credential is answered by [Get asset](/api-reference/endpoints/get-asset).
+</Note>
