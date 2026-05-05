@@ -1,0 +1,88 @@
+---
+title: "Get asset by CAIP-10 account ID"
+description: "Fetch a KYI-verified asset using a CAIP-10 account identifier expressed as URL segments."
+openapi: "GET /assets/{namespace}/{reference}/{account_address}"
+---
+
+Fetch a single KYI-verified asset using a [CAIP-10](https://chainagnostic.org/CAIPs/caip-10) account identifier. CAIP-10 is the chain-agnostic standard for naming an account in the form:
+
+```
+namespace:reference:account_address
+```
+
+For example:
+
+- `eip155:1:0xabcdef…` — an Ethereum mainnet contract address.
+- `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp:EPjFWdd5…` — a Solana SPL mint.
+
+To call the API, **replace each `:` with `/`** so the identifier becomes a sequence of URL segments. The endpoint returns the same `AssetInfo` shape as [Get asset by chain and address](/api-reference/endpoints/get-asset).
+
+## URL-segment encoding rule
+
+| CAIP-10 form | URL form |
+| --- | --- |
+| `eip155:1:0xabcdef…` | `/assets/eip155/1/0xabcdef…` |
+| `solana:5eykt4Us…:EPjFWdd5…` | `/assets/solana/5eykt4Us…/EPjFWdd5…` |
+| `cosmos:cosmoshub-4:cosmos1…` | `/assets/cosmos/cosmoshub-4/cosmos1…` |
+
+## Path parameters
+
+| Parameter | Description |
+| --- | --- |
+| `namespace` | CAIP-2 namespace (e.g. `eip155`, `solana`, `cosmos`). |
+| `reference` | CAIP-2 reference (chain ID for EVM, network identifier for Solana, etc.). |
+| `account_address` | The account address itself. |
+
+## Example
+
+<CodeGroup>
+
+```bash curl
+# Ethereum mainnet, contract 0xabcdef...
+curl https://integrations.bluprynt.com/assets/eip155/1/0xabcdef0123456789abcdef0123456789abcdef01 \
+  -H "Authorization: YOUR_API_KEY"
+```
+
+```javascript Node.js
+async function getAssetByCaip10(caip10) {
+  // "eip155:1:0xabc..." → "eip155/1/0xabc..."
+  const path = caip10.replaceAll(":", "/");
+  const url = `https://integrations.bluprynt.com/assets/${path}`;
+
+  const res = await fetch(url, {
+    headers: { Authorization: process.env.BLUPRYNT_API_KEY },
+  });
+
+  if (res.status === 404) return null; // Not KYI-verified.
+  if (!res.ok) throw new Error(`Bluprynt ${res.status}`);
+  return res.json();
+}
+```
+
+```python Python
+import os, requests
+
+def get_asset_by_caip10(caip10: str):
+    path = caip10.replace(":", "/")
+    res = requests.get(
+        f"https://integrations.bluprynt.com/assets/{path}",
+        headers={"Authorization": os.environ["BLUPRYNT_API_KEY"]},
+    )
+    if res.status_code == 404:
+        return None  # Not KYI-verified.
+    res.raise_for_status()
+    return res.json()
+```
+
+</CodeGroup>
+
+## When to use this vs. chain + address
+
+Both endpoints return the same `AssetInfo` shape. Use whichever matches the data you have:
+
+- **You have CAIP-10**: from a wallet, dApp connector, or chain-agnostic registry → use this endpoint.
+- **You have a friendly chain name + address**: from your own UI inputs or an exchange listing → use [Get asset by chain and address](/api-reference/endpoints/get-asset).
+
+<Note>
+  Both endpoints share the same backing data and are equally fresh. There is no preference from the API side.
+</Note>

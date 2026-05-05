@@ -1,0 +1,112 @@
+---
+title: "Get asset by chain and address"
+description: "Fetch a single KYI-verified asset by chain identifier and on-chain address."
+openapi: "GET /assets/{chain}/{account_address}"
+---
+
+Fetch a single KYI-verified asset by its chain and on-chain address. This is the most common lookup pattern for verification surfaces — given a token a user is interacting with, return the verified issuer and asset metadata.
+
+## Path parameters
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `chain` | enum | One of `solana`, `ethereum`, `base`, `plume`, `sepolia`, `avalanche`. |
+| `account_address` | string | The on-chain address of the asset. Format depends on `chain` (mint address on Solana, contract address on EVM, etc.). |
+
+## Response
+
+A `200` response is an `AssetInfo` object — full token details, controlling authorities, and business identity. See the [response shape reference](#response-shape) below for the structure.
+
+A `404` is returned when the asset is not KYI-verified. Treat that as "not verified" rather than a transient failure.
+
+## Example
+
+<CodeGroup>
+
+```bash curl
+# Solana — USDC mint
+curl https://integrations.bluprynt.com/assets/solana/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v \
+  -H "Authorization: YOUR_API_KEY"
+```
+
+```javascript Node.js
+async function getAsset(chain, address) {
+  const url = `https://integrations.bluprynt.com/assets/${chain}/${address}`;
+  const res = await fetch(url, {
+    headers: { Authorization: process.env.BLUPRYNT_API_KEY },
+  });
+
+  if (res.status === 404) return null; // Not KYI-verified.
+  if (!res.ok) throw new Error(`Bluprynt ${res.status}`);
+  return res.json();
+}
+```
+
+```python Python
+import os, requests
+
+def get_asset(chain: str, address: str):
+    res = requests.get(
+        f"https://integrations.bluprynt.com/assets/{chain}/{address}",
+        headers={"Authorization": os.environ["BLUPRYNT_API_KEY"]},
+    )
+    if res.status_code == 404:
+        return None  # Not KYI-verified.
+    res.raise_for_status()
+    return res.json()
+```
+
+</CodeGroup>
+
+## Response shape
+
+```json
+{
+  "token_details": {
+    "chain": "solana",
+    "address": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    "account_id": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp:EPjFWdd5...",
+    "asset_did": "01HN123ABC456DEF789GHI",
+    "token_name": "USD Coin",
+    "token_ticker": "USDC",
+    "authorities": [
+      {
+        "authority_type": "mint_authority",
+        "address": "11111111111111111111111111111112",
+        "verified": true,
+        "account_type": "regular"
+      }
+    ],
+    "token_image": "https://example.com/logo.png",
+    "copyright_confirmed": true
+  },
+  "business_details": {
+    "issuer_did": "01HN123ABC456DEF789GHI",
+    "business_verified": true,
+    "business_name": "Circle",
+    "business_description": "Issuer of USDC, the regulated digital dollar."
+  },
+  "website_url": "https://example.com",
+  "whitepaper_url": "https://example.com/whitepaper.pdf",
+  "asset_url": "https://verified.bluprynt.com/verified-assets/EPjFWdd5.../solana",
+  "attestation_address": "0x1234567890123456789012345678901234567890"
+}
+```
+
+### Authority types
+
+`token_details.authorities[].authority_type` is one of:
+
+| Value | Meaning |
+| --- | --- |
+| `creator` | Wallet that created the token. |
+| `mint_authority` | Wallet authorized to mint new units. |
+| `update_authority` | Wallet authorized to update metadata. |
+| `freeze_authority` | Wallet authorized to freeze accounts (Solana SPL). |
+| `upgrade_authority` | Wallet authorized to upgrade the program/contract. |
+
+`account_type` is `regular` (single signer) or `multisig`. For `multisig`, `multisig_signers` lists the constituent signer addresses.
+
+<Tip>
+  Need to look up by [CAIP-10](https://chainagnostic.org/CAIPs/caip-10) account ID instead of the chain-segmented form? Use [Get asset by CAIP-10](/api-reference/endpoints/get-asset-by-caip-10).
+</Tip>

@@ -1,0 +1,688 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/assets": {
+      "get": {
+        "description": "Returns a paginated list of all assets KYI-verified by Bluprynt.",
+        "operationId": "assets.listAssets",
+        "parameters": [
+          {
+            "name": "page_size",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "example": 20,
+              "type": "string"
+            }
+          },
+          {
+            "name": "page_number",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-based)",
+            "schema": {
+              "example": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of KYI-verified assets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid API key"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    },
+                    "statusCode": {
+                      "type": "number",
+                      "example": 401
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    },
+                    "statusCode": {
+                      "type": "number",
+                      "example": 500
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "List KYI-verified assets",
+        "tags": [
+          "Assets"
+        ],
+        "security": [
+          {
+            "api-key": []
+          }
+        ]
+      }
+    },
+    "/assets/{chain}/{account_address}": {
+      "get": {
+        "description": "Provides asset information",
+        "operationId": "assets.getAssetInfo",
+        "parameters": [
+          {
+            "name": "chain",
+            "required": true,
+            "in": "path",
+            "description": "Asset chain",
+            "schema": {
+              "enum": [
+                "solana",
+                "ethereum",
+                "base",
+                "plume",
+                "sepolia",
+                "avalanche"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "account_address",
+            "required": true,
+            "in": "path",
+            "description": "Asset address",
+            "schema": {
+              "example": "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Asset information retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetInfo"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid API key"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    },
+                    "statusCode": {
+                      "type": "number",
+                      "example": 401
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Asset not found"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    },
+                    "statusCode": {
+                      "type": "number",
+                      "example": 500
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get asset information",
+        "tags": [
+          "Assets"
+        ],
+        "security": [
+          {
+            "api-key": []
+          }
+        ]
+      }
+    },
+    "/assets/{namespace}/{reference}/{account_address}": {
+      "get": {
+        "description": "Retrieve KYI data for a single asset using CAIP-10 account ID and its segments. You can look for attestations issued to `eip155:1:0xabc...` by replacing `:` with `/` in the URL:  `eip155/1/0xabc...`. ",
+        "operationId": "assets.getAssetByCaip10",
+        "parameters": [
+          {
+            "name": "namespace",
+            "required": true,
+            "in": "path",
+            "description": "CAIP-2 namespace",
+            "schema": {
+              "example": "eip155",
+              "type": "string"
+            }
+          },
+          {
+            "name": "reference",
+            "required": true,
+            "in": "path",
+            "description": "CAIP-2 reference",
+            "schema": {
+              "example": "1",
+              "type": "string"
+            }
+          },
+          {
+            "name": "account_address",
+            "required": true,
+            "in": "path",
+            "description": "Account address",
+            "schema": {
+              "example": "0xabcdef...",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Asset information retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetInfo"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid API key"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    },
+                    "statusCode": {
+                      "type": "number",
+                      "example": 401
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Asset not found"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    },
+                    "statusCode": {
+                      "type": "number",
+                      "example": 500
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get asset by CAIP-10 account ID",
+        "tags": [
+          "Assets"
+        ],
+        "security": [
+          {
+            "api-key": []
+          }
+        ]
+      }
+    },
+    "/api/v1/badges/{credential_type}": {
+      "get": {
+        "description": "Returns a binary image for the requested Bluprynt verification badge. Responses are aggressively cached via `Cache-Control: public, max-age=31536000, immutable`.",
+        "operationId": "badges.getBadge",
+        "parameters": [
+          {
+            "name": "credential_type",
+            "required": true,
+            "in": "path",
+            "description": "Credential type to display a badge for",
+            "schema": {
+              "enum": [
+                "kyi_verified",
+                "proof_of_collateral"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "size",
+            "required": false,
+            "in": "query",
+            "description": "Badge size in pixels (ignored when variant=full). Note: 64 falls back to 32px as no 64px icon asset exists.",
+            "schema": {
+              "enum": [
+                "16",
+                "24",
+                "32",
+                "64"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "required": false,
+            "in": "query",
+            "description": "Image format",
+            "schema": {
+              "enum": [
+                "svg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "theme",
+            "required": false,
+            "in": "query",
+            "description": "Badge colour theme",
+            "schema": {
+              "enum": [
+                "dark",
+                "light"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "variant",
+            "required": false,
+            "in": "query",
+            "description": "icon = square icon; full = pill badge with text (size ignored)",
+            "schema": {
+              "enum": [
+                "icon",
+                "full"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Badge image",
+            "content": {
+              "image/svg+xml": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid credential_type or query parameter value"
+          },
+          "415": {
+            "description": "Unsupported Media Type — WebP is not yet available"
+          }
+        },
+        "summary": "Get verification badge",
+        "tags": [
+          "Badges"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Bluprynt Public API",
+    "description": "The Bluprynt Public API exposes KYI-verified asset metadata and verification badges. The API is read-only for partners and is intended to power exchange listings, wallet warnings, dApp integrations, and verification UI. Authentication uses an API key sent in the Authorization header.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Bluprynt Integrations",
+      "email": "team@bluprynt.com",
+      "url": "https://bluprynt.com"
+    }
+  },
+  "tags": [
+    {
+      "name": "Assets",
+      "description": "Assets"
+    },
+    {
+      "name": "Badges",
+      "description": "Verification badge assets"
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://integrations.bluprynt.com",
+      "description": "Production"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "api-key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Enter API key directly"
+      }
+    },
+    "schemas": {
+      "AssetAuthority": {
+        "type": "object",
+        "properties": {
+          "authority_type": {
+            "type": "string",
+            "description": "The type of authority this address has over the asset",
+            "enum": [
+              "creator",
+              "mint_authority",
+              "update_authority",
+              "freeze_authority",
+              "upgrade_authority"
+            ],
+            "example": "mint_authority"
+          },
+          "address": {
+            "type": "string",
+            "description": "The blockchain address with authority",
+            "example": "11111111111111111111111111111112"
+          },
+          "verified": {
+            "type": "boolean",
+            "description": "Whether this authority has been verified through credential proof",
+            "example": true
+          },
+          "account_type": {
+            "type": "string",
+            "description": "The type of account (regular wallet or multisig)",
+            "enum": [
+              "regular",
+              "multisig"
+            ],
+            "example": "regular"
+          },
+          "multisig_signers": {
+            "description": "List of signer addresses for multisig accounts",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "authority_type",
+          "address",
+          "verified",
+          "account_type"
+        ]
+      },
+      "AssetTokenDetails": {
+        "type": "object",
+        "properties": {
+          "chain": {
+            "type": "string",
+            "description": "The blockchain network where the asset exists",
+            "enum": [
+              "ethereum",
+              "base",
+              "solana",
+              "plume",
+              "avalanche"
+            ],
+            "example": "solana"
+          },
+          "address": {
+            "type": "string",
+            "description": "The blockchain address of the asset",
+            "example": "11111111111111111111111111111112"
+          },
+          "account_id": {
+            "type": "string",
+            "description": "CAIP-10 account identifier",
+            "example": "eip155:1:0xabcdef..."
+          },
+          "asset_did": {
+            "type": "object",
+            "description": "The unique identifier of the asset",
+            "additionalProperties": true,
+            "example": "01HN123ABC456DEF789GHI"
+          },
+          "token_name": {
+            "type": "string",
+            "description": "Token's full name",
+            "example": "USD Coin"
+          },
+          "token_ticker": {
+            "type": "string",
+            "description": "Token's ticker symbol",
+            "example": "USDC"
+          },
+          "authorities": {
+            "description": "List of authorities (addresses with control) over this asset",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssetAuthority"
+            }
+          },
+          "token_image": {
+            "type": "object",
+            "description": "Url of token's logo",
+            "additionalProperties": true,
+            "example": "https://example.com/logo.png"
+          },
+          "copyright_confirmed": {
+            "type": "boolean",
+            "description": "Whether the image copyright has been confirmed",
+            "example": true
+          }
+        },
+        "required": [
+          "chain",
+          "address",
+          "asset_did",
+          "token_name",
+          "token_ticker",
+          "authorities",
+          "token_image",
+          "copyright_confirmed"
+        ]
+      },
+      "AssetBusinessDetails": {
+        "type": "object",
+        "properties": {
+          "issuer_did": {
+            "type": "object",
+            "description": "The unique identifier of the issuer",
+            "additionalProperties": true,
+            "example": "01HN123ABC456DEF789GHI"
+          },
+          "business_verified": {
+            "type": "boolean",
+            "description": "Whether KYB (Know Your Business) verification has passed",
+            "example": true
+          },
+          "business_name": {
+            "type": "string",
+            "description": "Name of the business",
+            "example": "Circle"
+          },
+          "business_description": {
+            "type": "string",
+            "description": "Description of the business"
+          }
+        },
+        "required": [
+          "issuer_did",
+          "business_verified",
+          "business_name",
+          "business_description"
+        ]
+      },
+      "AssetInfo": {
+        "type": "object",
+        "properties": {
+          "token_details": {
+            "description": "Token details",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AssetTokenDetails"
+              }
+            ]
+          },
+          "business_details": {
+            "description": "Business details",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AssetBusinessDetails"
+              }
+            ]
+          },
+          "website_url": {
+            "type": "string",
+            "description": "Official website URL",
+            "example": "https://example.com"
+          },
+          "whitepaper_url": {
+            "type": "string",
+            "description": "Official whitepaper URL",
+            "example": "https://example.com/whitepaper.pdf"
+          },
+          "asset_url": {
+            "type": "string",
+            "description": "Asset information URL",
+            "example": "https://verified.bluprynt.com/verified-assets/8DBgFgCAsrDP4f2syfNVVyk9xq2YohwuHQr1t7dKjKCG/solana"
+          },
+          "attestation_address": {
+            "type": "string",
+            "description": "Attestation address on-chain (if available)",
+            "example": "0x1234567890123456789012345678901234567890"
+          }
+        },
+        "required": [
+          "token_details",
+          "business_details"
+        ]
+      },
+      "AssetList": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "List of KYI-verified assets",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssetInfo"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "description": "Pagination metadata",
+            "example": {
+              "total": 100,
+              "page_size": 20,
+              "page_number": 1
+            }
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "api-key": []
+    }
+  ]
+}

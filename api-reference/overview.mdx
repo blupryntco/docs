@@ -1,78 +1,77 @@
 ---
 title: "API overview"
-description: "Base URLs, versioning, and how the Bluprynt API is organized."
+description: "The Bluprynt Public API — KYI-verified asset metadata and verification badges, ready to drop into exchange listings, wallets, explorers, and dApps."
 ---
+
+The **Bluprynt Public API** exposes KYI-verified asset metadata and verification badges. It powers the verification surfaces partners build to answer "is this token issued by who it claims to be issued by?" — exchange listings, wallet warnings, explorer details, dApp gating, and trust UI.
+
+<Tip>
+  The interactive playground for this API is at [integrations.bluprynt.com](https://integrations.bluprynt.com). The same OpenAPI spec is rendered into these docs and lives at [`/api-reference/openapi.json`](/api-reference/openapi.json).
+</Tip>
 
 ## Base URL
 
 | Environment | URL |
-|---|---|
-| Production | `https://api.bluprynt.com` |
-| Staging | `https://api.staging.bluprynt.com` |
+| --- | --- |
+| Production | `https://integrations.bluprynt.com` |
 
-## Versioning
+There is currently a single production environment.
 
-Every endpoint is prefixed with a version: `/v1/...`. Breaking changes introduce a new major version (`/v2`) and the previous version remains available for at least 12 months. Non-breaking additions (new optional fields, new endpoints) go into the current version.
+## What's in the API
 
-## Surface map
-
-<Columns cols={2}>
-  <Card title="KYI" icon="id-card" href="/api-reference/kyi">
-    `/v1/kyi/*` — verified-issuer lookups by CCID, wallet, or contract address.
-</Card>
-  <Card title="Attestations" icon="file-shield" href="/api-reference/attestations">
-    `/v1/attestations/*` — read, write, revoke on-chain attestations.
-</Card>
-  <Card title="Identities" icon="fingerprint" href="/api-reference/identities">
-    `/v1/identities/*` — CCID-keyed identity records with wallets and accounts.
-</Card>
-  <Card title="Credentials" icon="award" href="/api-reference/credentials">
-    `/v1/credentials/*` — licenses and disclosures bound to identities.
-</Card>
-</Columns>
-
-## Request / response format
-
-- Requests and responses are **JSON** (`application/json`).
-- File uploads use `multipart/form-data`.
-- Timestamps are **ISO-8601** in UTC.
-- IDs are strings unless the underlying type is numeric.
+<CardGroup cols={2}>
+  <Card title="Assets" icon="coins" href="/api-reference/endpoints/list-assets">
+    KYI-verified asset metadata: token details, controlling authorities, business identity, and links to the issuer's whitepaper, website, and on-chain attestation. Three lookup styles — list, by chain + address, by CAIP-10 ID.
+  </Card>
+  <Card title="Badges" icon="image" href="/api-reference/endpoints/get-badge">
+    Pre-rendered verification badge images — KYI Verified and Proof of Collateral — in SVG, PNG, multiple sizes, and light/dark themes. Public, no authentication required.
+  </Card>
+</CardGroup>
 
 ## Authentication
 
-Every non-health endpoint requires `Authorization: Bearer YOUR_API_KEY`. See [Authentication](/api-reference/authentication) for details.
+Every Asset endpoint requires an API key sent in the `Authorization` header. Badge requests are public. See the [Authentication](/api-reference/authentication) page for the full pattern.
 
-## Errors
-
-Uniform error envelope:
-
-```json
-{
-  "error": "Human-readable message",
-  "code": "invalid_parameter",
-  "details": { "field": "ccid", "issue": "not found" }
-}
+```bash
+curl https://integrations.bluprynt.com/assets \
+  -H "Authorization: YOUR_API_KEY"
 ```
 
-Status codes follow HTTP conventions — see [Errors](/api-reference/errors) for the full list.
+## Endpoints at a glance
 
-## Machine-readable spec
+| Method | Path | Description |
+| --- | --- | --- |
+| `GET` | `/assets` | [List KYI-verified assets](/api-reference/endpoints/list-assets) (paginated). |
+| `GET` | `/assets/{chain}/{account_address}` | [Get an asset by chain and address](/api-reference/endpoints/get-asset). |
+| `GET` | `/assets/{namespace}/{reference}/{account_address}` | [Get an asset by CAIP-10 account ID](/api-reference/endpoints/get-asset-by-caip-10). |
+| `GET` | `/api/v1/badges/{credential_type}` | [Get a verification badge image](/api-reference/endpoints/get-badge) (no auth). |
 
-An OpenAPI 3.1 spec is available at `https://api.bluprynt.com/openapi.json`. Feed it to your favorite generator for typed clients.
+## Supported chains
 
-## Quick links
+Asset endpoints accept the following chain identifiers:
 
-<CardGroup cols={2}>
+`ethereum` · `base` · `solana` · `plume` · `avalanche` · `sepolia`
+
+CAIP-10 lookups support any namespace/reference combination Bluprynt has assets for — see the [CAIP-10 lookup endpoint](/api-reference/endpoints/get-asset-by-caip-10) for the URL-segment encoding rule.
+
+## Response format
+
+All Asset responses are JSON. Successful asset lookups return an `AssetInfo` object with two nested objects: `token_details` (chain, address, name, ticker, controlling authorities, image) and `business_details` (issuer DID, KYB status, business name and description). Listing returns the same `AssetInfo` shape inside a paginated `data` / `meta` envelope.
+
+Badge responses are binary image data with `Cache-Control: public, max-age=31536000, immutable`.
+
+## Status
+
+The API is **production**. Schema changes are additive; deprecations are announced via email and via the [changelog](https://github.com/blupryntco/docs/blob/main/CHANGELOG.md) before removal.
+
+<CardGroup cols={3}>
   <Card title="Authentication" icon="key" href="/api-reference/authentication">
-    API keys, scopes, rotation.
-</Card>
-  <Card title="Rate limits" icon="gauge" href="/api-reference/rate-limits">
-    Per-plan quotas and backoff guidance.
-</Card>
-  <Card title="Errors" icon="triangle-exclamation" href="/api-reference/errors">
-    Status codes, error shapes, retry logic.
-</Card>
-  <Card title="Webhooks" icon="webhook" href="/integration-guides/public-api#webhooks">
-    Subscribe to attestation lifecycle events.
-</Card>
+    How to send the API key and where to obtain one.
+  </Card>
+  <Card title="Rate limits" icon="gauge-high" href="/api-reference/rate-limits">
+    Quotas, response headers, and backoff guidance.
+  </Card>
+  <Card title="Errors" icon="circle-exclamation" href="/api-reference/errors">
+    Error envelope and the status codes you'll see.
+  </Card>
 </CardGroup>

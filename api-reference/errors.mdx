@@ -1,78 +1,77 @@
 ---
 title: "Errors"
-description: "Status codes, error shapes, and how to handle them."
+description: "The error envelope and status codes returned by the Bluprynt Public API."
 ---
+
+The Bluprynt Public API returns conventional HTTP status codes and a structured JSON body for every error.
 
 ## Error envelope
 
-Every error response has the same shape:
-
 ```json
 {
-  "error": "Human-readable message",
-  "code": "invalid_parameter",
-  "details": { "field": "ccid", "issue": "not found" }
+  "message": "Invalid API key",
+  "error": "Unauthorized",
+  "statusCode": 401
 }
 ```
 
-- **`error`** — a one-line, user-safe description.
-- **`code`** — a machine-readable error code (kebab-case).
-- **`details`** — optional structured context.
+| Field | Type | Description |
+| --- | --- | --- |
+| `message` | string | Human-readable explanation of what went wrong. |
+| `error` | string | Short error label (e.g. `Unauthorized`, `Internal Server Error`). |
+| `statusCode` | number | Mirrors the HTTP status code. |
 
 ## Status codes
 
-| Status | Meaning | Retry? |
-|---|---|---|
-| **400** | Malformed request (wrong JSON, missing required field) | No |
-| **401** | Invalid or missing API key | No |
-| **403** | Key is valid but doesn't have the required scope | No |
-| **404** | Resource not found (e.g. unknown CCID) | No |
-| **409** | Conflict (e.g. duplicate identity, concurrent revocation) | Maybe (after reconciliation) |
-| **422** | Business-rule violation (e.g. identity in wrong state for action) | No |
-| **429** | Rate-limited — see `Retry-After` | Yes |
-| **500** | Unexpected server error | Yes, with exponential backoff |
-| **502/503/504** | Dependent service degraded (chain RPC, IPFS, etc.) | Yes, with exponential backoff |
+<CardGroup cols={2}>
+  <Card title="200 OK" icon="circle-check">
+    The request succeeded. Asset endpoints return JSON; badge endpoints return binary image data.
+  </Card>
+  <Card title="400 Bad Request" icon="triangle-exclamation">
+    A path or query parameter was invalid — for example, an unsupported `credential_type` or an unknown query value on the badge endpoint.
+  </Card>
+  <Card title="401 Unauthorized" icon="key">
+    The API key is missing, malformed, or revoked. See [Authentication](/api-reference/authentication).
+  </Card>
+  <Card title="404 Not Found" icon="magnifying-glass">
+    The asset does not exist or has not been KYI-verified. Returned by the asset-by-address and CAIP-10 endpoints.
+  </Card>
+  <Card title="415 Unsupported Media Type" icon="ban">
+    Specific to the badge endpoint — currently returned when `format=webp` is requested (WebP is not yet available).
+  </Card>
+  <Card title="500 Internal Server Error" icon="server">
+    Unexpected server error. Retry with exponential backoff; if it persists, contact [team@bluprynt.com](mailto:team@bluprynt.com).
+  </Card>
+</CardGroup>
 
-## Common error codes
+## Endpoint-specific behavior
 
-<AccordionGroup>
-  <Accordion title="invalid_parameter">
-    A field in your request failed validation. `details` names the offending field and the reason.
-</Accordion>
-  <Accordion title="unauthorized">
-    API key is missing, revoked, or invalid.
-</Accordion>
-  <Accordion title="insufficient_scope">
-    Your key doesn't have the scope needed for this endpoint. Request an additional scope at [partners@bluprynt.com](mailto:partners@bluprynt.com).
-</Accordion>
-  <Accordion title="resource_not_found">
-    The resource (CCID, wallet, attestation) doesn't exist or isn't visible to your key.
-</Accordion>
-  <Accordion title="rate_limited">
-    You've exceeded your per-minute or per-day quota. Retry after `Retry-After` seconds.
-</Accordion>
-  <Accordion title="chain_unavailable">
-    The target chain's RPC is down or degraded. Only affects `POST /v1/attestations/*` during write operations. Retry with exponential backoff.
-</Accordion>
-  <Accordion title="ipfs_unavailable">
-    IPFS gateway unreachable. Affects attestation writes. Retry with exponential backoff.
-</Accordion>
-  <Accordion title="concurrent_modification">
-    Two operations tried to mutate the same identity concurrently. Re-fetch the identity state and retry.
-</Accordion>
-</AccordionGroup>
+- `404` is only emitted by single-asset lookups (`/assets/{chain}/{account_address}` and `/assets/{namespace}/{reference}/{account_address}`). The list endpoint returns `200` with an empty `data` array when no assets match.
+- `400` and `415` only appear on the badge endpoint.
+- Asset endpoints never return badge-specific codes (`400`, `415`).
 
-## Correlation IDs
+## Handling errors in code
 
-Every error response includes `X-Request-Id` in the response headers. Include this in any support email to accelerate investigation:
+```typescript TypeScript
+const res = await fetch(`https://integrations.bluprynt.com/assets/${chain}/${address}`, {
+  headers: { Authorization: process.env.BLUPRYNT_API_KEY! },
+});
 
-```bash
-curl -v https://api.bluprynt.com/v1/kyi/unknown-ccid \
-  -H "Authorization: Bearer YOUR_KEY"
-# ...
-# < X-Request-Id: bprnt_req_abc123...
+if (res.status === 404) {
+  // Treat the asset as unverified — no Bluprynt KYI record exists.
+  return null;
+}
+if (res.status === 401) {
+  throw new Error("Bluprynt API key is invalid or revoked");
+}
+if (!res.ok) {
+  const body = await res.json().catch(() => ({}));
+  throw new Error(`Bluprynt API ${res.status}: ${body.message ?? res.statusText}`);
+}
+
+return res.json();
 ```
 
 <Note>
-  If you hit a persistent error that doesn't match any code here, email [support@bluprynt.com](mailto:support@bluprynt.com) with the `X-Request-Id` and the request you made.
+  For every non-`200` response from an asset endpoint, the body matches the envelope above. For badge errors (`400`, `415`), the body may be empty — branch on status code, not body shape.
 </Note>

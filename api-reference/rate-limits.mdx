@@ -1,76 +1,36 @@
 ---
 title: "Rate limits"
-description: "Per-plan quotas, headers, and backoff guidance."
+description: "Quotas and backoff guidance for the Bluprynt Public API."
 ---
 
-## Quotas by plan
-
-| Plan | Per minute | Per day | Burst |
-|---|---|---|---|
-| Starter | 60 | 10,000 | 10 rps |
-| Growth | 300 | 100,000 | 30 rps |
-| Scale | 1,500 | 1,000,000 | 100 rps |
-| Enterprise | Custom | Custom | Custom |
-
-Quotas are per **API key**. To raise limits, email [partners@bluprynt.com](mailto:partners@bluprynt.com).
-
-## Response headers
-
-Every response includes:
-
-```
-X-RateLimit-Limit: 300
-X-RateLimit-Remaining: 287
-X-RateLimit-Reset: 1714155000
-```
-
-- **`X-RateLimit-Limit`** — your current window's quota
-- **`X-RateLimit-Remaining`** — requests left
-- **`X-RateLimit-Reset`** — Unix timestamp when the window resets
-
-## When you're rate-limited
-
-A 429 response includes `Retry-After` in seconds:
-
-```
-HTTP/1.1 429 Too Many Requests
-Retry-After: 12
-Content-Type: application/json
-
-{
-  "error": "Rate limit exceeded",
-  "code": "rate_limited",
-  "details": { "retryAfterSeconds": 12 }
-}
-```
-
-## Backoff guidance
-
-- **On 429:** wait `Retry-After` seconds, then retry.
-- **On 503:** exponential backoff — `min(60, 2^attempt)` seconds, max 5 attempts.
-- **On 500:** same exponential backoff as 503.
-- **On 4xx (not 429):** do not retry — fix the request.
-
-## Batch-friendly endpoints
-
-Some endpoints accept batches to reduce your request rate:
-
-- `POST /v1/kyi/batch` — up to 100 CCIDs / wallets per call, counted as **one** request against your quota.
-- `POST /v1/attestations/batch` — same pattern.
-
-Using batches is the primary way to stay within limits during bulk ETL.
-
-## Caching
-
-Bluprynt returns `ETag` headers. Send `If-None-Match` on subsequent reads:
-
-```
-GET /v1/identities/{ccid}
-If-None-Match: "abc123"
-```
-
-A 304 response uses **no** quota.
+The Bluprynt Public API applies per-key rate limits to keep latency consistent across all integrators. Limits are tuned for typical exchange-listing, wallet, and dApp workloads.
 
 <Note>
-  Consistent 429s even with batching + caching? Email [partners@bluprynt.com](mailto:partners@bluprynt.com) — we can diagnose traffic patterns and raise limits.
+  Specific quotas vary by integration tier and are negotiated when your key is provisioned. Most read-heavy integrations operate well within standard limits; heavier workloads (registry-style sweeps) should request a higher allotment in advance.
 </Note>
+
+## Caching guidance
+
+KYI-verified asset records change rarely once issued. Aggressive client-side caching is the easiest way to stay well under any quota:
+
+- Cache `GET /assets/{chain}/{account_address}` responses by `(chain, account_address)` for at least 5 minutes; longer is fine for lower-priority surfaces.
+- Cache the listing response (`GET /assets`) per page for at least 1 minute.
+- The badge endpoint already returns `Cache-Control: public, max-age=31536000, immutable` — let CDNs and browsers cache forever.
+
+## Backoff on `429` and `5xx`
+
+If you receive a `429 Too Many Requests` (when applicable to your tier) or a `5xx`, retry with exponential backoff:
+
+| Attempt | Delay |
+| --- | --- |
+| 1 | 1 s |
+| 2 | 2 s |
+| 3 | 4 s |
+| 4 | 8 s |
+| 5 | 16 s |
+
+Stop retrying after 5 attempts and surface the failure to the caller. `401` and `404` are deterministic — never retry those.
+
+## Need higher limits?
+
+For real-time market-making, exchange listing pipelines, or large registry mirrors, email [team@bluprynt.com](mailto:team@bluprynt.com) with your expected request volume and we'll provision a tier that fits.

@@ -11,6 +11,9 @@
   "appearance": {
     "default": "light"
   },
+  "openapi": [
+    "api-reference/openapi.json"
+  ],
   "favicon": "/favicon.svg",
   "seo": {
     "indexing": "all"
@@ -124,7 +127,7 @@
         "tab": "API reference",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Get started",
             "pages": [
               "api-reference/overview",
               "api-reference/authentication",
@@ -133,12 +136,17 @@
             ]
           },
           {
-            "group": "Endpoints",
+            "group": "Assets",
             "pages": [
-              "api-reference/kyi",
-              "api-reference/attestations",
-              "api-reference/identities",
-              "api-reference/credentials"
+              "api-reference/endpoints/list-assets",
+              "api-reference/endpoints/get-asset",
+              "api-reference/endpoints/get-asset-by-caip-10"
+            ]
+          },
+          {
+            "group": "Badges",
+            "pages": [
+              "api-reference/endpoints/get-badge"
             ]
           }
         ]
