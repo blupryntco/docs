@@ -131,12 +131,14 @@
             "group": "Compliance Explorer",
             "pages": [
               "explorer/overview",
+              "explorer/concepts",
               "explorer/search",
               "explorer/directories",
               "explorer/asset-page",
               "explorer/profiles",
               "explorer/disclosure-checklist",
-              "explorer/access-and-provenance"
+              "explorer/access-and-provenance",
+              "explorer/faq"
             ]
           },
           {
