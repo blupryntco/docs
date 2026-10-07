@@ -118,8 +118,8 @@ The full list of node types, edge types and flags is in the [graph reference](/t
   <Accordion title="Does the graph cover off-chain assets?">
     It covers off-chain backing when an attestation or proof-of-reserve feed evidences it. Those nodes are terminal. Legal wrapper, custody and attestation layers come from the registry's disclosure evidence.
   </Accordion>
-  <Accordion title="Where do I see the dependency count for an asset?">
-    On the asset page, **Evidence & Verification** shows **Reserve dependencies mapped**. See [the asset page](/tools/explorer/asset-page).
+  <Accordion title="Is the Asset Dependency Engine graph on every asset page?">
+    No. The asset page shows the registry's disclosure record. The **Reserve dependencies mapped** count there comes from the parties, reserve, oracles and controllers in that record, not from an engine traversal.
   </Accordion>
 </AccordionGroup>
 
@@ -127,5 +127,5 @@ The full list of node types, edge types and flags is in the [graph reference](/t
 
 <CardGroup cols={2}>
   <Card title="Graph reference" icon="table" href="/tools/asset-graph/reference">Node types, edges, flags and limits.</Card>
-  <Card title="The asset page" icon="coins" href="/tools/explorer/asset-page">Where the graph's counts appear.</Card>
+  <Card title="The asset page" icon="coins" href="/tools/explorer/asset-page">The disclosure record for an asset.</Card>
 </CardGroup>
