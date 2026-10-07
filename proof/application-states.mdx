@@ -19,18 +19,13 @@ An application moves through seven states, from the issuer's first draft to your
 ```mermaid
 flowchart TD
   A[Draft] -->|Issuer submits| B[Pending Review]
-  A -->|Filing submitted| E[Approved]
   B -->|Accept| C[In Review]
-  C -->|Approve| E
+  C -->|Approve| E[Approved]
   C -->|Decline| F[Denied]
-  C -->|Request for information| D[Request for Info]
-  D -->|Issuer edits| A
-  E -->|Decline| F
-  E -->|Request for information| D
-  F -->|Approve| E
   F -->|Archive| G[Archived]
-  A -->|Issuer archives| G
 ```
+
+This is the main path. **Request for information** sends an application to **Request for Info**, and the issuer's edit returns it to **Draft**. A filing form goes straight from **Draft** to **Approved**. Every other move is listed in [Transition rules](#transition-rules).
 
 <Note>
 The Compliance Hub labels a declined application **Denied**. Earlier versions of these docs called it *Rejected*. It's the same state.

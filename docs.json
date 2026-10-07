@@ -62,6 +62,7 @@
             "group": "Bluprynt Passport",
             "pages": [
               "passport/overview",
+              "passport/concepts",
               "passport/sign-in",
               "passport/home",
               {
@@ -91,13 +92,15 @@
                   "passport/reports"
                 ]
               },
-              "passport/settings"
+              "passport/settings",
+              "passport/faq"
             ]
           },
           {
             "group": "Bluprynt Proof",
             "pages": [
               "proof/overview",
+              "proof/concepts",
               "proof/sign-in",
               "proof/dashboard",
               {
@@ -124,7 +127,8 @@
                 ]
               },
               "proof/credentials",
-              "proof/members"
+              "proof/members",
+              "proof/faq"
             ]
           },
           {
