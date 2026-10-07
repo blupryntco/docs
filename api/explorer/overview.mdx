@@ -1,55 +1,107 @@
 ---
 title: "Explorer API"
 sidebarTitle: "Overview"
-description: "Read tokenomics changes and manage a monitoring watchlist with an exchange key."
+description: "Read tokenomics changes and run a monitoring watchlist with a scoped exchange key."
 ---
 
-The Explorer API serves the data behind [Compliance Explorer](/tools/compliance-explorer). With an exchange key you can read supply changes and run your own [Disclosure Monitoring](/tools/disclosure-monitoring) watchlist from code.
+The Explorer API exposes the data behind [Compliance Explorer](/tools/compliance-explorer) to exchange integrators. With a scoped key you can stream tokenomics change revisions and run your own [Disclosure Monitoring](/tools/disclosure-monitoring) watchlist from code — watching assets, reading detected changes and pulling the notification inbox.
 
 ```text Base URL
 https://explorer-api.bluprynt.com
 ```
 
-## Authenticate
+## Key concepts
 
-Bluprynt issues exchange keys by arrangement. Ask [product@bluprynt.com](mailto:product@bluprynt.com). Send the key as a bearer token:
-
-```bash
-curl -s "https://explorer-api.bluprynt.com/tokenomics/changes" \
-  -H "Authorization: Bearer $BLUPRYNT_EXPLORER_KEY"
-```
-
-Each key carries scopes. A route only answers if your key has its scope.
-
-| Scope | Routes |
+| Term | Meaning |
 |---|---|
-| `tokenomics:read` | `GET /tokenomics/changes`, `GET /assets/{id}/tokenomics/changes` |
-| `monitoring:read` | `GET /me/watchlist`, `GET /me/monitoring/changes`, `GET /me/notifications` |
-| `watchlist:write` | `POST /me/watchlist`, `PATCH /me/watchlist/{id}`, `DELETE /me/watchlist/{id}` |
+| Exchange key | A `bx_live_…` bearer token Bluprynt issues per integrator. Scoped, rate-limited, revocable. |
+| Scope | A permission on the key: `tokenomics:read`, `monitoring:read`, `watchlist:write`. |
+| Watchlist | Your set of watched registry assets. Monitoring and notifications cover only what you watch. |
+| Change | A detected difference on a watched asset — a disclosure field edit, register move, sanctions listing, and so on. |
+| Tokenomics revision | A verified change to an asset's tokenomics — unlocks, emissions, allocations, control — with issuer and on-chain evidence. |
+
+## Endpoints
+
+Eight routes are key-callable. Everything else — the full registry read surface — serves the public explorer frontend, not keys.
+
+| Endpoint | Scope | Returns |
+|---|---|---|
+| `GET /tokenomics/changes` | `tokenomics:read` | Tokenomics revisions across your watchlist. |
+| `GET /assets/{id}/tokenomics/changes` | `tokenomics:read` | Tokenomics revisions of one asset. |
+| `GET /me/watchlist` | `monitoring:read` | Your watchlist with limit and usage. |
+| `POST /me/watchlist` | `watchlist:write` | Watch a registry asset. |
+| `PATCH /me/watchlist/{id}` | `watchlist:write` | Pause/resume monitoring, edit the note. |
+| `DELETE /me/watchlist/{id}` | `watchlist:write` | Stop watching. |
+| `GET /me/monitoring/changes` | `monitoring:read` | Detected changes on your watchlist. |
+| `GET /me/notifications` | `monitoring:read` | Your notification inbox. |
 
 <Warning>
 The three `watchlist:write` routes change your watchlist. Everything else is read-only.
 </Warning>
 
+## Authenticate
+
+Bluprynt issues exchange keys by arrangement — ask [product@bluprynt.com](mailto:product@bluprynt.com). Send the key as a bearer token:
+
+```bash
+curl -s "https://explorer-api.bluprynt.com/me/watchlist" \
+  -H "Authorization: Bearer bx_live_your_key_here"
+```
+
+A route answers only when your key holds its scope. See [Authentication and scopes](/api/explorer/authentication).
+
 ## Check the service
 
-These two routes need no key:
+Two routes need no key:
 
 ```bash
 curl -s https://explorer-api.bluprynt.com/health
 # {"status":"ok","info":{},"error":{},"details":{}}
 
 curl -s https://explorer-api.bluprynt.com/openapi.json | jq .info.title
+# "Compliance Explorer Registry API"
 ```
 
-## Errors
+## Response envelope
 
-| Status | `code` | Cause |
-|---|---|---|
-| `401` | `api_key_invalid` | The key is unknown, revoked, or can't call this route. |
-| `403` | `api_key_scope_missing` | The key is valid but lacks the route's scope. |
-| `403` | `signature_missing` | No key was sent. Direct access without a key isn't permitted. |
+Key-callable routes wrap their payload:
 
 ```json
-{"code":"api_key_invalid","message":"This API key cannot call this route"}
+{
+  "data": { "…": "the route payload" },
+  "meta": { "request_id": "req_…", "fetched_at": "2026-10-07T20:00:00.000Z" },
+  "errors": []
+}
 ```
+
+Errors instead carry a stable `code` — see [Errors](/api/explorer/errors).
+
+## In this section
+
+<CardGroup cols={2}>
+  <Card title="Authentication and scopes" icon="key" href="/api/explorer/authentication">
+    Key format, scopes, and the route-to-scope table.
+  </Card>
+  <Card title="Pagination" icon="arrows-left-right" href="/api/explorer/pagination">
+    Backlog pages and feed cursors.
+  </Card>
+  <Card title="Tokenomics changes" icon="coins" href="/api/explorer/tokenomics-changes">
+    Revision classes, filters and the field reference.
+  </Card>
+  <Card title="Watchlist and monitoring" icon="eye" href="/api/explorer/watchlist-monitoring">
+    Watch → change → notification, with a worked example.
+  </Card>
+  <Card title="Polling guidance" icon="rotate" href="/api/explorer/webhooks-polling">
+    There are no webhooks — poll efficiently with cursors.
+  </Card>
+  <Card title="Errors" icon="triangle-exclamation" href="/api/explorer/errors">
+    The full `code` table.
+  </Card>
+  <Card title="Rate limits" icon="gauge" href="/api/explorer/rate-limits">
+    Per-key budgets and the 429 response.
+  </Card>
+</CardGroup>
+
+<Note>
+Looking for the public KYI record and badges instead? That's the [Public API](/api/public/overview) — a separate service with raw-key auth.
+</Note>

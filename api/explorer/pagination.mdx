@@ -1,0 +1,71 @@
+---
+title: "Pagination"
+sidebarTitle: "Pagination"
+description: "How the Explorer API paginates: backlog pages and feed cursors."
+---
+
+Tokenomics change feeds use two complementary cursors: an opaque **backlog page** token walks older history, and a **feed cursor** (`nextCursor`) resumes where the newest item left off on the next poll. Monitoring lists apply page caps server-side.
+
+## Feed pagination
+
+`GET /tokenomics/changes` returns a page of revisions plus both cursors:
+
+```json Illustrative
+{
+  "items": [ "…" ],
+  "hasMore": true,
+  "nextCursor": "tfc1_c2VxOjE4MzA5MjE",
+  "nextPage": "tfp1_cGFnZTo…",
+  "order": "priority"
+}
+```
+
+| Field | Use |
+|---|---|
+| `nextCursor` | Pass as `since` on the next poll to get only newer revisions. Frozen at the head your first page saw, so backlog paging never loses rows revised while you paged. |
+| `nextPage` | Pass verbatim as `page` to fetch the next backlog page (same filters required — the token carries a filter fingerprint). `null` when the backlog is complete. |
+| `hasMore` | More rows match the filters than were returned. With `since`: poll again with `nextCursor`. Without: page the backlog. |
+| `order` | `priority` for backlog pages (highest-priority revisions first), `since` for incremental polls. |
+
+```bash First page — freezes a head cursor
+curl -s "https://explorer-api.bluprynt.com/tokenomics/changes?limit=50" \
+  -H "Authorization: Bearer bx_live_…"
+
+# Newer revisions later — poll the cursor
+curl -s "https://explorer-api.bluprynt.com/tokenomics/changes?since=tfc1_c2VxOjE4MzA5MjE" \
+  -H "Authorization: Bearer bx_live_…"
+
+# Older backlog — pass the nextPage token back unchanged
+curl -s "https://explorer-api.bluprynt.com/tokenomics/changes?page=tfp1_cGFnZTo…&limit=50" \
+  -H "Authorization: Bearer bx_live_…"
+```
+
+## Page caps
+
+- Tokenomics feeds cap `limit` at 200 per page (default 50).
+- Monitoring changes cap at 200 items per response; when the window holds more, the response sets `truncated: true`. Narrow with `days`, `category`, `item`, or `materiality` until `truncated` clears — the rest still exists server-side.
+- Watchlist items come back complete (your whole list, up to your key's limit).
+- `/me/notifications` returns your inbox in one read; `unread=true` filters to unread only.
+
+## Cursor rules
+
+- `since` and `page` are opaque. Never construct them — always take them from `nextCursor`/`nextPage`.
+- A `page` token is bound to its filters by a fingerprint: change the filter set and reuse the token → `400 invalid_page`. Keep filters identical while paging.
+- An invalid `since` returns `400 invalid_cursor`; a bad `page` returns `400 invalid_page`.
+- Persist `nextCursor` between polls. A later catch-up call fetches exactly what arrived since, without re-reading backlog.
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Why two cursors instead of one?">
+    `nextCursor` answers "what's new since last time" (your poll loop); `nextPage` answers "what came before this page" (history). They're different tokens on purpose.
+  </Accordion>
+  <Accordion title="What if truncated stays true after narrowing?">
+    Reduce `days` further. The cap is per response, not per day — a 200+ change window truncates even at `days=1`.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Tokenomics changes](/api/explorer/tokenomics-changes) — filters and fields
+- [Polling guidance](/api/explorer/webhooks-polling) — the recommended loop

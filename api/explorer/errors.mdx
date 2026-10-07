@@ -1,0 +1,60 @@
+---
+title: "Errors"
+sidebarTitle: "Errors"
+description: "Every error code the Explorer API's key-callable routes return."
+---
+
+The Explorer API answers errors with a stable `code` you can branch on, plus a human-readable `message`. Key-callable routes use the codes below; other routes on the service follow the same convention.
+
+## Code table
+
+| Status | `code` | Where | Cause |
+|---|---|---|---|
+| `400` | `invalid_cursor` | Tokenomics feeds | `since` isn't a cursor the service issued. |
+| `400` | `invalid_page` | Tokenomics feeds | `page` out of range or not a number. |
+| `400` | `invalid_parameter` | Any | Malformed filter value — e.g. bad date, unknown enum, `item` list over 25 ids. The `message` says which. |
+| `401` | `api_key_invalid` | Keyed routes | Unknown, revoked, or malformed `bx_live_` key. |
+| `403` | `api_key_scope_missing` | Keyed routes | Valid key, missing the route's scope. |
+| `403` | `api_key_not_permitted` | Non-key routes | Route isn't open to API keys, any scope. |
+| `403` | `signature_missing` | Keyed routes | No `Authorization` header. Unsigned calls aren't allowed. |
+| `403` | `site_gate_required` | Any | The service's site gate is closed — Bluprynt-side condition, not your key. |
+| `404` | `not_found` | Any | Unknown route or asset id — including a valid id your key's scope doesn't cover, and a feature-flagged route that's off. |
+| `409` | `watchlist_limit_reached` | `POST /me/watchlist` | Your key's watchlist is full. |
+| `429` | `too_many_requests` | Any | Over your key's rate budget. Respect `Retry-After`. |
+| `500` | `internal_error` | Any | Server fault. Retry with backoff. |
+
+## Envelope
+
+Error responses keep the same outer shape as success, with the code in place of data:
+
+```json Illustrative
+{"code":"api_key_scope_missing","message":"This API key cannot call this route"}
+```
+
+Branch on `code` — `message` can change; `code` is the contract.
+
+## Troubleshooting
+
+| Symptom | Likely cause | Next step |
+|---|---|---|
+| `signature_missing` on every call | Header not sent — check your client actually sets `Authorization` | Log the outgoing request. |
+| `api_key_invalid` | `Bearer` missing, key mistyped, revoked, or `bx_live_` prefix truncated | Compare the full string; ask Bluprynt to check the key's `keyPrefix`/`revokedAt`. |
+| `api_key_scope_missing` | Right key, missing scope | Ask for the scope or use a wider-scoped key. |
+| `404 not_found` on `/tokenomics/changes` | Feed feature-flagged off for the service | Ask Bluprynt to confirm the feed is enabled. |
+| `watchlist_limit_reached` | At your per-key cap (default 50) | Delete stale watches or ask for a higher limit. |
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Why does a real asset id 404?">
+    Two reasons: the asset isn't in the registry (or isn't public), or the route is behind a feature flag. `not_found` doesn't distinguish them.
+  </Accordion>
+  <Accordion title="Is the error shape the same for unauthenticated calls?">
+    Yes — `403 signature_missing` uses the same `{code, message}` body.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Authentication](/api/explorer/authentication) — the auth codes in context
+- [Rate limits](/api/explorer/rate-limits) — the `429` path

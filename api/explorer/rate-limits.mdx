@@ -1,0 +1,45 @@
+---
+title: "Rate limits"
+sidebarTitle: "Rate limits"
+description: "Per-key rate budgets on the Explorer API and the 429 response."
+---
+
+Each exchange key carries its own requests-per-minute budget, set at issue. Default is **120 requests/minute**, adjustable per key from 1 to 6,000. A short-burst allowance (about a tenth of the per-minute budget over 10 seconds) smooths bursts.
+
+## The 429 response
+
+```json
+{"code":"too_many_requests","message":"Too many requests — slow down or sign in for a higher budget"}
+```
+
+Response headers on limited calls:
+
+| Header | Meaning |
+|---|---|
+| `Retry-After` | Seconds until you may retry. |
+| `X-RateLimit-*` | Budget and remaining allowance where the route exposes it. |
+
+When you see `429`, wait `Retry-After` seconds — don't hammer. Sustained 429s mean you're over your budget; contact Bluprynt to raise `rateLimitPerMinute` for your key.
+
+## Designing around the budget
+
+- Poll with `nextCursor`/`since` rather than re-reading full pages — most polls return empty or a few items.
+- Batch: the `item` filter on [monitoring changes](/api/explorer/watchlist-monitoring) takes up to 25 asset ids per call.
+- Cache `GET /me/watchlist` server-side; it changes only when you change it.
+- Spread calls evenly. A 120/min budget is 2/second — burst spikes trip the 10-second allowance even when the minute budget is fine.
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Are limits per key or per route?">
+    Per key, across all key-callable routes. `/health` and `/openapi.json` aren't key-gated and don't consume your budget.
+  </Accordion>
+  <Accordion title="Can I see my current usage?">
+    Check `X-RateLimit-Remaining` on responses where exposed; otherwise count your own calls.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Errors](/api/explorer/errors) — `too_many_requests` in the code table
+- [Polling guidance](/api/explorer/webhooks-polling) — stay under the budget by polling smart

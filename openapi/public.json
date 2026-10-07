@@ -419,6 +419,126 @@
           "Badges"
         ]
       }
+    },
+    "/kyi/v1/tokens": {
+      "get": {
+        "description": "Finds indexed tokens by CAIP-19, or by address with an optional chain slug, and returns their KYI verification, discovered authorities and wallet-proof verifications. Provide either `caip19`, or `address` with optional `chain_slug`.",
+        "operationId": "kyi.lookupTokens",
+        "parameters": [
+          {
+            "name": "chain_slug",
+            "required": false,
+            "in": "query",
+            "description": "Chain slug, used with address",
+            "schema": {
+              "example": "ethereum"
+            }
+          },
+          {
+            "name": "address",
+            "required": false,
+            "in": "query",
+            "description": "Token address",
+            "schema": {
+              "example": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+            }
+          },
+          {
+            "name": "caip19",
+            "required": false,
+            "in": "query",
+            "description": "CAIP-19 asset ID",
+            "schema": {
+              "example": "eip155:1/erc20:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching tokens",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KyiTokenLookup"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid, missing or mixed query parameters"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid API key"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    },
+                    "statusCode": {
+                      "type": "number",
+                      "example": 401
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No indexed token matches; body is `{ \"kyi_verified\": false, \"data\": [] }`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KyiTokenLookup"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    },
+                    "statusCode": {
+                      "type": "number",
+                      "example": 500
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "An upstream service is unavailable"
+          }
+        },
+        "summary": "Look up KYI verification of tokens",
+        "tags": [
+          "KYI"
+        ],
+        "security": [
+          {
+            "api-key": []
+          }
+        ]
+      }
     }
   },
   "info": {
@@ -435,6 +555,10 @@
     {
       "name": "Badges",
       "description": "Verification badge assets"
+    },
+    {
+      "name": "KYI",
+      "description": "Know Your Issuer verification lookups"
     }
   ],
   "servers": [

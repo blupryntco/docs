@@ -1,0 +1,124 @@
+---
+title: "Badges"
+sidebarTitle: "Badges"
+description: "Render Bluprynt verification badges — every credential type, variant, theme, format and size."
+---
+
+`GET /api/v1/badges/{credential_type}` serves the official badge images for a credential. The endpoint is public — no API key — so you can embed it directly on any page, including pages you don't control like a token listing.
+
+## Options
+
+| Parameter | Values | Default |
+|---|---|---|
+| `credential_type` (path) | `kyi_verified`, `proof_of_collateral` | — |
+| `variant` | `icon`, `full` | `icon` |
+| `theme` | `dark`, `light` | `dark` |
+| `format` | `svg`, `png` | `svg` |
+| `size` | `16`, `24`, `32`, `64` | `24` |
+
+- `icon` is the square mark; `full` is the pill badge with the credential name. `size` applies to `icon` only and is ignored for `full`.
+- `size=64` falls back to the 32 px asset — no 64 px icon exists.
+- `webp` is accepted as a value but returns `415 Unsupported Media Type` — it isn't available yet.
+
+## Every variant
+
+### KYI verified
+
+<Columns cols={2}>
+  <Frame caption="kyi_verified · full · light">
+    <img src="/images/api/badges/kyi_verified-full-light.webp" alt="KYI Verified pill badge, light theme" />
+  </Frame>
+  <Frame caption="kyi_verified · full · dark">
+    <img src="/images/api/badges/kyi_verified-full-dark.webp" alt="KYI Verified pill badge, dark theme" />
+  </Frame>
+</Columns>
+<Columns cols={2}>
+  <Frame caption="kyi_verified · icon · light">
+    <img src="/images/api/badges/kyi_verified-icon-light.webp" alt="KYI Verified icon badge, light theme" />
+  </Frame>
+  <Frame caption="kyi_verified · icon · dark">
+    <img src="/images/api/badges/kyi_verified-icon-dark.webp" alt="KYI Verified icon badge, dark theme" />
+  </Frame>
+</Columns>
+
+### Proof of Collateral
+
+<Columns cols={2}>
+  <Frame caption="proof_of_collateral · full · light">
+    <img src="/images/api/badges/proof_of_collateral-full-light.webp" alt="Proof of Collateral pill badge, light theme" />
+  </Frame>
+  <Frame caption="proof_of_collateral · full · dark">
+    <img src="/images/api/badges/proof_of_collateral-full-dark.webp" alt="Proof of Collateral pill badge, dark theme" />
+  </Frame>
+</Columns>
+<Columns cols={2}>
+  <Frame caption="proof_of_collateral · icon · light">
+    <img src="/images/api/badges/proof_of_collateral-icon-light.webp" alt="Proof of Collateral icon badge, light theme" />
+  </Frame>
+  <Frame caption="proof_of_collateral · icon · dark">
+    <img src="/images/api/badges/proof_of_collateral-icon-dark.webp" alt="Proof of Collateral icon badge, dark theme" />
+  </Frame>
+</Columns>
+
+## Embed it
+
+```html
+<a href="https://verified.bluprynt.com/verified-assets/<address>/<chain>">
+  <img
+    src="https://integrations.bluprynt.com/api/v1/badges/kyi_verified?variant=full&theme=light"
+    alt="KYI Verified by Bluprynt"
+    height="32"
+  />
+</a>
+```
+
+Always link the badge to the asset's verified page (the `asset_url` from an [asset lookup](/api/public/asset-lookup)) so anyone can check the claim behind it.
+
+## Caching
+
+Badge responses are immutable:
+
+```http
+Cache-Control: public, max-age=31536000, immutable
+```
+
+Cache and CDN them freely — the URL parameters fully determine the image. When a badge changes, the URL changes.
+
+```bash
+curl -s -o kyi.svg -w "%{http_code} %{content_type}\n" \
+  "https://integrations.bluprynt.com/api/v1/badges/kyi_verified?variant=full"
+# 200 image/svg+xml
+```
+
+## Errors
+
+All errors return a JSON body even though the route serves images:
+
+| Status | Body | Cause |
+|---|---|---|
+| `400` | `{"message":"Invalid credential_type \"x\". Allowed: kyi_verified, proof_of_collateral",…}` | Unknown credential type in the path. |
+| `400` | `{"message":"Invalid format \"gif\". Allowed: svg, png, webp",…}` | Unsupported `format` value. |
+| `400` | `{"message":"Invalid theme \"x\". Allowed: dark, light",…}` | Unsupported `theme`. |
+| `400` | `{"message":"Invalid variant \"x\". Allowed: icon, full",…}` | Unsupported `variant`. |
+| `400` | `{"message":"Invalid size \"x\". Allowed: 16, 24, 32, 64",…}` | Unsupported `size`. |
+| `404` | `{"message":"Badge not available",…}` | The combination is valid but no asset exists for it. |
+| `415` | `{"message":"WebP badges are not yet available. Use svg or png.",…}` | `format=webp`. |
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Why is badge serving public while every other route needs a key?">
+    The badge only displays a public verification status — it leaks nothing. Requiring a key would make it impossible to embed on third-party sites, which is its purpose.
+  </Accordion>
+  <Accordion title="Which theme should I use?">
+    Match the surface the badge sits on. `light` for light backgrounds, `dark` for dark. The pill (`full`) reads better as a standalone element; the icon works inline next to a token name.
+  </Accordion>
+  <Accordion title="Does the badge image reflect live verification state?">
+    The badge is a static claim image — it doesn't check state at render time. Resolve the verification first with an [asset lookup](/api/public/asset-lookup), then show the badge only when the asset is verified.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Recipe: KYI badge](/api/public/badge-recipe) — the end-to-end walkthrough
+- [Asset lookup](/api/public/asset-lookup) — get `asset_url` and the verification state to gate the badge
