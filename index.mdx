@@ -1,68 +1,57 @@
 ---
-title: "Introduction"
-description: "Bluprynt is the Compliance OS for Digital Assets — institutional-grade infrastructure for identity, disclosures, supervision, and credentials."
+title: "Bluprynt documentation"
+sidebarTitle: "Introduction"
+description: "Verify issuers, prove collateral, and supervise tokenized assets from one shared record."
+mode: "wide"
 ---
 
-<Tip>
-  **New to Bluprynt?** Start with [What is Bluprynt?](/overview/what-is-bluprynt), then jump to the [Quickstart](/quickstart) when you're ready to build.
-</Tip>
+<Frame>
+  <img src="/images/live/explorer-home.png" alt="The Bluprynt Explorer home page with search and an asset record." />
+</Frame>
 
-## The four pillars
+Bluprynt is the trust layer for tokenized assets. Issuers publish verified facts about who they are and what backs their tokens. Exchanges, custodians and supervisors read the same record.
 
-Bluprynt turns jurisdictional regulations, issuer disclosures, and regulator licenses into verifiable onchain state. Four pillars compose the platform.
+## Products
 
-<Columns cols={2}>
-  <Card title="Issuer Hub" icon="building-columns" href="/issuer-hub/overview">
-    The issuer dashboard — Smart Disclosures, KYI, MiCA Checker, and Proof of Collateral in one workspace, bound to a single verified onchain identity.
+<CardGroup cols={2}>
+  <Card title="Bluprynt Passport" icon="badge-check" href="/passport/overview">
+    For issuers. Verify your organization and assets with KYI, publish Proof of Collateral and manage disclosures.
   </Card>
-  <Card title="Compliance Hub" icon="shield-halved" href="/compliance-hub/compliance-hub-coming-soon">
-    The compliance dashboard for regulators and third-party compliance teams to review, decide, and monitor regulated asset activity in real time.
+  <Card title="Bluprynt Proof" icon="shield-check" href="/proof/overview">
+    For regulated entities and supervisors. Request information, review applications and monitor issuers and assets.
   </Card>
-  <Card title="Credentials" icon="award" href="/credentials/credentials-overview">
-    Verifiable onchain attestations of KYI and Proof of Collateral — portable, machine-checkable, and queryable across the asset lifecycle.
-  </Card>
-  <Card title="V4 Hooks" icon="plug" href="/v4-hooks/overview">
-    Onchain integrations between Bluprynt credentials and DeFi protocols — keeping tokenized markets safe and free of contagion.
-  </Card>
-</Columns>
+</CardGroup>
 
-## Pick your path
+## Tools
 
-Choose the starting point that matches what you're trying to do.
-
-<Columns cols={3}>
-  <Card title="I'm an issuer" icon="rocket" href="/issuer-hub/overview">
-    Verify your identity, file regulator-ready disclosures, and prove your reserves in the Issuer Hub.
+<CardGroup cols={3}>
+  <Card title="Know Your Issuer" icon="fingerprint" href="/tools/kyi">
+    Bind a verified issuer and its mint authority to a token.
   </Card>
-  <Card title="I'm an integrator" icon="code" href="/integration-guides/overview">
-    Embed the KYI widget, call the public API, or read credentials onchain via V4 Hooks.
+  <Card title="Proof of Collateral" icon="vault" href="/tools/proof-of-collateral">
+    Show what backs a token, with sources.
   </Card>
-  <Card title="I'm a regulator" icon="gavel" href="/compliance-hub/compliance-hub-coming-soon">
-    Review supervised assets, monitor attestations, and access auditable supervisory trails.
+  <Card title="Asset Dependency Engine" icon="network" href="/tools/asset-dependency-engine">
+    Every layer a tokenized asset depends on.
   </Card>
-</Columns>
+  <Card title="Disclosure Monitoring" icon="activity" href="/tools/disclosure-monitoring">
+    Classified changes to disclosures, kept as history.
+  </Card>
+  <Card title="Compliance Explorer" icon="search" href="/tools/compliance-explorer">
+    The public registry of assets, issuers and disclosures.
+  </Card>
+</CardGroup>
 
 ## Build with Bluprynt
 
-<Columns cols={3}>
-  <Card title="KYI Widget" icon="window" href="/integration-guides/kyi-widget">
-    Drop an iframe into your site to verify asset issuers. Ships as `@bluprynt/kyi-widget-sdk` on npm.
+<CardGroup cols={3}>
+  <Card title="KYI Widget SDK" icon="app-window" href="/sdk/quickstart">
+    Let issuers on your platform verify without leaving it.
   </Card>
-  <Card title="Public API" icon="terminal" href="/api-reference/overview">
-    REST endpoints for KYI lookups, attestation reads, and credential queries.
+  <Card title="Public API" icon="plug" href="/api/public/overview">
+    Look up KYI-verified assets and embed badges.
   </Card>
-  <Card title="Attestation schemas" icon="file-code" href="/architecture-and-standards/attestation-schemas">
-    Onchain attestation shapes across Ethereum, Solana, Stellar, Aptos, and XRPL.
+  <Card title="Explorer API" icon="radio-tower" href="/api/explorer/overview">
+    Stream tokenomics and disclosure changes with an API key.
   </Card>
-</Columns>
-
-## Going deeper
-
-- [What is Bluprynt?](/overview/what-is-bluprynt) — the longer-form read on why the platform exists and what it does.
-- [System overview](/architecture-and-standards/system-overview) — how identity, disclosures, credentials, and V4 Hooks compose into a single Compliance OS.
-- [Key concepts & glossary](/overview/key-concepts-and-glossary) — CCIDs, attestations, credentials, and the rest of the vocabulary.
-- [Standards compatibility](/overview/standards-compatibility) — W3C DIDs, EAS, SAS, CAIP, and the open standards Bluprynt interoperates with.
-
-<Note>
-  **Need help?** Reach us at [support@bluprynt.com](mailto:support@bluprynt.com) or [book a demo](https://bluprynt.com/#contact).
-</Note>
+</CardGroup>

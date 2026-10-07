@@ -1,0 +1,55 @@
+---
+title: "Explorer API"
+sidebarTitle: "Overview"
+description: "Read tokenomics changes and manage a monitoring watchlist with an exchange key."
+---
+
+The Explorer API serves the data behind [Compliance Explorer](/tools/compliance-explorer). With an exchange key you can read supply changes and run your own [Disclosure Monitoring](/tools/disclosure-monitoring) watchlist from code.
+
+```text Base URL
+https://explorer-api.bluprynt.com
+```
+
+## Authenticate
+
+Bluprynt issues exchange keys by arrangement. Ask [product@bluprynt.com](mailto:product@bluprynt.com). Send the key as a bearer token:
+
+```bash
+curl -s "https://explorer-api.bluprynt.com/tokenomics/changes" \
+  -H "Authorization: Bearer $BLUPRYNT_EXPLORER_KEY"
+```
+
+Each key carries scopes. A route only answers if your key has its scope.
+
+| Scope | Routes |
+|---|---|
+| `tokenomics:read` | `GET /tokenomics/changes`, `GET /assets/{id}/tokenomics/changes` |
+| `monitoring:read` | `GET /me/watchlist`, `GET /me/monitoring/changes`, `GET /me/notifications` |
+| `watchlist:write` | `POST /me/watchlist`, `PATCH /me/watchlist/{id}`, `DELETE /me/watchlist/{id}` |
+
+<Warning>
+The three `watchlist:write` routes change your watchlist. Everything else is read-only.
+</Warning>
+
+## Check the service
+
+These two routes need no key:
+
+```bash
+curl -s https://explorer-api.bluprynt.com/health
+# {"status":"ok","info":{},"error":{},"details":{}}
+
+curl -s https://explorer-api.bluprynt.com/openapi.json | jq .info.title
+```
+
+## Errors
+
+| Status | `code` | Cause |
+|---|---|---|
+| `401` | `api_key_invalid` | The key is unknown, revoked, or can't call this route. |
+| `403` | `api_key_scope_missing` | The key is valid but lacks the route's scope. |
+| `403` | `signature_missing` | No key was sent. Direct access without a key isn't permitted. |
+
+```json
+{"code":"api_key_invalid","message":"This API key cannot call this route"}
+```

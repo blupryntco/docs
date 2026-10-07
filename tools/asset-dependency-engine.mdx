@@ -1,0 +1,28 @@
+---
+title: "Asset Dependency Engine"
+description: "One deterministic graph of every layer a token depends on."
+---
+
+A tokenized asset is a stack, not a contract address. The Asset Dependency Engine maps everything under a token — vault, underlying token, oracle, bridge, legal wrapper and collateral — into one graph.
+
+<Frame>
+  <img src="/images/live/asset-dependency-engine.png" alt="The Asset Dependency Engine page on Bluprynt Explorer, showing an asset stack graph." />
+</Frame>
+
+## How it reads a stack
+
+The engine classifies each layer, resolves what sits under it, and reads it — recursively, up to **16 levels** deep. A branch ends only at native ETH, attested off-chain backing, or a plain ERC-20 read.
+
+| Principle | What it means for you |
+|---|---|
+| **Deterministic** | The same asset at the same pinned blocks gives the same graph. Every traversal can be replayed. |
+| **Unsupported is a node** | A layer the engine can't read still appears, flagged with a reason. Nothing is silently left out. |
+| **Read-only inspector** | Explorer shows sealed graph states. It never recomputes a read in your browser. |
+
+## What it doesn't do
+
+- It doesn't guess a dependency it can't classify; it flags the node.
+- It doesn't re-run on every block. Runs are manual, scheduled or replayed.
+- It doesn't score risk. It shows the dependencies and leaves the judgment to you.
+
+Open any asset in [Compliance Explorer](https://explorer.bluprynt.com) to see its graph.

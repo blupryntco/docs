@@ -1,0 +1,33 @@
+---
+title: "Disclosure Monitoring"
+description: "Know the moment an issuer's disclosure changes, and whether it matters."
+---
+
+Disclosure Monitoring re-reads every tracked disclosure on a cadence. Each change is versioned, quoted and classified, so you see what changed, where, and how much it matters.
+
+<Frame>
+  <img src="/images/live/explorer-monitoring.png" alt="The Disclosure Monitoring page on Bluprynt Explorer." />
+</Frame>
+
+## How changes are classified
+
+| Class | Meaning |
+|---|---|
+| **Material** | The fact changed, for example a new reserve custodian. |
+| **Clarification** | Same fact, stated differently, for example the custodian's full legal name. |
+| **Editorial** | Formatting or wording only, such as a reflowed PDF. Kept, but folded away in the timeline. |
+| **Needs review** | The change couldn't be classified automatically. |
+
+## What you can rely on
+
+- **Same source, same field.** A change is one source saying something different about a disclosed field. Two sources disagreeing is a finding, not a change.
+- **Removal is evidence-gated.** A field that disappears is re-read several times before it counts as removed. A failed fetch never counts as a withdrawal.
+- **History is immutable.** Every version stays retrievable with its quote, document and hash.
+
+## Watch an asset
+
+On any asset page in [Compliance Explorer](https://explorer.bluprynt.com), click **Watch**. Your watched assets and their changes appear under [Monitoring](https://explorer.bluprynt.com/monitoring).
+
+<Info>
+Monitoring needs Explorer Pro. To manage a watchlist from code, use the [Explorer API](/api/explorer/overview).
+</Info>

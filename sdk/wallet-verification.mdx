@@ -1,0 +1,49 @@
+---
+title: "Wallet verification"
+description: "How issuers prove they control each wallet with authority over a token."
+---
+
+After the KYB check and the token lookup, the widget lists every wallet with authority over the token. The issuer verifies each one. Most methods sign a short challenge message off-chain: no funds move and there's no gas fee.
+
+<Frame>
+  <img src="/images/sdk/sign-wallets.png" alt="KYI widget listing the token's controlling wallets, one row per wallet." />
+</Frame>
+
+| Method | Chains | Confirmed |
+|---|---|---|
+| **Browser wallet** — Phantom, GemWallet, Crossmark | EVM, Solana, XRPL | Instantly |
+| **WalletConnect** — MetaMask, mobile wallets | EVM, Solana | Instantly |
+| **Manual signature** | EVM, Solana, XRPL | Instantly; Solana after Bluprynt review |
+| **HSM or custody** — a memo transaction | All | After Bluprynt review |
+| **Micro-transaction** | EVM | When the transaction is found |
+
+<Note>WalletConnect and micro-transactions aren't enabled for every integration. Ask your Bluprynt representative.</Note>
+
+## Manual signature
+
+Copy the challenge message from the widget, sign it with your own tooling and paste the signature back.
+
+<CodeGroup>
+```bash EVM (Foundry)
+cast wallet sign --interactive "<message>"
+```
+```bash Solana CLI
+solana sign-offchain-message -k <keypair.json> "<message>"
+```
+</CodeGroup>
+
+Any EVM tool that does an EIP-191 `personal_sign` works. For XRPL, the widget shows a short script using `xrpl` or `ripple-keypairs`.
+
+## HSM or custody
+
+If the key can't sign arbitrary messages, send a transaction from the wallet that carries only this memo:
+
+```text
+Bluprynt KYI verification: Selected wallet <address> confirms authority
+```
+
+Then email the transaction link to [product@bluprynt.com](mailto:product@bluprynt.com). The wallet stays pending until Bluprynt reviews it. The transaction pays normal network fees.
+
+## Multisig wallets
+
+Sign as the multisig itself or as any one of its signers. If you can't sign for a wallet, its tokens stay listed but unverified.
