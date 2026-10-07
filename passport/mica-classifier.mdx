@@ -19,29 +19,17 @@ The MiCA asset classifier tells you how MiCA treats your token. You answer up to
 
 ```mermaid
 flowchart TD
-  A[Value or right?] -->|No| X[Not a crypto-asset]
-  A -->|Yes| B[Transferable?]
-  B -->|No| X
-  B -->|Yes| C[Uses DLT?]
-  C -->|No| Y[MiCA does not apply]
-  C -->|Yes| D[Excluded issuer?]
-  D -->|Yes| X
-  D -->|No| E[Unique?]
-  E -->|Yes| Y
-  E -->|No| F[Excluded type?]
-  F -->|Yes| Y
-  F -->|No| G[Stable value?]
-  G -->|No| O[Other token]
-  G -->|Yes| H[References value?]
-  H -->|No| O
-  H -->|Yes| I[One currency?]
-  I -->|Yes| M[EMT]
-  I -->|No| J[Wider reference?]
-  J -->|Yes| R[ART]
-  J -->|No| Z[Review your choices]
+  A[Q1–2 Crypto-asset?] -->|No| X[Not a crypto-asset]
+  A -->|Yes| B[Q3–6 In MiCA scope?]
+  B -->|No| Y[Outside MiCA]
+  B -->|Yes| C[Q7–8 Stable, referenced?]
+  C -->|No| O[Other token]
+  C -->|Yes| D[Q9 One currency?]
+  D -->|Yes| M[EMT]
+  D -->|No| R[Q10 ART or review]
 ```
 
-Each answer either ends the flow with a result or opens the next question.
+Each answer either ends the flow with a result or opens the next question. The [Questions](#questions) table gives the exact result for each exit.
 
 ## Classify a token
 
