@@ -1,48 +1,115 @@
 ---
-title: "Embed a KYI badge"
+title: "Show a KYI badge in your exchange UI"
 sidebarTitle: "Recipe: KYI badge"
-description: "Show a Bluprynt verification badge on your site. No API key needed."
+description: "End-to-end recipe: resolve a token's verification, then render the badge and link it to the verified page."
 ---
 
-The badge endpoint is public. Link it to the asset's verified page so anyone can check the claim.
+This recipe walks through adding a KYI badge next to a token in your UI — the way an exchange or wallet shows "this issuer is verified" for a listed asset. It needs the Public API key for the lookup; the badge image itself is public.
 
-<Columns cols={2}>
-  <Frame caption="kyi_verified · full · light">
-    <img src="/images/badges/kyi-full-light.svg" alt="KYI Verified badge" />
-  </Frame>
-  <Frame caption="proof_of_collateral · full · light">
-    <img src="/images/badges/poc-full-light.svg" alt="Proof of Collateral badge" />
-  </Frame>
-</Columns>
+## Key concepts
 
-## Embed it
-
-```html index.html
-<a href="https://verified.bluprynt.com/verified-assets/<address>/<chain>">
-  <img
-    src="https://integrations.bluprynt.com/api/v1/badges/kyi_verified?variant=full&theme=light"
-    alt="KYI Verified by Bluprynt"
-    height="32"
-  />
-</a>
-```
-
-Take the link from the `asset_url` field of the [asset lookup](/api/public/overview).
-
-## Options
-
-| Parameter | Values |
+| Term | Meaning |
 |---|---|
-| `credential_type` (path) | `kyi_verified`, `proof_of_collateral` |
-| `variant` | `icon`, `full` |
-| `theme` | `light`, `dark` |
-| `format` | `svg`, `png`, `webp` |
-| `size` | `16`, `24`, `32`, `64` |
+| Verified record | The API row behind a token: issuer identity, authorities, verification flags. |
+| `asset_url` | The public verified page the badge should link to. |
+| Badge | A hosted image from `/api/v1/badges/{credential_type}`. |
 
-## Try it
+## How it works
 
-```bash
-curl -s -o kyi.svg -w "%{http_code} %{content_type}\n" \
-  "https://integrations.bluprynt.com/api/v1/badges/kyi_verified?variant=full"
-# 200 image/svg+xml
+```mermaid
+flowchart TD
+    A["Token in your listing"] --> B["GET /assets/{chain}/{address}"]
+    B --> C{"business_verified + authority verified?"}
+    C -->|"Yes"| D["Render badge, link to asset_url"]
+    C -->|"404 or false"| E["Render nothing — unverified"]
 ```
+
+The badge is a claim, not a check. Gate it on the live record: show it only when the lookup confirms verification, so a revoked asset never keeps a stale badge.
+
+## Steps
+
+<Steps>
+  <Step title="Look up the asset">
+    For each listed token, call the [asset lookup](/api/public/asset-lookup) with its chain and address:
+
+    ```bash
+    curl -s "https://integrations.bluprynt.com/assets/solana/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" \
+      -H "Authorization: $BLUPRYNT_API_KEY"
+    ```
+  </Step>
+  <Step title="Check the verification flags">
+    A KYI-verified asset has `business_details.business_verified: true` and `verified: true` on each authority. `404` means not verified — show nothing.
+
+    <Frame caption="The verified page the badge links to — the KYI VERIFIED status (1) and the credential record behind it (2).">
+      <img src="/images/api/verified-asset.webp" alt="USD Coin verified page showing KYI VERIFIED status and the credential card" />
+    </Frame>
+  </Step>
+  <Step title="Render the badge">
+    Use `asset_url` as the link and the [badges endpoint](/api/public/badges) as the image:
+
+    ```html
+    <a href="https://verified.bluprynt.com/verified-assets/<address>/<chain>">
+      <img
+        src="https://integrations.bluprynt.com/api/v1/badges/kyi_verified?variant=full&theme=light"
+        alt="KYI Verified by Bluprynt"
+        height="32"
+      />
+    </a>
+    ```
+  </Step>
+  <Step title="Refresh on a schedule">
+    Re-run the lookup when you refresh listing data. Verification can be revoked — a cached badge becomes a false claim.
+  </Step>
+</Steps>
+
+## Worked example
+
+```ts TypeScript — server-side, per listed token
+const res = await fetch(
+  `https://integrations.bluprynt.com/assets/${token.chain}/${token.address}`,
+  { headers: { Authorization: process.env.BLUPRYNT_API_KEY! } },
+)
+
+const asset = res.ok ? await res.json() : null
+const kyi =
+  asset?.business_details?.business_verified === true &&
+  asset.token_details.authorities.every((a) => a.verified)
+
+// Pass { kyi, assetUrl: asset?.asset_url } to your template:
+// kyi ? <Badge url={asset.asset_url} /> : null
+```
+
+```html Template
+{{#if kyi}}
+<a href="{{assetUrl}}">
+  <img src="https://integrations.bluprynt.com/api/v1/badges/kyi_verified?variant=full&theme=light"
+       alt="KYI Verified by Bluprynt" height="32" />
+</a>
+{{/if}}
+```
+
+## Troubleshooting
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| `401` on the lookup | `Bearer` prefix on the key | Send the raw key — see [Authentication](/api/public/authentication). |
+| `404` for a token you listed | Not verified, or wrong chain | Check the same address on other chains; show unverified. |
+| Badge is a broken image | Invalid parameter combination | Check [Badges](/api/public/badges) — `webp` returns `415`, `size=64` serves 32 px. |
+| Badge doesn't update | It's a static image | That's correct — re-check the lookup and drop the badge when verification lapses. |
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Should I check every authority or just business_verified?">
+    `business_verified` is the headline KYI state. For a stricter display, require every authority to be `verified` too — the worked example does both.
+  </Accordion>
+  <Accordion title="Can I show the badge without linking it?">
+    You can, but linking to `asset_url` is the point — it lets your users verify the claim instead of trusting the image. The image alone proves nothing.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Badges](/api/public/badges) — every variant, theme, format and size
+- [Asset lookup](/api/public/asset-lookup) — the record behind the check
+- [Token KYI lookup](/api/public/token-lookup) — the per-chain verdict with proof detail

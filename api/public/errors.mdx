@@ -1,0 +1,65 @@
+---
+title: "Errors"
+sidebarTitle: "Errors"
+description: "Every status code and error body the Public API returns, observed live."
+---
+
+The Public API uses standard HTTP status codes. Error bodies follow NestJS conventions: a `message`, and usually an `error` name and `statusCode`. Handle them by status, and read `message` for detail.
+
+## Status reference
+
+| Status | Where | Body | Cause |
+|---|---|---|---|
+| `400` | Badges | `{"message":"Invalid …","error":"Bad Request","statusCode":400}` | A parameter outside its allowed values — the message lists what's allowed. |
+| `400` | KYI tokens | `{"message":"Provide caip19, or address with optional chain_slug","error":"Bad Request","statusCode":400}` | No query parameters. |
+| `400` | KYI tokens | `{"message":"Use either caip19, or address with optional chain_slug, not both",…}` | Mixed both lookup forms. |
+| `400` | KYI tokens | `{"message":"chain_slug requires address",…}` | `chain_slug` without `address`. |
+| `400` | KYI tokens | `{"message":"caip19 must be a valid CAIP-19 identifier",…}` | Malformed CAIP-19. |
+| `401` | All keyed routes | `{"message":"Unauthorized","statusCode":401}` | Missing key, wrong key, or a `Bearer` prefix. Note there's no `error` field in this body. |
+| `404` | `/assets` | `{"message":"Asset not found","error":"Not Found","statusCode":404}` | No verified asset at that address or chain. |
+| `404` | `/assets` list | `{"message":"Assets not found","error":"Not Found","statusCode":404}` | List query matched nothing — e.g. a non-numeric `page_size`. |
+| `404` | KYI tokens | `{"kyi_verified":false,"data":[]}` | No indexed token matches. The body is the normal response shape, not an error envelope. |
+| `404` | Badges | `{"message":"Badge not available",…}` | Valid parameters, no matching image asset. |
+| `415` | Badges | `{"message":"WebP badges are not yet available. Use svg or png.",…}` | `format=webp`. |
+| `500` | Any | `{"message":"Internal Server Error","statusCode":500}` | Server fault. Retry; report persistent failures. |
+| `502` | KYI tokens | Nest error body | An upstream service is unavailable. Retry with backoff. |
+
+## Observed examples
+
+```json 401 — missing, wrong, or Bearer-prefixed key
+{"message":"Unauthorized","statusCode":401}
+```
+
+```json 404 — no verified asset at that address
+{"message":"Asset not found","error":"Not Found","statusCode":404}
+```
+
+```json 400 — badge parameter outside its allowed values
+{"message":"Invalid theme \"blue\". Allowed: dark, light","error":"Bad Request","statusCode":400}
+```
+
+```json 404 — KYI token lookup, no match (normal body shape)
+{"kyi_verified":false,"data":[]}
+```
+
+## Handling guidance
+
+- **Retry** `500` and `502` with exponential backoff. Everything else is a caller bug or a real "not found" — don't retry it.
+- Treat `404` as data, not failure: a token that isn't verified *should* come back 404. Show an "unverified" state, not an error state.
+- The KYI-tokens `404` still returns a usable body (`kyi_verified: false`), so check the status code *and* the payload.
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Why 401 when my key is definitely correct?">
+    Check for a `Bearer` prefix — it's the most common cause. The key must be the entire header value. Also check for stray whitespace or quotes around the key.
+  </Accordion>
+  <Accordion title="Is there a rate-limit error?">
+    No `429` or rate-limit headers were observed. See [Limits, caching and versions](/api/public/limits).
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Authentication](/api/public/authentication) — the `Bearer` mistake that causes most 401s
+- [Token KYI lookup](/api/public/token-lookup) — the query-form 400s

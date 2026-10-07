@@ -1,0 +1,148 @@
+---
+title: "Tokenomics changes"
+sidebarTitle: "Tokenomics changes"
+description: "Stream verified tokenomics revisions — unlocks, emissions, allocations — with issuer and on-chain evidence."
+---
+
+`GET /tokenomics/changes` and `GET /assets/{id}/tokenomics/changes` stream tokenomics revisions — every detected change to how a token's supply, unlock schedule, allocations or control works, each backed by issuer documents and/or independently reproducible chain reads. Requires `tokenomics:read`.
+
+## Key concepts
+
+| Term | Meaning |
+|---|---|
+| Revision | One write of a tokenomics event to the feed. `id` + `revision` is your idempotency key — the same event re-revises (T-30 → T-7 → T-1 → occurred). |
+| `feedSeq` | Monotonic feed sequence (exact integer string). For ordering/audit only — resume with `nextCursor`, not this value. |
+| `itemKey` | Stable id shared by every revision of the same underlying event. |
+| Evidence | Every revision cites what was observed: a held issuer document (verbatim quote + sha256) or a finalized chain read (block, method, backend). |
+
+## Filters
+
+All filters apply before `limit`. Comma-separate multiple values in one parameter.
+
+| Parameter | Values | Notes |
+|---|---|---|
+| `class` | `unlock_event`, `emission_change`, `allocation_change`, `allocation_move`, `control_change`, `value_accrual_change`, `governance_proposal`, `venue_notice`, `supply_change`, `governance_param_change`, `legal_classification_change`, `migration_event`, `onchain_mismatch` | One or more change classes. |
+| `status` | `upcoming`, `occurred`, `proposed`, `superseded` | A scheduled unlock stays `upcoming`; only a finalized on-chain release is `occurred`. |
+| `materiality` | `material`, `clarification`, `editorial`, `review`, `unclassified` | Classifier materiality. |
+| `direction` | `weakens`, `mixed`, `strengthens`, `neutral`, `undetermined` | Evidenced effect on holders — never a price forecast. `undetermined` = not assessed. |
+| `eventFrom` / `eventTo` | ISO 8601 | Bounds on `eventAt` (when the event happens). |
+| `detectedFrom` / `detectedTo` | ISO 8601 | Bounds on `detectedAt` (when Bluprynt saw it). |
+| `minCirculatingPct` | Decimal string | Rows without an evidenced circulating percent never pass. |
+| `mismatchKind` | `undisclosed_unlock`, `amount_mismatch`, `date_mismatch`, `recipient_mismatch`, `disclosed_not_on_chain` | Events whose issuer-vs-on-chain comparison flagged these kinds. |
+| `asset` | Registry asset id | On `GET /tokenomics/changes` only — one watched asset id. |
+| `limit` | 1–200 | Default 50. |
+
+An unknown value in any filter is a `400`, never a silently wider feed.
+
+## Response
+
+```json Illustrative — trimmed
+{
+  "data": {
+    "items": [
+      {
+        "id": "7f3c…",
+        "revision": 2,
+        "feedSeq": "1830921",
+        "category": "tokenomics",
+        "itemKey": "eip155:1/0x…/unlock:cliff-2026-11",
+        "asset": { "assetId": "…", "chainId": 1, "contractAddress": "0x…" },
+        "class": "unlock_event",
+        "status": "occurred",
+        "eventAt": "2026-11-01T00:00:00.000Z",
+        "detectedAt": "2026-11-01T00:09:41.000000Z",
+        "fieldName": "unlock_schedule",
+        "changeKind": "changed",
+        "materiality": "material",
+        "summary": "Cliff unlock of 4.2M tokens occurred",
+        "unlock": {
+          "amount": "4200000", "amountRaw": "4200000000000", "decimals": 18,
+          "pctCirculating": "0.83", "pctTotalSupply": "0.42",
+          "recipientClass": "investor", "scheduleMatch": "as_scheduled",
+          "txHash": "0x…"
+        },
+        "impact": { "direction": "weakens", "status": "assessed", "disposition": "…" },
+        "primaryEvidence": { "kind": "on_chain", "chain": { "method": "log:Transfer", "block": "23501…" } },
+        "onchainMismatch": null
+      }
+    ],
+    "hasMore": true,
+    "nextCursor": "tfc1_…",
+    "nextPage": "tfp1_…",
+    "order": "priority"
+  },
+  "meta": { "request_id": "req_…", "fetched_at": "…" },
+  "errors": []
+}
+```
+
+### Field reference
+
+| Field | Type | Notes |
+|---|---|---|
+| `id`, `revision` | string, int | Idempotency key pair — dedupe on both. |
+| `feedSeq` | string | Monotonic sequence; don't resume on it — use `nextCursor`. |
+| `asset` | object | `assetId` (null when not yet in the registry), `chainId`, `contractAddress`. |
+| `class`, `status`, `materiality`, `changeKind` | enum | See filter tables. |
+| `eventAt`, `detectedAt` | ISO 8601 | Evidenced event time vs detection time; `detectedAt` carries µs precision. |
+| `oldValue`/`newValue` | string | Before/after where the monitor holds one. |
+| `unlock` | object \| null | `amount`/`amountRaw` exact decimals; `pctCirculating`/`pctTotalSupply` exact decimal percents; `scheduleMatch` ∈ `as_scheduled`/`deviates`/`unscheduled`; `txHash` when on-chain. |
+| `impact` | object | `direction` (weakens/mixed/strengthens/neutral, null = undetermined), `status` (assessed/undetermined/pending), `disposition`, `reason`, `rulesVersion`, `assessedAt`. Never a price forecast. |
+| `oldEvidence`/`newEvidence` | object | `value`, `quote` (verbatim), `artifactId`, `sha256` for each side. |
+| `primaryEvidence` | object | `kind` ∈ `issuer_document`/`on_chain`/`governance`/`venue_notice`; `observedAt`, `sourceUrl`, `artifactId`, `sha256`, `quote`, `publishedAt`; `chain` holds the read for `on_chain`. |
+| `onChainEvidence` | array | Every chain read: `method` (e.g. `eth_call:totalSupply()`, `log:Transfer`), `block`, `blockHash`, `txHash`, `backend`, `readAt`, `exchangeSha256`. |
+| `onchainMismatch` | object \| null | The issuer-vs-on-chain comparison when stored: `kinds`, `comparisonStatus` (comparable/undetermined), tolerances, issuer and chain evidence ids, `comparedAt`. A disagreement is a fact about the record, never an impact direction. |
+| `hasMore`/`nextCursor`/`nextPage`/`order` | — | See [Pagination](/api/explorer/pagination). |
+
+## Worked example
+
+Keep a `seen` cursor in your store and poll:
+
+```ts
+async function pollTokenomics(seen?: string) {
+  const url = new URL('https://explorer-api.bluprynt.com/tokenomics/changes')
+  url.searchParams.set('limit', '200')
+  if (seen) url.searchParams.set('since', seen)
+  const res = await fetch(url, {
+    headers: { Authorization: `Bearer ${process.env.BLUPRYNT_EXPLORER_KEY}` },
+  })
+  if (!res.ok) throw new Error(`${res.status} ${await res.text()}`)
+  const { data } = await res.json()
+  for (const rev of data.items) {
+    ingest(rev) // dedupe on (id, revision)
+  }
+  return data.nextCursor // persist for the next poll
+}
+```
+
+## Errors and limits
+
+| Status | `code` | Cause |
+|---|---|---|
+| `400` | `invalid_cursor` | `since` isn't a cursor the feed issued. |
+| `400` | `invalid_page` | `page` token invalid or replayed against different filters. |
+| `400` | `invalid_parameter` | Bad filter value — the message says which. |
+| `401` | `api_key_invalid` | Bad or revoked key. |
+| `403` | `api_key_scope_missing` | Key lacks `tokenomics:read`. |
+| `404` | `not_found` | Feature-flagged off, or the asset id isn't visible to your scope. |
+| `429` | `too_many_requests` | Over your per-key budget. |
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Do revisions repeat the same event?">
+    Yes — a scheduled unlock arrives as `upcoming` at T-30, revises as the date approaches, and lands `occurred` once the chain read finalizes. `itemKey` links them; `id`+`revision` versions them. Keep the latest revision per `itemKey`.
+  </Accordion>
+  <Accordion title="What's onchain_mismatch?">
+    When a disclosed event disagrees with the reproducible chain read — e.g. an undisclosed unlock or an amount mismatch — the comparison is stored on the revision. `comparisonStatus: undetermined` means one side was missing, stale or incomplete; no mismatch kind is asserted.
+  </Accordion>
+  <Accordion title="Why is direction sometimes null?">
+    Impact assessment runs only where enabled and where the evidence supports a direction. `null` (or `undetermined`) means "not assessed" — it is never silently "neutral".
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Pagination](/api/explorer/pagination) — the cursor contract
+- [Polling guidance](/api/explorer/webhooks-polling) — the recommended poll loop
+- [Watchlist and monitoring](/api/explorer/watchlist-monitoring) — the other change stream

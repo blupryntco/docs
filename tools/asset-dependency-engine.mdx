@@ -1,28 +1,40 @@
 ---
 title: "Asset Dependency Engine"
-description: "One deterministic graph of every layer a token depends on."
+sidebarTitle: "Overview"
+description: "One deterministic graph of every layer a tokenized asset depends on: wrapper, custody, contract, oracle, bridge and collateral."
 ---
 
-A tokenized asset is a stack, not a contract address. The Asset Dependency Engine maps everything under a token — vault, underlying token, oracle, bridge, legal wrapper and collateral — into one graph.
+A tokenized asset is a stack of dependencies, not a single contract address. The Asset Dependency Engine walks that stack from the token you hold down to what finally backs it, and records every layer it passes as a node in one graph. Risk, treasury and compliance teams use it to see what a token really depends on before they hold it, list it or accept it as collateral.
 
-<Frame>
-  <img src="/images/live/asset-dependency-engine.png" alt="The Asset Dependency Engine page on Bluprynt Explorer, showing an asset stack graph." />
+<Frame caption="An illustrative graph from the public Asset Dependency Engine page. The dark node is the asset you hold, green is a terminal and amber is a layer the engine could not read.">
+  <img src="/images/explorer/ade-landing-graph.webp" alt="The Asset Dependency Engine hero graph: a vault share at the top, a tokenized money market fund and an unsupported L2 deployment beneath it, an oracle and a fund share class below those, and US Treasury bills as a terminal at the bottom." />
 </Frame>
 
-## How it reads a stack
+Read the public overview at [explorer.bluprynt.com/tools/asset-dependency-engine](https://explorer.bluprynt.com/tools/asset-dependency-engine).
 
-The engine classifies each layer, resolves what sits under it, and reads it — recursively, up to **16 levels** deep. A branch ends only at native ETH, attested off-chain backing, or a plain ERC-20 read.
+## What it answers
 
-| Principle | What it means for you |
-|---|---|
-| **Deterministic** | The same asset at the same pinned blocks gives the same graph. Every traversal can be replayed. |
-| **Unsupported is a node** | A layer the engine can't read still appears, flagged with a reason. Nothing is silently left out. |
-| **Read-only inspector** | Explorer shows sealed graph states. It never recomputes a read in your browser. |
+| Question | Answer |
+| --- | --- |
+| What does this token actually depend on? | Everything under it: the vault, the underlying token, the oracle pricing it, the bridge it crossed, the legal wrapper and the collateral at the bottom. |
+| How far down does it look? | It resolves recursively to depth 16. A branch ends only at native ETH, attested off-chain backing or a plain ERC-20 read. |
+| What if it can't read a layer? | The layer still appears, as a flagged node with a reason. The graph is complete about what it doesn't know. |
+| Does it score risk? | No. It shows what an asset depends on and lets you judge. |
 
-## What it doesn't do
+## Pages in this section
 
-- It doesn't guess a dependency it can't classify; it flags the node.
-- It doesn't re-run on every block. Runs are manual, scheduled or replayed.
-- It doesn't score risk. It shows the dependencies and leaves the judgment to you.
+<CardGroup cols={2}>
+  <Card title="How resolution works" icon="diagram-project" href="/tools/asset-graph/how-it-works">
+    Nodes, edges, terminals and flags, the four resolution stages, and how to read a graph.
+  </Card>
+  <Card title="Graph reference" icon="table" href="/tools/asset-graph/reference">
+    Every node type, edge type, flag, wallet type and limit.
+  </Card>
+</CardGroup>
 
-Open any asset in [Compliance Explorer](https://explorer.bluprynt.com) to see its graph.
+## Related tools
+
+<CardGroup cols={2}>
+  <Card title="Compliance Explorer" icon="magnifying-glass" href="/tools/compliance-explorer">The registry the graph is built from.</Card>
+  <Card title="Proof of Collateral" icon="vault" href="/tools/proof-of-collateral">Verified reserve evidence for an asset.</Card>
+</CardGroup>

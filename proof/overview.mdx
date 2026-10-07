@@ -1,34 +1,97 @@
 ---
 title: "Bluprynt Proof"
 sidebarTitle: "Overview"
-description: "The Compliance Hub where supervisors review issuers and issue credentials."
+description: "The Compliance Hub where supervisors review issuers, monitor assets and issue credentials."
 ---
 
 <Frame caption="Product design: the Compliance Hub dashboard.">
-  <img src="/images/design/proof-home.png" alt="Compliance Hub dashboard design with application totals, recent applications and recent activity." />
+  <img src="/images/design/proof-home.png" alt="Compliance Hub dashboard design" />
 </Frame>
 
-Bluprynt Proof, at [compliance.bluprynt.com](https://compliance.bluprynt.com), is the Compliance Hub for regulators, exchanges and other reviewers. You publish forms, review what issuers submit through [Bluprynt Passport](/passport/overview), and issue credentials that anyone can check.
+Bluprynt Proof, at [compliance.bluprynt.com](https://compliance.bluprynt.com), is the Compliance Hub for regulators and other supervisors. You build forms, review what issuers submit through [Bluprynt Passport](/passport/overview), watch the assets you supervise, and issue credentials that anyone can check on-chain.
 
 <Info>
 Bluprynt Proof is in early access. Ask [product@bluprynt.com](mailto:product@bluprynt.com) for an organization.
 </Info>
 
-## What you can do
+## Key concepts
 
-| Area | Use it to |
+| Term | Meaning |
 |---|---|
-| **Dashboard** | See submitted, issued and rejected applications and recent work. |
-| **Applications** | Accept, review and decide on issuer applications. |
-| **Registry** | Browse organizations, assets and credentials in the shared record. |
-| **Credentials** | Define the credentials your organization issues, such as KYI. |
-| **Form manager** | Build the forms issuers fill in to apply for a credential. |
+| **Organization** | Your supervising body. Every member, form, application and credential belongs to it. |
+| **Member** | A person in your organization, with one role |
+| **Form** | Questions you publish for issuers to answer |
+| **Application** | One issuer's answers to one form |
+| **Watchlist** | The issuers, assets and credentials you supervise. Formerly *Registry*. |
+| **Credential** | Your on-chain statement about an issuer or asset, such as a licence. A kind of attestation. |
 
-<Columns cols={2}>
-  <Card title="Applications and review" icon="clipboard-check" href="/proof/applications">
-    Build a form, then review what issuers submit.
-  </Card>
-  <Card title="Registry" icon="database" href="/proof/registry">
-    Look up any organization, asset or credential.
-  </Card>
-</Columns>
+## How it works
+
+```mermaid
+flowchart TD
+  A[Build a form] --> B[Issuer applies]
+  B --> C[You review]
+  C --> D[Approve]
+  D --> E[Credential on-chain]
+  E --> F[Anyone verifies]
+```
+
+## Get started
+
+<CardGroup cols={2}>
+  <Card title="Sign in and access" icon="right-to-bracket" href="/proof/sign-in">Sign in, reset your password and see what each role can do.</Card>
+  <Card title="Dashboard" icon="house" href="/proof/dashboard">Set up supervision and see your monitored assets.</Card>
+  <Card title="Members and settings" icon="users" href="/proof/members">Invite members, set roles and manage your account.</Card>
+</CardGroup>
+
+## Forms and applications
+
+<CardGroup cols={2}>
+  <Card title="Form manager" icon="file-pen" href="/proof/form-manager">Create a form, pick its type and credential, and publish.</Card>
+  <Card title="Form builder" icon="list-check" href="/proof/form-builder">Every field type, validation and condition.</Card>
+  <Card title="Approval workflow" icon="user-check" href="/proof/approval-workflow">Set who approves, and in what order.</Card>
+  <Card title="Applications" icon="folder-open" href="/proof/applications">Find, filter, read and review applications.</Card>
+  <Card title="Application states" icon="diagram-project" href="/proof/application-states">Every state, who moves it and how.</Card>
+</CardGroup>
+
+## Watchlist
+
+<Frame caption="Product design: the Watchlist.">
+  <img src="/images/design/proof-registry.png" alt="Compliance Hub Watchlist design" />
+</Frame>
+
+<CardGroup cols={2}>
+  <Card title="Watchlist" icon="network-wired" href="/proof/registry">Your supervised issuers, assets and credentials.</Card>
+  <Card title="Watchlist assets" icon="coins" href="/proof/watchlist-assets">Add tokens one at a time or by CSV. Read the asset graph.</Card>
+  <Card title="Watchlist issuers" icon="building" href="/proof/watchlist-issuers">Add issuers, read their profile and request forms.</Card>
+</CardGroup>
+
+## Credentials
+
+<Frame caption="Product design: an asset graph.">
+  <img src="/images/design/proof-asset-graph.png" alt="Compliance Hub asset graph design" />
+</Frame>
+
+<CardGroup cols={2}>
+  <Card title="Credentials" icon="id-card" href="/proof/credentials">Credential types, issuance, contents and verification.</Card>
+</CardGroup>
+
+## Who uses what
+
+| Role | Main areas |
+|---|---|
+| **Super Admin** | Everything, plus members of other organizations |
+| **Organization Admin** | Form manager, credential types, members |
+| **Reviewer** | Applications assigned to them |
+| **Analyst** | Dashboard, Applications, Watchlist, Credentials |
+
+## Not available yet
+
+**Activity**, **Supervisory Intelligence** and **Monitoring** appear greyed out in the sidebar. They aren't available yet.
+
+## Related pages
+
+- [Bluprynt Passport](/passport/overview)
+- [KYI](/tools/kyi)
+- [Proof of Collateral](/tools/proof-of-collateral)
+- [Asset Dependency Engine](/tools/asset-dependency-engine)

@@ -1,0 +1,78 @@
+---
+title: "Authentication"
+sidebarTitle: "Authentication"
+description: "How to get a Public API key and send it on every request."
+---
+
+The Public API uses a single API key sent in the `Authorization` header. Keys are issued by Bluprynt per integrator — there is no self-serve key page, so Passport can't create or rotate one for you.
+
+## Get a key
+
+Ask [product@bluprynt.com](mailto:product@bluprynt.com) for a Public API key. Keys identify your integration and are issued per environment or partner on request.
+
+<Note>
+The **Integrations** page in [Passport](https://app.bluprynt.com) lists third-party data providers (1) — TRM Labs, Forta and similar. It does not issue or manage API keys — key requests go through Bluprynt directly.
+</Note>
+
+<Frame caption="Passport's Integrations page holds data providers (1), not API keys.">
+  <img src="/images/api/passport-integrations.webp" alt="The Passport Integrations page showing data-provider cards such as TRM Labs and Forta" />
+</Frame>
+
+## Send the key
+
+Send the key as the entire `Authorization` header value. There is no `Bearer` prefix and no other scheme.
+
+```http
+Authorization: <your-api-key>
+```
+
+A `Bearer` prefix is the most common mistake — the API treats `Authorization: Bearer <key>` as a different, unknown credential and answers `401`.
+
+```bash Test your key
+curl -s -o /dev/null -w "%{http_code}\n" \
+  "https://integrations.bluprynt.com/assets?page_size=1" \
+  -H "Authorization: $BLUPRYNT_API_KEY"
+# 200
+```
+
+`401` here means the key is missing, misspelled, or sent with a scheme prefix.
+
+## Try routes in the interactive docs
+
+The service hosts an interactive OpenAPI reference at [integrations.bluprynt.com](https://integrations.bluprynt.com). You can run every route from the browser without writing code.
+
+<Steps>
+  <Step title="Open the reference">
+    Go to [integrations.bluprynt.com](https://integrations.bluprynt.com) and click **Authorize** (1) in the top right.
+  </Step>
+  <Step title="Paste your key">
+    In the **Available authorizations** dialog, the `api-key` scheme is an `Authorization` header (1). Paste your key into **Value** (2) — the key alone, no `Bearer` — and click **Authorize** (3), then **Close**. Nothing is sent until you call a route.
+
+    <Frame caption="The Authorize dialog sends your key as the raw Authorization header on every Try it out call.">
+      <img src="/images/api/swagger-authorize.webp" alt="Swagger Authorize dialog showing the api-key scheme with an empty Value field" />
+    </Frame>
+  </Step>
+  <Step title="Run a route">
+    Open any route, click **Try it out**, fill in the parameters and click **Execute**. The response body, status and headers appear inline.
+  </Step>
+</Steps>
+
+## Keep the key safe
+
+- Store it in a secret manager or environment variable. Never commit it or ship it in client-side code.
+- Every endpoint except badges requires it, so a leaked key can be replayed against all of them.
+- If a key leaks, ask Bluprynt to revoke it — there is no self-serve rotation.
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Do badges need a key?">
+    No. `GET /api/v1/badges/{credential_type}` is public by design — it renders on pages you don't control, like a token listing. See [Badges](/api/public/badges).
+  </Accordion>
+  <Accordion title="Can one key call both Bluprynt APIs?">
+    No. The Public API and the [Explorer API](/api/explorer/overview) issue different keys with different formats. A Public API key is a raw secret; an Explorer API key is a `bx_live_…` bearer token with scopes.
+  </Accordion>
+  <Accordion title="Is there IP allowlisting or OAuth?">
+    No. The only credential check is the key value itself, compared against the keys Bluprynt has issued. Treat the key like a password.
+  </Accordion>
+</AccordionGroup>

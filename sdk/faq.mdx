@@ -1,0 +1,43 @@
+---
+title: "KYI FAQ"
+sidebarTitle: "FAQ"
+description: "Answers to common questions about integrating the KYI widget."
+---
+
+<AccordionGroup>
+  <Accordion title="Do members need a Bluprynt account?">
+    No. Your access token identifies them. Bluprynt links their progress to the token's `sub` under your partner ID.
+  </Accordion>
+  <Accordion title="Is KYI the same as KYC?">
+    No. KYC verifies a person. KYI verifies an issuer, which is the organization (through KYB) and its control of a token (through wallet signatures). See [Know Your Issuer](/tools/kyi).
+  </Accordion>
+  <Accordion title="Can I use the widget in a mobile app?">
+    The SDK is a browser library. It works in mobile browsers, and the drawer takes the full width on narrow screens. For a native app, ask your Bluprynt representative.
+  </Accordion>
+  <Accordion title="Can I prefill the token address or chain?">
+    Not in SDK `0.1.1`. The member pastes the address and Bluprynt detects the chain.
+  </Accordion>
+  <Accordion title="How do I know when a member finishes?">
+    There's no completion callback. After `onClose`, look the asset up with the [Public API](/api/public/overview): check `business_details.business_verified` and each authority's `verified` flag. Or show a [KYI badge](/api/public/badge-recipe), which always reflects the current status.
+  </Accordion>
+  <Accordion title="Which token lifetime should I use?">
+    The default one hour (3600 seconds) or less. Mint a new token every time you open the widget.
+  </Accordion>
+  <Accordion title="Can I sign tokens without Node.js?">
+    Yes. Any HS256 JWT library works. See the [Python examples](/sdk/tokens#python) and the [claims](/sdk/tokens#token-format).
+  </Accordion>
+  <Accordion title="Can I style the widget?">
+    No. It renders Bluprynt's interface in an iframe. You control the button that opens it.
+  </Accordion>
+  <Accordion title="Is anything published before the member signs?">
+    No. Nothing about the member or the asset becomes public until they sign and the application is approved.
+  </Accordion>
+  <Accordion title="Which chains are supported?">
+    See [Supported chains](/supported-chains) and [Wallet verification](/sdk/wallet-verification#methods-by-chain).
+  </Accordion>
+  <Accordion title="Can I test without production?">
+    Use the [SDK playground](https://blupryntco.github.io/kyi-widget-sdk/playground.html) and an allowlisted `localhost` origin. Ask Bluprynt for test credentials.
+  </Accordion>
+</AccordionGroup>
+
+Related: [Overview](/sdk/overview) · [Errors and troubleshooting](/sdk/errors)

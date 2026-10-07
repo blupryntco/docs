@@ -1,49 +1,151 @@
 ---
 title: "Wallet verification"
-description: "How issuers prove they control each wallet with authority over a token."
+description: "How members prove control of each wallet with on-chain authority over a token, per chain and signing method."
 ---
 
-After the KYB check and the token lookup, the widget lists every wallet with authority over the token. The issuer verifies each one. Most methods sign a short challenge message off-chain: no funds move and there's no gas fee.
+KYI verifies an asset by tying it to the organization that controls it. After [KYB](/sdk/flow#step-2-verify-the-organization-kyb) proves who the organization is, wallet verification proves the organization controls the token. A member signs once for each wallet that holds on-chain authority over the token.
 
-<Frame>
-  <img src="/images/sdk/sign-wallets.png" alt="KYI widget listing the token's controlling wallets, one row per wallet." />
+## Key concepts
+
+| Term | Meaning |
+|---|---|
+| **Authority wallet** | A wallet the token contract gives control to: owner, admin, minter or upgrade admin on EVM; mint authority or freeze authority on Solana; the issuing account on XRPL. Bluprynt reads these from the chain. |
+| **Challenge** | A one-time message, issued to the organization, that contains the wallet address and a nonce. |
+| **Declared → attested** | Before signing, an authority is `DECLARED`: Bluprynt read it from the chain. After a valid signature, it's `ATTESTED`. Signing attests to control of the address only, not to any other field. |
+| **Wallet queue** | The list of authority wallets still waiting for a signature, across all of an asset's tokens. One signature covers every token that wallet controls. |
+
+## How it works
+
+1. Bluprynt reads the token's contract and lists the authority wallets.
+2. The member picks a wallet and a signing method.
+3. Bluprynt issues a challenge that expires: five minutes for a browser wallet, 30 minutes for a manual signature. An expired challenge is refreshed automatically.
+4. The member signs. Most methods sign off-chain: no funds move and no gas is paid.
+5. Bluprynt verifies the signature against the wallet address. Off-chain signatures are confirmed instantly; HSM memo transactions are reviewed by Bluprynt.
+6. When every token has an attested authority, the member can file the asset for decision.
+
+<Frame caption="Signing methods for an Ethereum authority wallet (Bluprynt Passport; the widget shows the same dialog).">
+  <img src="/images/sdk/flow/07-signing-method.png" alt="Select Signing Method dialog listing extension wallet, manual signature and HSM options." />
 </Frame>
 
-| Method | Chains | Confirmed |
-|---|---|---|
-| **Browser wallet** — Phantom, GemWallet, Crossmark | EVM, Solana, XRPL | Instantly |
-| **WalletConnect** — MetaMask, mobile wallets | EVM, Solana | Instantly |
-| **Manual signature** | EVM, Solana, XRPL | Instantly; Solana after Bluprynt review |
-| **HSM or custody** — a memo transaction | All | After Bluprynt review |
-| **Micro-transaction** | EVM | When the transaction is found |
+## Methods by chain
 
-<Note>WalletConnect and micro-transactions aren't enabled for every integration. Ask your Bluprynt representative.</Note>
+| Method | EVM | Solana | XRPL | Signs | Confirmed |
+|---|---|---|---|---|---|
+| **Extension wallet** | MetaMask and other injected wallets | Phantom and other Solana wallets | GemWallet, Crossmark | Off-chain message | Instantly |
+| **WalletConnect** | Mobile and desktop wallets | Mobile and desktop wallets | — | Off-chain message | Instantly |
+| **Manual signature (CLI)** | `cast wallet sign` or any EIP-191 tool | `solana sign-offchain-message` | Script using `xrpl` or `ripple-keypairs` | Off-chain message | Instantly; Solana after Bluprynt review |
+| **HSM or custody** | Memo transaction | Memo transaction | Memo transaction | On-chain no-op | After Bluprynt review |
+| **Transaction verification** | Micro-ETH transfer | — | — | On-chain transfer | When the transaction is found |
 
-## Manual signature
+<Note>WalletConnect and transaction verification are switched on per integration. Ask your Bluprynt contact which methods your members get.</Note>
 
-Copy the challenge message from the widget, sign it with your own tooling and paste the signature back.
+## Extension wallet
+
+<Frame>
+  <img src="/images/sdk/flow/08-sign-extension.png" alt="Sign with Extension Wallet with Connect Wallet, the message and Sign Message." />
+</Frame>
+
+1. **Connect Wallet**, and switch to the authority account if the wallet opens another one.
+2. Check the **message being signed**. It names the purpose, the organization it's issued to, and the address with a nonce.
+3. The message **expires** after five minutes and is refreshed automatically.
+4. **Sign Message**. The wallet shows a `personal_sign` request (EVM), a message-signing request (Solana), or a GemWallet / Crossmark prompt (XRPL).
+
+The connected account must be the authority wallet. Otherwise, the signature doesn't verify for that address.
+
+## Manual signature (CLI)
+
+Use this for keys in a keystore, a hardware wallet over USB, or any machine without a browser wallet.
+
+<Frame>
+  <img src="/images/sdk/flow/09-sign-manual.png" alt="Manual Signature screen with challenge, cast command and signature field." />
+</Frame>
+
+1. Copy the **signature challenge** whole, including line breaks.
+2. Run the command the widget shows. It already contains the challenge.
+3. Paste the signature and press **Submit**.
 
 <CodeGroup>
 ```bash EVM (Foundry)
-cast wallet sign --interactive "<message>"
+# --interactive prompts for the key so it never lands in shell history.
+cast wallet sign --interactive "<challenge>"
+# Key elsewhere:
+cast wallet sign --keystore ~/.foundry/keystores/admin "<challenge>"
+cast wallet sign --ledger "<challenge>"
 ```
 ```bash Solana CLI
-solana sign-offchain-message -k <keypair.json> "<message>"
+solana sign-offchain-message -k <path to keypair.json> "<challenge>"
+```
+```ts EVM (viem)
+import { privateKeyToAccount } from 'viem/accounts'
+
+const account = privateKeyToAccount(process.env.AUTHORITY_KEY as `0x${string}`)
+console.log(await account.signMessage({ message: challenge })) // EIP-191 personal_sign
 ```
 </CodeGroup>
 
-Any EVM tool that does an EIP-191 `personal_sign` works. For XRPL, the widget shows a short script using `xrpl` or `ripple-keypairs`.
+`cast` prints a `0x`-prefixed 65-byte signature. Paste only that line. For XRPL, the widget shows a short script for `xrpl` or `ripple-keypairs` with the challenge filled in.
 
 ## HSM or custody
 
-If the key can't sign arbitrary messages, send a transaction from the wallet that carries only this memo:
+Use this when the key can't sign arbitrary messages, for example an HSM policy or a qualified custodian.
 
-```text
-Bluprynt KYI verification: Selected wallet <address> confirms authority
-```
+<Frame>
+  <img src="/images/sdk/flow/10-sign-hsm.png" alt="HSM screen with the memo text and email instructions." />
+</Frame>
 
-Then email the transaction link to [product@bluprynt.com](mailto:product@bluprynt.com). The wallet stays pending until Bluprynt reviews it. The transaction pays normal network fees.
+1. From the authority wallet, submit a no-op transaction carrying exactly this memo:
+   ```text
+   Bluprynt KYI verification: Selected wallet <address> confirms authority
+   ```
+2. Email the transaction link (block explorer URL) to [product@bluprynt.com](mailto:product@bluprynt.com).
+3. Bluprynt reviews the transaction and replies. The wallet stays unverified until then.
 
-## Multisig wallets
+No assets move. The transaction pays normal network fees.
 
-Sign as the multisig itself or as any one of its signers. If you can't sign for a wallet, its tokens stay listed but unverified.
+## Multisig
+
+If a token's authority is a multisig, such as a Safe, the queue offers two ways to sign:
+
+| Option | When to use it |
+|---|---|
+| **The multisig itself** | The multisig signs, for example by sending the HSM memo transaction from the multisig. |
+| **Signer on the multisig** | One owner of the multisig signs with their own key. Any one eligible signer is enough. |
+
+## Worked example: USD Coin on Ethereum
+
+The queue for an asset with one authority, an upgrade admin:
+
+<Frame>
+  <img src="/images/sdk/flow/06-wallet-queue.png" alt="Verify your wallets dialog with one upgrade admin wallet." />
+</Frame>
+
+1. The member clicks **Sign** next to `0x80…95d2 · Upgrade admin`.
+2. They choose **Manual Signature (CLI)** and copy the challenge.
+3. They run `cast wallet sign --ledger "<challenge>"` with the admin key on a Ledger.
+4. They paste the signature and press **Submit**. The authority becomes `ATTESTED` and the queue reads "Nothing left to sign for."
+
+## Errors and limits
+
+| Situation | What the member sees | Fix |
+|---|---|---|
+| Challenge expired | "This message expires in 0:00", then a new challenge. | Sign the new message. Don't reuse old signatures. |
+| Wrong account connected | The signature doesn't verify for the authority address. | Switch the wallet to the authority address and sign again. |
+| Edited challenge | The signature doesn't verify. | Copy the whole challenge, including line breaks. |
+| No authority found on chain | "No controlling authority has been found on chain yet, so there is nothing to prove." | Check the address, or contact Bluprynt for tokens whose control sits off-chain. |
+| Wallet you can't sign for | Its tokens stay listed but unverified. | Sign with another authority, or use HSM or custody. |
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Does signing cost gas or move funds?">
+    No, for extension wallet, WalletConnect and manual signatures: they sign off-chain. HSM memo transactions and transaction verification are on-chain and pay network fees, but move no assets beyond the micro-transfer.
+  </Accordion>
+  <Accordion title="What exactly does a signature prove?">
+    Only that the signer controls the address. It doesn't attest to the asset's name, reserves or any other field.
+  </Accordion>
+  <Accordion title="Do I sign once per token?">
+    Once per wallet. One signature covers every token that wallet controls.
+  </Accordion>
+</AccordionGroup>
+
+Related: [Verification flow](/sdk/flow) · [Supported chains](/supported-chains) · [KYI](/tools/kyi)
