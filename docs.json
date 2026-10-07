@@ -24,7 +24,8 @@
     "default": "light"
   },
   "styling": {
-    "codeblocks": "system"
+    "codeblocks": "system",
+    "eyebrows": "breadcrumbs"
   },
   "navbar": {
     "links": [
@@ -276,5 +277,11 @@
       "source": "/tools/explorer/access-and-provenance",
       "destination": "/explorer/access-and-provenance"
     }
-  ]
+  ],
+  "contextual": {
+    "options": [
+      "copy",
+      "view"
+    ]
+  }
 }

@@ -22,10 +22,29 @@ Ask [product@bluprynt.com](mailto:product@bluprynt.com) for an exchange key, nam
 
 ## Send the key
 
-```bash
+<CodeGroup>
+```bash curl
 curl -s "https://explorer-api.bluprynt.com/me/watchlist" \
-  -H "Authorization: Bearer bx_live_your_key_here"
+  -H "Authorization: Bearer $EXPLORER_API_KEY"
 ```
+```ts TypeScript
+const res = await fetch('https://explorer-api.bluprynt.com/me/watchlist', {
+  headers: { Authorization: `Bearer ${process.env.EXPLORER_API_KEY}` },
+})
+if (!res.ok) throw new Error((await res.json()).code)
+const watchlist = await res.json()
+```
+```python Python
+import os, requests
+
+res = requests.get(
+    "https://explorer-api.bluprynt.com/me/watchlist",
+    headers={"Authorization": f"Bearer {os.environ['EXPLORER_API_KEY']}"},
+)
+res.raise_for_status()
+watchlist = res.json()
+```
+</CodeGroup>
 
 The header must be exactly `Bearer bx_live_<43 chars>`. Malformed shapes — a missing scheme, a lowercase scheme, or extra text — are rejected as `api_key_invalid` and never fall through to another auth method.
 
