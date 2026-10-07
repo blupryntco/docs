@@ -11,27 +11,11 @@ This example comes from the [Compliance Explorer](/tools/compliance-explorer) in
 ## What it does
 
 ```mermaid
-sequenceDiagram
-  participant V as Visitor
-  participant W as Explorer page
-  participant S as POST /api/kyi/token
-  participant B as Bluprynt widget
-  V->>W: Click "Claim this profile"
-  W->>S: fetch (no-store)
-  alt signed out
-    S-->>W: 401 unauthorized
-    W->>V: Sign-in dialog, then retry once
-  else KYI not configured
-    S-->>W: 503 kyi_unconfigured
-    W->>V: Fall back to the in-page claim flow
-  else signing failed
-    S-->>W: 502 token_failed
-    W->>V: Error state
-  else ok
-    S-->>W: 200 { accessToken }
-    W->>B: kyi('drawer', 'kyi', accessToken, { onClose })
-    B->>V: KYB, add asset, sign wallets
-  end
+flowchart TD
+  A["Visitor clicks<br/>Claim this profile"] --> B["POST /api/kyi/token"]
+  B --> C["200: accessToken<br/>(401 / 503 / 502: see below)"]
+  C --> D["kyi('drawer', 'kyi', token)"]
+  D --> E["KYB, add asset,<br/>sign wallets"]
 ```
 
 ## 1. Configuration
