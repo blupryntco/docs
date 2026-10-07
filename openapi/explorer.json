@@ -145,7 +145,7 @@
             "description": "Unknown or revoked key (`api_key_invalid`)."
           }
         },
-        "summary": "Tokenomics change revisions across the caller's watchlist.",
+        "summary": "List tokenomics changes",
         "tags": [
           "Tokenomics"
         ],
@@ -280,7 +280,7 @@
             "description": "Unknown or revoked key (`api_key_invalid`)."
           }
         },
-        "summary": "Tokenomics change revisions of one asset.",
+        "summary": "List an asset's tokenomics changes",
         "tags": [
           "Tokenomics"
         ],
@@ -314,7 +314,7 @@
             "description": "Unknown or revoked key (`api_key_invalid`)."
           }
         },
-        "summary": "The owner watchlist with limit and usage.",
+        "summary": "List watchlist",
         "tags": [
           "Disclosure monitoring"
         ],
@@ -359,7 +359,7 @@
             "description": "Unknown or revoked key (`api_key_invalid`)."
           }
         },
-        "summary": "Watch a registry asset (monitoring on by default).",
+        "summary": "Watch an asset",
         "tags": [
           "Disclosure monitoring"
         ],
@@ -412,7 +412,7 @@
             "description": "Unknown or revoked key (`api_key_invalid`)."
           }
         },
-        "summary": "Pause/resume monitoring or edit the note.",
+        "summary": "Update a watched asset",
         "tags": [
           "Disclosure monitoring"
         ],
@@ -446,7 +446,7 @@
             "description": "Unknown or revoked key (`api_key_invalid`)."
           }
         },
-        "summary": "Stop watching (history and \"watched since\" kept).",
+        "summary": "Unwatch an asset",
         "tags": [
           "Disclosure monitoring"
         ],
@@ -586,7 +586,7 @@
             "description": "Unknown or revoked key (`api_key_invalid`)."
           }
         },
-        "summary": "Changes on watched assets, newest first. Every filter applies before the 200-change page cap; `truncated` is per filtered result.",
+        "summary": "List disclosure changes",
         "tags": [
           "Disclosure monitoring"
         ],
@@ -630,7 +630,7 @@
             "description": "Unknown or revoked key (`api_key_invalid`)."
           }
         },
-        "summary": "Latest in-app notifications.",
+        "summary": "List notifications",
         "tags": [
           "Disclosure monitoring"
         ],
