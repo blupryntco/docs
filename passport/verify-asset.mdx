@@ -1,37 +1,136 @@
 ---
 title: "Verify an asset (KYI)"
-description: "Link a token to your verified organization with Know Your Issuer."
+description: "Add a token to Passport, fill in its details and prove control with authority wallet signatures."
 ---
 
-[Know Your Issuer](/tools/kyi) proves that a token was issued by your organization. You find the token on-chain, attest its details, and sign with the wallets that control it.
+KYI, Know Your Issuer, ties a token to your verified entity. You paste the token address, confirm the details Bluprynt reads, and sign once with each wallet that controls the token. Bluprynt then reviews the filing and publishes a KYI attestation.
+
+<Note>
+To run the same flow inside your own app, use the [KYI widget](/tools/kyi). The SDK guides cover the [flow](/sdk/flow) and [wallet verification](/sdk/wallet-verification).
+</Note>
+
+## Key concepts
+
+| Term | Meaning |
+|---|---|
+| **Asset** | A token or vault you issue, identified by its address and chain. |
+| **Token** | One on-chain deployment of the asset. An asset can have several. |
+| **Authority** | A wallet or contract that controls a token, such as its owner or a permission registry. |
+| **Signer** | The wallet that signs for an authority. For a multisig, the signer and the authority differ. |
+| **What we need from you** | The asset details Passport asks you to confirm. |
+| **Submit for review** | Sends the filing to Bluprynt. Verified tokens get attestations once it's approved. |
+
+## How it works
+
+```mermaid
+flowchart TD
+  A[Paste address] --> B[Network recognised]
+  B --> C[Verify]
+  C --> D[Confirm details]
+  D --> E[Sign per authority]
+  E --> F[Submit for review]
+  F --> G[Pending]
+  G --> H[Verified]
+```
+
+One signature settles every token a wallet controls. Bluprynt takes the proof from the signer and writes it against every authority that wallet controls.
+
+## Verify an asset
 
 <Steps>
-  <Step title="Paste the token address">
-    On **Overview**, paste the token's contract address into **Verify a new asset**. Passport finds the token on-chain and reads its controlling wallets.
-    <Frame caption="Product design">
-      <img src="/images/design/kyi-paste-address.png" alt="Design of the Verify a new asset panel with a contract address field." />
+  <Step title="Paste the address">
+    On the Overview, paste the token or vault address into **Verify a new asset** (1). Passport recognises the network from the address. Nothing is read until you press **Verify** (2). If the token is already on your list, Passport says so and offers **Open its page** (3).
+
+    <Frame caption="An address pasted into Verify a new asset.">
+      <img src="/images/passport/passport-add-asset.webp" alt="Verify a new asset panel with callouts on the address input, the Verify button and the Open its page link." />
     </Frame>
   </Step>
-  <Step title="Confirm the details">
-    Open **Asset details and tokens**. Passport fills in what public sources already say. Check each line; click a line to change it. Every line is marked **Attested** once it's ready.
-    <Frame>
-      <img src="/images/live/passport-kyi-details.png" alt="USD Coin KYI checklist: token found on chain, every detail filled in, one token still needs a wallet signature, and the attested details list." />
+  <Step title="Confirm the asset details">
+    Open **Asset details and tokens**. A banner counts what's left, for example **1 token still needs a wallet signature** (1). Under **What we need from you** (2), check each detail Passport read and fix any that are wrong.
+
+    <Frame caption="Asset details and tokens for an asset that still needs a signature.">
+      <img src="/images/passport/passport-kyi-details.webp" alt="Asset details drawer with callouts on the outstanding-signature banner, the What we need from you fields, a token's Sign button and Sign all wallets." />
     </Frame>
   </Step>
-  <Step title="Sign with each controlling wallet">
-    Each wallet with authority over the token, such as the owner or mint authority, signs a short off-chain message. No funds move. One signature covers every token that wallet controls. For a multisig, sign as the multisig or as any one of its signers. See [wallet verification](/sdk/wallet-verification) for the methods per chain.
-    <Frame caption="Product design">
-      <img src="/images/design/kyi-wallet-verification.png" alt="Design of the wallet signature step listing the token's controlling wallets." />
+  <Step title="Sign with each authority wallet">
+    Under **Tokens on this asset**, click **Sign** (3) on a token, or **Sign all wallets** (4). The **Verify your wallets** dialog (1) lists each authority and its signer, for example *Owner · multisig of 6 signers*. Click **Sign** (2) for each wallet and approve the message in that wallet. Click **Close** (3) when you're done.
+
+    <Frame caption="The Verify your wallets dialog. Signing is not shown.">
+      <img src="/images/passport/passport-sign-wallets.webp" alt="Verify your wallets dialog with callouts on the title, the Sign buttons for each authority and Close." />
     </Frame>
   </Step>
-  <Step title="Get the KYI Verified credential">
-    When every line is attested and every wallet has signed, the asset shows **Verified**. Its public profile and the [Public API](/api/public/overview) now return it.
-    <Frame>
-      <img src="/images/live/passport-asset-verified.png" alt="Delta Dollar asset page: KYI verification complete, with the Proof of Collateral card below." />
-    </Frame>
+  <Step title="Submit for review">
+    When every token has a signature, click **Submit for review**. The KYI state becomes **Pending**: *Your Know Your Issuer filing is in. Verification finishes on our side.* When Bluprynt approves it, the state becomes **Verified** and the attestation appears under [Attestations](/passport/wallets-and-attestations).
   </Step>
 </Steps>
 
-<Tip>
-Embed the result on your site with the [KYI badge recipe](/api/public/badge-recipe), or run this flow inside your own app with the [KYI Widget SDK](/sdk/quickstart).
-</Tip>
+<Warning>
+A wallet you can't sign for leaves its tokens listed but unverified.
+</Warning>
+
+## Reference
+
+### Asset details
+
+| Field | Required | Notes |
+|---|---|---|
+| Asset Name | Yes | *What is the name of the asset?* |
+| Ticker Symbol | Yes | For example `BTC` for Bitcoin. |
+| Description | Yes | Describe the asset and the project behind it. |
+| Asset Image | Yes | Take the image a source already publishes, or upload your own. |
+| Image License | Yes | All Rights Reserved, CC BY (Attribution), CC BY-NC (Non-Commercial) or Public Domain / CC0. |
+| White Paper | Yes | A link to the white paper. |
+| Website | Yes | A URL where people can learn more about the asset and its project. |
+| X / Twitter | No | The project's X profile. |
+
+### KYI states
+
+| State | Meaning | Next action |
+|---|---|---|
+| Not started | Nothing filed. | **Start KYI verification** |
+| Sign to finish | Details are complete; signatures are missing. | **Sign** or **Sign all wallets** |
+| Submit for review | Every token has a signature. | **Submit for review** |
+| Pending | Filed and under review. | Wait. |
+| Partly verified | Some tokens are verified, others aren't. | Sign the rest. |
+| Verified | KYI is complete. | Start [Proof of Collateral](/passport/proof-of-collateral). |
+| Revoked | Verification was revoked. | **Verify KYI again** |
+
+### Address messages
+
+| Message | Meaning |
+|---|---|
+| *{Network} recognised from the address. Nothing is read until you press Verify.* | Ready to read. |
+| *{Name} is already on your list. Open its page* | The asset is already in this organization. |
+| *We could not read that address on any chain we support. Check it and try again.* | Wrong address, or an unsupported chain. See [Supported chains](/supported-chains). |
+| *Locked — complete step 1 above to verify your first asset.* | Finish [KYB](/passport/organization) first. |
+
+## Worked example
+
+You paste Plume USD's Ethereum address and press **Verify**. Passport reads the name, ticker, description, white paper and website. You set **Image License** to *All Rights Reserved*. The banner says **1 token still needs a wallet signature**. The token's owner is a multisig of 6 signers, so you click **Sign** and approve the message from one signer wallet. You click **Submit for review**, and the asset shows **Pending** until Bluprynt approves it.
+
+## Troubleshooting
+
+| Problem | What to do |
+|---|---|
+| **Verify** is disabled | The address isn't valid yet, or KYB isn't complete. |
+| A token stays unverified | No one signed for its authority. Sign with a wallet that controls it. |
+| *Your verified wallets also control 2 more assets.* | Click **Add them to verify**. |
+| KYI shows **Revoked** | Click **Verify KYI again**. |
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Do I sign once per token?">
+    No. One signature settles every token a wallet controls.
+  </Accordion>
+  <Accordion title="How does signing work for a multisig?">
+    The authority is the multisig. One of its signer wallets signs, and Bluprynt records the proof against the multisig.
+  </Accordion>
+</AccordionGroup>
+
+## Related pages
+
+- [Asset trust center](/passport/asset-page)
+- [Proof of Collateral](/passport/proof-of-collateral)
+- [KYI widget](/tools/kyi)
+- [Supported chains](/supported-chains)
