@@ -22,10 +22,8 @@ description: "The handful of terms you need to read any Bluprynt record."
 ```mermaid
 flowchart TD
   I[Issuer] -- KYB --> O[Verified organization]
-  O -- KYI: sign with mint authority --> A[Asset]
-  A --> C1[KYI Verified credential]
-  A -- references + review --> C2[Proof of Collateral credential]
-  A --> D[Disclosures with provenance]
-  C1 & C2 & D --> R[(Shared record)]
-  R --> V[Exchanges, custodians, supervisors]
+  O -- "KYI: sign with<br/>mint authority" --> A[Asset]
+  A --> C["Credentials: KYI Verified,<br/>Proof of Collateral<br/>+ disclosures with provenance"]
+  C --> R[(Shared record)]
+  R --> V["Exchanges, custodians,<br/>supervisors"]
 ```
