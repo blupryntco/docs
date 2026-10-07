@@ -1,0 +1,3 @@
+/* Quickstart persona tabs scroll sideways on phones; hide the scrollbar track. */
+[role="tablist"] { scrollbar-width: none; }
+[role="tablist"]::-webkit-scrollbar { display: none; }
