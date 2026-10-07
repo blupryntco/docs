@@ -1,0 +1,69 @@
+---
+title: "Webhooks and polling"
+sidebarTitle: "Webhooks & polling"
+description: "The Explorer API has no webhooks — poll feeds with cursors."
+---
+
+The Explorer API does not push webhooks to exchange keys. You pull: tokenomics via its feed cursor, monitoring via its windowed feed, notifications via the inbox. This page is the recommended poll pattern.
+
+## Poll the tokenomics feed
+
+Persist `nextCursor` after each run. A `since` poll returns only newer revisions — empty polls are cheap.
+
+```ts Pseudocode
+let since = store.get('tokenomics:cursor')
+while (true) {
+  const page = await getChanges({ since, limit: 200 })
+  for (const rev of page.items) ingest(rev) // dedupe on (id, revision)
+  store.set('tokenomics:cursor', page.nextCursor)
+  since = page.nextCursor
+  await sleep(page.items.length ? 0 : 60_000) // back off when idle
+}
+```
+
+- Always send `since`, never re-read the backlog once you have a cursor.
+- `hasMore` with `since` means keep polling immediately — the window caught up faster than the page size.
+- Backfill history once with `page` tokens, then switch to cursor polling forever.
+
+## Poll monitoring changes
+
+There's no cursor on `/me/monitoring/changes` — instead it's a rolling window plus a seen marker:
+
+```bash
+curl -s "https://explorer-api.bluprynt.com/me/monitoring/changes?newOnly=true" \
+  -H "Authorization: Bearer bx_live_…"
+```
+
+`newOnly=true` returns only changes newer than your last seen marker — the built-in incremental read. For scheduled sweeps, pass `days` sized to your poll interval plus margin (e.g. `days=1` hourly is wasteful; `days=7` daily gives overlap).
+
+## Poll notifications
+
+`GET /me/notifications?unread=true` is the inbox check — read it at the cadence you alert on, and mark-read in the explorer UI.
+
+## Stay inside the budget
+
+| Poll | Cost guidance |
+|---|---|
+| `since` poll with no new items | One request, tiny body — safe on a short interval. |
+| Backlog page | One request per 200 items. |
+| `monitoring/changes` with `days=90` | Heavier — don't run it per-minute; use `newOnly`. |
+| `watchlist` GET | Changes only when you write it — cache it. |
+
+At the default 120 req/minute you can poll every second, but a 15–60 s interval is plenty for monitoring cadence.
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Are webhooks coming?">
+    Not for key access today. If you need push, ask Bluprynt — otherwise poll with `since`/`newOnly`, which is near-real-time for monitoring cadences.
+  </Accordion>
+  <Accordion title="What poll interval should I use?">
+    For incident-level alerting, 15–60 s on `since` + `newOnly`. For daily sweeps, one `days=7` pull per day.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Pagination](/api/explorer/pagination) — cursor mechanics
+- [Tokenomics changes](/api/explorer/tokenomics-changes) — the feed to poll
+- [Rate limits](/api/explorer/rate-limits) — the budget this must fit

@@ -1,0 +1,43 @@
+[
+  {
+    "group": "Public API",
+    "openapi": "/openapi/public.json",
+    "pages": [
+      "api/public/overview",
+      "api/public/authentication",
+      "api/public/asset-lookup",
+      "api/public/token-lookup",
+      "api/public/badges",
+      "api/public/errors",
+      "api/public/limits",
+      "api/public/badge-recipe",
+      "GET /assets",
+      "GET /assets/{chain}/{account_address}",
+      "GET /assets/{namespace}/{reference}/{account_address}",
+      "GET /api/v1/badges/{credential_type}",
+      "GET /kyi/v1/tokens"
+    ]
+  },
+  {
+    "group": "Explorer API",
+    "openapi": "/openapi/explorer.json",
+    "pages": [
+      "api/explorer/overview",
+      "api/explorer/authentication",
+      "api/explorer/pagination",
+      "api/explorer/tokenomics-changes",
+      "api/explorer/watchlist-monitoring",
+      "api/explorer/webhooks-polling",
+      "api/explorer/errors",
+      "api/explorer/rate-limits",
+      "GET /tokenomics/changes",
+      "GET /assets/{id}/tokenomics/changes",
+      "GET /me/watchlist",
+      "POST /me/watchlist",
+      "PATCH /me/watchlist/{id}",
+      "DELETE /me/watchlist/{id}",
+      "GET /me/monitoring/changes",
+      "GET /me/notifications"
+    ]
+  }
+]

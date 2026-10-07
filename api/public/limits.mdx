@@ -1,0 +1,39 @@
+---
+title: "Limits, caching and versions"
+sidebarTitle: "Limits & caching"
+description: "Caching headers, deprecation signals and how the Public API is versioned."
+---
+
+What we can verify about the Public API's operating limits — from live responses and source — and what isn't published.
+
+## Rate limits
+
+No rate-limit headers (`RateLimit-*`, `X-RateLimit-*`, `Retry-After`) appear on live responses, and no throttle middleware exists in the service source. If you plan high-volume polling, agree a budget with Bluprynt when you request your key — don't assume the absence of a 429 means unlimited.
+
+## Caching
+
+| Surface | Header | Guidance |
+|---|---|---|
+| Badges | `Cache-Control: public, max-age=31536000, immutable` | Cache forever at your CDN. The URL parameters determine the image. |
+| Asset and token data | none | No cache headers are set. Fetch at display time — verification state changes when issuers update disclosures or proofs are renewed. |
+| `token_image` URLs | — | Signed S3 URLs that expire after one hour (`X-Amz-Expires=3600`). Never store them; refetch the asset instead. |
+
+## Versioning and deprecation
+
+- Routes are unversioned today except `/api/v1/badges/*` and `/kyi/v1/*`, which carry a `v1` segment. New route families land under their own versioned prefix.
+- The served OpenAPI document reports the service version (`1.0.0` at `integrations.bluprynt.com/openapi.json`).
+- Every `/assets` response carries `Deprecation: true` (RFC 9745). A planned change to the asset↔deployment model is signalled ahead of time; no removal date is committed yet. When one exists it will also arrive as `Sunset` (RFC 8594) and a `Link: rel="deprecation"` header pointing at the migration notice — watch for those two headers to know the timeline is live.
+
+```http Observed response headers on /assets/*
+HTTP/2 200
+deprecation: true
+```
+
+## Spec access
+
+The interactive reference at [integrations.bluprynt.com](https://integrations.bluprynt.com) serves the live spec at `/openapi.json` and `/openapi.yaml`. Pin your client to it — it's generated from the same code that answers requests.
+
+## Related
+
+- [Errors](/api/public/errors) — status codes and bodies
+- [Authentication](/api/public/authentication) — key handling

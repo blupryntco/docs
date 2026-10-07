@@ -1,0 +1,83 @@
+---
+title: "Authentication and scopes"
+sidebarTitle: "Authentication"
+description: "Exchange API keys, the three scopes, and which route needs which scope."
+---
+
+The Explorer API authenticates integrators with scoped exchange keys — `bx_live_…` bearer tokens Bluprynt operators issue per integrator. There is no self-serve key page; keys are issued, shown once, and stored only as a SHA-256 hash.
+
+## Key concepts
+
+| Term | Meaning |
+|---|---|
+| `bx_live_` key | Your credential: `bx_live_` plus 43 characters. Send it as `Authorization: Bearer bx_live_…`. |
+| Scope | One of `tokenomics:read`, `monitoring:read`, `watchlist:write`. A key can hold any subset. |
+| `keyPrefix` | The visible stem of your key (`bx_live_` plus 6 characters) — how Bluprynt identifies it without storing the secret. |
+| Watchlist limit | Per-key cap on watched assets (default 50, up to 500). |
+| Rate limit | Per-key requests/minute budget (default 120, up to 6,000). See [Rate limits](/api/explorer/rate-limits). |
+
+## Get a key
+
+Ask [product@bluprynt.com](mailto:product@bluprynt.com) for an exchange key, naming the scopes you need. The plaintext is shown once at issue — store it immediately. Bluprynt keeps only its hash and can't recover it; a lost key is revoked and reissued.
+
+## Send the key
+
+```bash
+curl -s "https://explorer-api.bluprynt.com/me/watchlist" \
+  -H "Authorization: Bearer bx_live_your_key_here"
+```
+
+The header must be exactly `Bearer bx_live_<43 chars>`. Malformed shapes — a missing scheme, a lowercase scheme, or extra text — are rejected as `api_key_invalid` and never fall through to another auth method.
+
+## Route ↔ scope
+
+| Endpoint | Required scope |
+|---|---|
+| `GET /tokenomics/changes` | `tokenomics:read` |
+| `GET /assets/{id}/tokenomics/changes` | `tokenomics:read` |
+| `GET /me/watchlist` | `monitoring:read` |
+| `GET /me/monitoring/changes` | `monitoring:read` |
+| `GET /me/notifications` | `monitoring:read` |
+| `POST /me/watchlist` | `watchlist:write` |
+| `PATCH /me/watchlist/{id}` | `watchlist:write` |
+| `DELETE /me/watchlist/{id}` | `watchlist:write` |
+
+`watchlist:write` doesn't imply `monitoring:read` — a key that edits the watchlist but can't read it is valid. Ask for the combination your integration needs.
+
+## What rejects your key
+
+| Status | `code` | Cause |
+|---|---|---|
+| `401` | `api_key_invalid` | Unknown, revoked, or malformed key. |
+| `403` | `api_key_scope_missing` | Valid key, missing this route's scope. |
+| `403` | `api_key_not_permitted` | The route isn't open to API keys at all — even with every scope. |
+| `403` | `signature_missing` | No key was sent. Direct unsigned access isn't permitted. |
+
+```json Rejected body (illustrative)
+{"code":"api_key_scope_missing","message":"This API key cannot call this route"}
+```
+
+## Keep the key safe
+
+- Store it in a secret manager. The plaintext is unrecoverable after issue.
+- A leaked key can read your watchlist and, with `watchlist:write`, mutate it. Ask Bluprynt to revoke it — `revokedAt` takes effect immediately and the key authenticates nothing afterwards.
+- Use separate keys per environment so revocation stays scoped.
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Why 403 instead of 404 on routes my key can't call?">
+    Deliberate: the API answers `api_key_not_permitted` so you can tell "wrong scope or key" apart from "this route will never accept keys". The route exists — it just isn't for you.
+  </Accordion>
+  <Accordion title="Can I get more scopes later?">
+    Yes — ask Bluprynt. Scopes are set per key at issue and can be adjusted or reissued.
+  </Accordion>
+  <Accordion title="Does a key expire?">
+    Keys have no automatic expiry. They authenticate until revoked (`revokedAt`), which is immediate.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Rate limits](/api/explorer/rate-limits) — the per-key budget
+- [Errors](/api/explorer/errors) — the full `code` table
