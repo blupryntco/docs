@@ -28,17 +28,12 @@ It's built for platforms that list or hold tokens, such as exchanges, launchpads
 ## How it works
 
 ```mermaid
-sequenceDiagram
-  participant M as Member's browser
-  participant P as Your server
-  participant B as Bluprynt (app.bluprynt.com)
-  M->>P: POST /api/kyi/token (session cookie)
-  P->>P: generateToken({ issuer, secretKey, userId })
-  P-->>M: { accessToken } (Cache-Control: no-store)
-  M->>B: kyi('drawer', 'kyi', accessToken) opens an iframe
-  B->>B: Check the token and the embedding origin
-  B-->>M: Drawer: KYB → add asset → sign wallets
-  B-->>M: onReady / onClose / onError
+flowchart TD
+  A["Member's browser:<br/>POST /api/kyi/token"] --> B["Your server:<br/>generateToken()"]
+  B --> C["Browser:<br/>kyi('drawer', 'kyi', token)"]
+  C --> D["Bluprynt checks token<br/>and origin"]
+  D --> E["Drawer: KYB, add asset,<br/>sign wallets"]
+  E --> F["onReady / onClose / onError<br/>back to your page"]
 ```
 
 1. Your server signs a token with your `SECRET_KEY`. The secret never reaches the browser.
