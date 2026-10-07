@@ -98,8 +98,33 @@
             "group": "Bluprynt Proof",
             "pages": [
               "proof/overview",
-              "proof/applications",
-              "proof/registry"
+              "proof/sign-in",
+              "proof/dashboard",
+              {
+                "group": "Forms",
+                "pages": [
+                  "proof/form-manager",
+                  "proof/form-builder",
+                  "proof/approval-workflow"
+                ]
+              },
+              {
+                "group": "Applications",
+                "pages": [
+                  "proof/applications",
+                  "proof/application-states"
+                ]
+              },
+              {
+                "group": "Watchlist",
+                "pages": [
+                  "proof/registry",
+                  "proof/watchlist-assets",
+                  "proof/watchlist-issuers"
+                ]
+              },
+              "proof/credentials",
+              "proof/members"
             ]
           },
           {
