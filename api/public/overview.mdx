@@ -1,0 +1,77 @@
+---
+title: "Public API"
+sidebarTitle: "Overview"
+description: "Read KYI-verified assets and embed verification badges."
+---
+
+The Bluprynt Public API returns the verified record behind an asset: its issuer, the wallets with authority over it and whether each one is verified.
+
+```text Base URL
+https://integrations.bluprynt.com
+```
+
+## Authenticate
+
+Send your API key as the raw `Authorization` header value. Don't add a `Bearer` prefix: the API rejects it. Ask [product@bluprynt.com](mailto:product@bluprynt.com) for a key.
+
+<CodeGroup>
+```bash curl
+curl -s "https://integrations.bluprynt.com/assets/solana/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" \
+  -H "Authorization: $BLUPRYNT_API_KEY"
+```
+```ts TypeScript
+const res = await fetch(
+  'https://integrations.bluprynt.com/assets/solana/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  { headers: { Authorization: process.env.BLUPRYNT_API_KEY! } },
+)
+if (res.status === 404) throw new Error('No verified asset at this address')
+const asset = await res.json()
+console.log(asset.business_details.business_name, asset.business_details.business_verified)
+```
+</CodeGroup>
+
+```json Response (trimmed)
+{
+  "token_details": {
+    "account_id": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp:EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    "token_name": "USD Coin",
+    "token_ticker": "USDC",
+    "authorities": [
+      {
+        "authority_type": "mint_authority",
+        "address": "BJE5MMbqXjVwjAF7oxwPYXnTXDyspzZyt4vwenNw5ruG",
+        "verified": true,
+        "account_type": "multisig"
+      }
+    ]
+  },
+  "business_details": {
+    "business_name": "CIRCLE INTERNET GROUP, INC.",
+    "business_verified": true
+  },
+  "asset_url": "https://verified.bluprynt.com/verified-assets/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/solana"
+}
+```
+
+## Endpoints
+
+| Endpoint | Returns |
+|---|---|
+| `GET /assets` | All verified assets, paged with `page_size` and `page_number`. |
+| `GET /assets/{chain}/{account_address}` | One asset by chain name, such as `ethereum` or `solana`. |
+| `GET /assets/{namespace}/{reference}/{account_address}` | One asset by CAIP-2 chain ID, such as `eip155/1`. |
+| `GET /api/v1/badges/{credential_type}` | A KYI or Proof of Collateral badge image. No key needed. |
+
+Both lookups return the same record. The CAIP form also covers chains that have no short name, such as `eip155/98866` for Plume.
+
+## Errors
+
+| Status | Body | Cause |
+|---|---|---|
+| `401` | `{"message":"Unauthorized","statusCode":401}` | Missing key, wrong key, or a `Bearer` prefix. |
+| `404` | `{"message":"Asset not found","error":"Not Found","statusCode":404}` | No verified asset at that address. |
+| `400` | `{"message":"Invalid format \"gif\". Allowed: svg, png, webp", …}` | A badge parameter outside its allowed values. |
+
+<Tip>
+`token_image` is a signed URL that expires after an hour. Fetch the asset again rather than storing the link.
+</Tip>

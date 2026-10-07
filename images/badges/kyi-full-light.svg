@@ -1,0 +1,39 @@
+<svg width="200" height="64" viewBox="0 0 200 64" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="kyi-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1A8CFF"/>
+      <stop offset="100%" stop-color="#0066CC"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="64" rx="32" fill="url(#kyi-bg)"/>
+  <g>
+    <circle cx="27.4" cy="19.0" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="32.6" cy="19.0" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="22.2" cy="24.2" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="27.4" cy="24.2" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="32.6" cy="24.2" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="37.8" cy="24.2" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="17.0" cy="29.4" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="22.2" cy="29.4" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="27.4" cy="29.4" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="32.6" cy="29.4" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="37.8" cy="29.4" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="43.0" cy="29.4" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="17.0" cy="34.6" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="22.2" cy="34.6" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="27.4" cy="34.6" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="32.6" cy="34.6" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="37.8" cy="34.6" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="43.0" cy="34.6" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="22.2" cy="39.8" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="27.4" cy="39.8" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="32.6" cy="39.8" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="37.8" cy="39.8" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="27.4" cy="45.0" r="2.0" fill="white" opacity="0.9"/>
+    <circle cx="32.6" cy="45.0" r="2.0" fill="white" opacity="0.9"/>
+  </g>
+  <text x="60" y="29" font-family="DM Sans, Helvetica, Arial, sans-serif" font-weight="700" font-size="12" fill="white" letter-spacing="0.5">KYI</text>
+  <text x="60" y="43" font-family="DM Sans, Helvetica, Arial, sans-serif" font-weight="500" font-size="10" fill="white" opacity="0.8" letter-spacing="0.3">VERIFIED</text>
+  <circle cx="166" cy="32" r="16" fill="rgba(255,255,255,0.2)" stroke="#FFFFFF" stroke-width="1.5"/>
+  <path d="M158 32 L163 37 L174 26" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

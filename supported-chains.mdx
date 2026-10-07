@@ -1,0 +1,18 @@
+---
+title: "Supported chains"
+description: "Which chains each Bluprynt surface supports today."
+---
+
+| Chain | Type | KYI verification | Public API `chain` |
+|---|---|---|---|
+| Ethereum | EVM | <Icon icon="check" /> | `ethereum` |
+| Base | EVM | <Icon icon="check" /> | `base` |
+| Plume | EVM | <Icon icon="check" /> | `plume` |
+| Avalanche C-Chain | EVM | <Icon icon="check" /> | `avalanche` |
+| Solana | Solana | <Icon icon="check" /> | `solana` |
+| XRP Ledger | XRPL | <Icon icon="check" /> | — |
+| Sepolia (testnet) | EVM | — | `sepolia` |
+
+- **KYI verification** is where an issuer can sign to prove control of a token. More EVM chains are being added; ask your Bluprynt representative if you need one that isn't listed.
+- **Public API** accepts the `chain` values above. For any other chain, use the [CAIP lookup](/api/public/overview#endpoints) with a CAIP-2 namespace and reference, for example `eip155` and `1` for Ethereum.
+- **Compliance Explorer** reads assets across many more chains than KYI supports. Each asset page lists its deployments under **Chain deployments**.

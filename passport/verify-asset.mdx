@@ -1,0 +1,37 @@
+---
+title: "Verify an asset (KYI)"
+description: "Link a token to your verified organization with Know Your Issuer."
+---
+
+[Know Your Issuer](/tools/kyi) proves that a token was issued by your organization. You find the token on-chain, attest its details, and sign with the wallets that control it.
+
+<Steps>
+  <Step title="Paste the token address">
+    On **Overview**, paste the token's contract address into **Verify a new asset**. Passport finds the token on-chain and reads its controlling wallets.
+    <Frame caption="Product design">
+      <img src="/images/design/kyi-paste-address.png" alt="Design of the Verify a new asset panel with a contract address field." />
+    </Frame>
+  </Step>
+  <Step title="Confirm the details">
+    Open **Asset details and tokens**. Passport fills in what public sources already say. Check each line; click a line to change it. Every line is marked **Attested** once it's ready.
+    <Frame>
+      <img src="/images/live/passport-kyi-details.png" alt="USD Coin KYI checklist: token found on chain, every detail filled in, one token still needs a wallet signature, and the attested details list." />
+    </Frame>
+  </Step>
+  <Step title="Sign with each controlling wallet">
+    Each wallet with authority over the token, such as the owner or mint authority, signs a short off-chain message. No funds move. One signature covers every token that wallet controls. For a multisig, sign as the multisig or as any one of its signers. See [wallet verification](/sdk/wallet-verification) for the methods per chain.
+    <Frame caption="Product design">
+      <img src="/images/design/kyi-wallet-verification.png" alt="Design of the wallet signature step listing the token's controlling wallets." />
+    </Frame>
+  </Step>
+  <Step title="Get the KYI Verified credential">
+    When every line is attested and every wallet has signed, the asset shows **Verified**. Its public profile and the [Public API](/api/public/overview) now return it.
+    <Frame>
+      <img src="/images/live/passport-asset-verified.png" alt="Delta Dollar asset page: KYI verification complete, with the Proof of Collateral card below." />
+    </Frame>
+  </Step>
+</Steps>
+
+<Tip>
+Embed the result on your site with the [KYI badge recipe](/api/public/badge-recipe), or run this flow inside your own app with the [KYI Widget SDK](/sdk/quickstart).
+</Tip>

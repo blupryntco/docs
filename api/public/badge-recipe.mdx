@@ -1,0 +1,48 @@
+---
+title: "Embed a KYI badge"
+sidebarTitle: "Recipe: KYI badge"
+description: "Show a Bluprynt verification badge on your site. No API key needed."
+---
+
+The badge endpoint is public. Link it to the asset's verified page so anyone can check the claim.
+
+<Columns cols={2}>
+  <Frame caption="kyi_verified · full · light">
+    <img src="/images/badges/kyi-full-light.svg" alt="KYI Verified badge" />
+  </Frame>
+  <Frame caption="proof_of_collateral · full · light">
+    <img src="/images/badges/poc-full-light.svg" alt="Proof of Collateral badge" />
+  </Frame>
+</Columns>
+
+## Embed it
+
+```html index.html
+<a href="https://verified.bluprynt.com/verified-assets/<address>/<chain>">
+  <img
+    src="https://integrations.bluprynt.com/api/v1/badges/kyi_verified?variant=full&theme=light"
+    alt="KYI Verified by Bluprynt"
+    height="32"
+  />
+</a>
+```
+
+Take the link from the `asset_url` field of the [asset lookup](/api/public/overview).
+
+## Options
+
+| Parameter | Values |
+|---|---|
+| `credential_type` (path) | `kyi_verified`, `proof_of_collateral` |
+| `variant` | `icon`, `full` |
+| `theme` | `light`, `dark` |
+| `format` | `svg`, `png`, `webp` |
+| `size` | `16`, `24`, `32`, `64` |
+
+## Try it
+
+```bash
+curl -s -o kyi.svg -w "%{http_code} %{content_type}\n" \
+  "https://integrations.bluprynt.com/api/v1/badges/kyi_verified?variant=full"
+# 200 image/svg+xml
+```

@@ -1,0 +1,31 @@
+---
+title: "Know Your Issuer"
+description: "Cryptographic proof that a token was issued by a verified organization."
+---
+
+Know Your Issuer (KYI) binds a token to the verified organization that issued it. Exchanges, custodians and wallets read the same credential, so nobody relies on screenshots or self-reported claims.
+
+<Frame>
+  <img src="/images/live/kyi.png" alt="The Know Your Issuer page on Bluprynt Explorer." />
+</Frame>
+
+## How it works
+
+1. The issuer passes a **KYB** check on its legal entity.
+2. Bluprynt finds the token on-chain and reads the wallets with authority over it.
+3. The issuer signs with each wallet to prove control.
+4. The asset gets the **KYI Verified** credential, and its public record shows the verified issuer.
+
+## What it protects against
+
+- **Impersonation**: a look-alike token claiming a real issuer.
+- **Counterfeit assets**: a token with no verified issuer behind it.
+- **Sanctions risk**: KYI supports screening of the issuer behind each asset.
+
+## Use it
+
+<Columns cols={3}>
+  <Card title="Verify your token" icon="fingerprint" href="/passport/verify-asset">In Bluprynt Passport.</Card>
+  <Card title="Embed the widget" icon="code" href="/sdk/quickstart">Run KYI in your own app.</Card>
+  <Card title="Read it by API" icon="plug" href="/api/public/overview">Check an asset's issuer.</Card>
+</Columns>
