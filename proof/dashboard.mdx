@@ -1,0 +1,102 @@
+---
+title: "Dashboard"
+description: "The Compliance Hub home page: set up supervision and see your monitored assets."
+---
+
+The dashboard is the first page you see after you sign in. It gets a new organization started with three independent setup paths, and lists the assets you monitor. Every member sees it.
+
+## Key concepts
+
+| Term | Meaning |
+|---|---|
+| **Monitored asset** | A token on your [Watchlist](/proof/registry). The dashboard lists its chain, address, KYI and Proof of Collateral status. |
+| **Issuer information request** | A structured form you send to an issuer. Their answers come back verified, timestamped and attached to the record. |
+| **Authorization** | A licence, registration or approval you publish on-chain as a [credential](/proof/credentials). |
+| **Resolved data** | Facts the Compliance Hub reads for you: price, holders, net flow, collateral, oracles and admin controls. |
+| **Requested data** | Facts only the issuer can give: reserves, legal terms, redemption and disclosures. |
+
+## How it works
+
+```mermaid
+flowchart TD
+  A[Dashboard] --> B[Add an asset]
+  A --> C[Request issuer information]
+  A --> D[Publish an authorization]
+  B --> E[Watchlist]
+  C --> F[Form manager]
+  D --> G[Credentials]
+```
+
+The three paths are independent. Start with whichever matches your mandate.
+
+<Info>
+Your workspace is private. Assets, forms and answers stay inside your organization. Nothing is filed on your behalf.
+</Info>
+
+## Use the dashboard
+
+<Steps>
+  <Step title="Add an asset to monitor">
+    Click **Add an Asset to Monitor** (1), then **Go to Registry**. You add a token by its contract address and network. On-chain data such as issuer identity, mint authority and collateral status fills in and stays up to date. See [Watchlist assets](/proof/watchlist-assets).
+
+    <Frame caption="The dashboard for a new organization">
+      <img src="/images/proof/dashboard.webp" alt="Compliance Hub dashboard with callouts on Add an Asset to Monitor, Request Issuer Information, Publish an Authorization Onchain and Invite team members" />
+    </Frame>
+  </Step>
+  <Step title="Request issuer information">
+    Click **Request Issuer Information** (2), then **Go to Form manager**. Build a form and send it to a supervised issuer. See [Form manager](/proof/form-manager).
+  </Step>
+  <Step title="Publish an authorization on-chain">
+    Click **Publish an Authorization Onchain** (3), then **Go to Credentials**. A credential is the official answer to "is this licensed?". You can update or revoke it as status changes. See [Credentials](/proof/credentials).
+  </Step>
+  <Step title="Invite your team">
+    Click **Invite team members** (4) to add colleagues. See [Members and settings](/proof/members).
+  </Step>
+</Steps>
+
+## Reference
+
+### Monitored assets table
+
+| Column | Shows |
+|---|---|
+| **Asset** | Token name and symbol |
+| **Chain** | The network the contract lives on |
+| **Address** | The token contract address |
+| **KYI** | Whether the issuer has a [KYI](/tools/kyi) credential |
+| **Proof of Collateral** | The [Proof of Collateral](/tools/proof-of-collateral) status |
+
+### What fills in, and when
+
+| Data | Source | When |
+|---|---|---|
+| Price, holders, net flow, collateral, oracles, admin controls | Resolved by the Compliance Hub | Starts within minutes of adding an asset |
+| Reserves, legal terms, redemption, disclosures | Requested from the issuer | Blank until the issuer files. That's a gap in their filing, not an error. |
+
+## Worked example
+
+You supervise three stablecoins. You click **Add an Asset to Monitor** and add each by contract address. Within minutes the **Monitored assets** table lists all three with their chain and address. Their reserves stay blank, so you click **Request Issuer Information** and send each issuer your reserve disclosure form.
+
+## Errors and troubleshooting
+
+| Problem | Cause | What to do |
+|---|---|---|
+| **No assets yet** | Nothing is on your Watchlist | Add an asset from the [Watchlist](/proof/watchlist-assets). |
+| Reserves or disclosures are blank | The issuer hasn't filed | Send a form. See [Watchlist issuers](/proof/watchlist-issuers#request-a-form). |
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Do I have to complete all three setup cards?">
+    No. They're independent. You can monitor assets without ever publishing a credential.
+  </Accordion>
+  <Accordion title="Why are Activity and Monitoring greyed out?">
+    They aren't available yet.
+  </Accordion>
+</AccordionGroup>
+
+## Related pages
+
+- [Watchlist](/proof/registry)
+- [Form manager](/proof/form-manager)
+- [Credentials](/proof/credentials)

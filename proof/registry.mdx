@@ -1,20 +1,102 @@
 ---
-title: "Registry"
-description: "Look up organizations, assets and credentials in the shared record."
+title: "Watchlist"
+description: "The organizations, assets and credentials your organization supervises, in one place."
 ---
 
-**Registry** is the shared record behind every review. Its three tabs list **Organizations**, **Assets** and **Credentials**, each with its own count.
+The Watchlist is your organization's list of supervised issuers, monitored assets and issued credentials. It was called **Registry** in earlier versions, and its pages still live under `/registry`. Use it to add what you supervise and to open each issuer's or asset's detail page.
 
-<Frame caption="Product design: an asset in the registry.">
-  <img src="/images/design/proof-registry.png" alt="Compliance Hub registry design with tabs for organizations, assets and credentials." />
-</Frame>
+## Key concepts
 
-Open an organization to see its assets, credentials and applications. Open an asset to see its overview, reserves, governance and compliance status.
+| Term | Meaning |
+|---|---|
+| **Issuer** | An organization on your Watchlist. Shown on the **Issuers** tab and counted as **Organizations**. |
+| **Asset** | A token you monitor, identified by its contract address and network |
+| **Credential** | A credential your organization issued to an issuer or asset |
+| **Chain data** | Facts read from the blockchain, filled in automatically |
+| **Issuer filings** | Facts the issuer provides through your forms. Blank until they're on the platform and file. |
 
-<Frame caption="Product design: an asset's dependency graph.">
-  <img src="/images/design/proof-asset-graph.png" alt="Compliance Hub design of an asset's dependency graph." />
-</Frame>
+## How it works
 
-## Monitoring
+```mermaid
+flowchart TD
+  A[Add an asset] --> B[Chain data fills in]
+  C[Add an issuer] --> D[Issuer joins or is invited]
+  D --> E[Issuer KYIs an asset]
+  E --> B
+  B --> F[Asset page]
+  D --> G[Issuer page]
+  G --> H[Request a form]
+```
 
-Disclosure monitoring in the Compliance Hub isn't switched on yet. To track changes to an issuer's disclosures today, use [Disclosure Monitoring](/tools/disclosure-monitoring) in Explorer.
+When an issuer on your Watchlist completes [KYI](/tools/kyi) for an asset, that asset joins your monitored list automatically.
+
+## Use the Watchlist
+
+<Steps>
+  <Step title="Open the Watchlist">
+    Click **Watchlist** in the sidebar. The counters (4) show how many organizations, assets and credentials you supervise.
+
+    <Frame caption="The Watchlist">
+      <img src="/images/proof/registry.webp" alt="Watchlist page with Organizations, Assets and Credentials counters, Add an asset and Add an issuer cards, and the Issuers, Assets and Credentials tabs" />
+    </Frame>
+  </Step>
+  <Step title="Add an asset">
+    Click **Add asset** under **Add an asset** (1). See [Watchlist assets](/proof/watchlist-assets).
+  </Step>
+  <Step title="Add an issuer">
+    Click **Add issuer** under **Add an issuer** (2). See [Watchlist issuers](/proof/watchlist-issuers).
+  </Step>
+  <Step title="Switch tabs">
+    Use **Issuers**, **Assets** and **Credentials** (3) to switch the table. Click a row to open its detail page.
+  </Step>
+</Steps>
+
+## Reference
+
+### Tabs
+
+| Tab | Columns |
+|---|---|
+| **Issuers** | Organization, Jurisdiction, Website, Status, Registered On |
+| **Assets** | Asset, Domicile, Status, Created On |
+| **Credentials** | Credential, Asset, Jurisdiction, Status, Issued On, Expires On |
+
+### Detail pages
+
+| Page | Opens from | Tabs |
+|---|---|---|
+| Issuer | **Issuers** tab, or **Entity Details** on an application | Overview, Assets, Applications, Credentials, Entity & Governance |
+| Asset | **Assets** tab, or the dashboard | Overview, Performance, Markets, Reserves, Compliance, Risk Assessment, Governance & Control |
+
+## Worked example
+
+A new stablecoin launches in your jurisdiction. You click **Add asset** and enter its contract address on Ethereum. Its chain data fills in within minutes. The issuer isn't linked yet, so you click **Add issuer**, find nothing and invite them by email. Once they complete KYI, the issuer appears on the **Issuers** tab and you send them your disclosure form.
+
+## Errors and troubleshooting
+
+| Problem | Cause | What to do |
+|---|---|---|
+| **No data available** | Nothing added yet | Add an asset or issuer. |
+| Reserves and disclosures are blank | The issuer hasn't filed | [Request a form](/proof/watchlist-issuers#request-a-form). |
+| An asset shows the wrong token | Wrong network picked | Add it again with the right network. |
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Is the Watchlist the same as the Registry?">
+    Yes. The Compliance Hub renamed **Registry** to **Watchlist**. Links under `/registry` still work.
+  </Accordion>
+  <Accordion title="Can other organizations see my Watchlist?">
+    No. Your workspace is private to your organization.
+  </Accordion>
+  <Accordion title="Is Monitoring the same as the Watchlist?">
+    No. **Monitoring** in the sidebar isn't available yet. The Watchlist is.
+  </Accordion>
+</AccordionGroup>
+
+## Related pages
+
+- [Watchlist assets](/proof/watchlist-assets)
+- [Watchlist issuers](/proof/watchlist-issuers)
+- [Credentials](/proof/credentials)
+- [Asset Dependency Engine](/tools/asset-dependency-engine)

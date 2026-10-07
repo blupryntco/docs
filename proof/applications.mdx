@@ -1,48 +1,167 @@
 ---
-title: "Applications and review"
-description: "Build an application form and review what issuers submit."
+title: "Applications"
+description: "Find, filter, open and review the applications issuers submit to your organization."
 ---
 
-Issuers apply for a credential by filling in one of your forms. You review each application and approve, decline or ask for more.
+An application is an issuer's answers to one of your published forms. **Applications** lists every application your organization has received, so reviewers can pick up work and track decisions. Approving an application issues its [credential](/proof/credentials).
 
-## Build a form
+## Key concepts
 
-Open **Form manager** and click **Create form**. The builder has five steps: **Form details**, **Credential type**, **Form builder**, **Approval workflow** and **Review & publish**.
-
-<Frame>
-  <img src="/images/live/proof-form-create.png" alt="Form manager, step 1: form name, description, form type (Application or Filing) and credential recipient (Issuer or Asset)." />
-</Frame>
-
-Two choices shape the form:
-
-| Choice | Options |
+| Term | Meaning |
 |---|---|
-| **Form type** | **Application**: you review and approve before the credential is issued. **Filing**: the credential is issued when the issuer submits. |
-| **Credential recipient** | **Issuer**: the organization gets it, for example KYI or a license. **Asset**: one token gets it, for example a reserve proof or listing permit. |
+| **Application** | One issuer's submission of one form. It has a state, an assigned reviewer and the issuer's answers. |
+| **Form** | The questions you publish in the [Form manager](/proof/form-manager). Each application uses one form version. |
+| **Credential / Form** | The credential type the application issues, shown above the form name. |
+| **Issuing to** | The organization or asset that receives the credential. |
+| **Reviewer** | The member the [approval workflow](/proof/approval-workflow) assigned. *Unassigned* means no one yet. |
+| **State** | Where the application is in review. See [Application states](/proof/application-states). |
 
-## Review an application
+## How it works
+
+```mermaid
+flowchart TD
+  A[You publish a form] --> B[Issuer fills a draft]
+  B --> C[Issuer submits]
+  C --> D[Pending Review]
+  D -->|Accept| E[In Review]
+  E -->|Approve| F[Approved]
+  F --> G[Credential issued]
+  E -->|Decline| H[Denied]
+  E -->|Request for information| I[Request for Info]
+```
+
+Filing forms skip review. Their credential is issued as soon as the issuer submits.
+
+## Find an application
 
 <Steps>
-  <Step title="Pick it up">
-    Open **Applications**. New submissions show **Pending review**. The assigned reviewer clicks **Accept** to move it to **In review**.
-    <Frame>
-      <img src="/images/live/proof-applications.png" alt="Applications page with pending and processed counts and status and reviewer filters." />
+  <Step title="Open Applications">
+    Click **Applications** in the sidebar. **Pending applications** (1) counts open work, broken down by state. **Processed applications** (2) counts closed ones.
+
+    <Frame caption="The Applications list">
+      <img src="/images/proof/applications-list.webp" alt="Applications page with callouts on the Pending applications and Processed applications cards, the status and reviewer filters, and an application row" />
     </Frame>
   </Step>
-  <Step title="Read the submission">
-    Open the application to see the issuer details, asset details, each form section and the uploaded documents.
+  <Step title="Filter by state">
+    Click **All Statuses** (3) and pick a state (1). **Needs Review** shows Pending Review and In Review together.
+
+    <Frame caption="The status filter">
+      <img src="/images/proof/applications-status-filter.webp" alt="Status filter open, listing All Statuses, Needs Review, Pending Review, In Review, Request for Info, Approved, Denied, Archived and Draft" />
+    </Frame>
   </Step>
-  <Step title="Decide">
-    Choose **Approve** to issue the credential, **Decline** to reject it, or **Request for information** to send it back to the issuer.
+  <Step title="Filter by reviewer">
+    Click **All Reviewers** (4). Pick **Unassigned**, or a member to see their queue (1).
+
+    <Frame caption="The reviewer filter">
+      <img src="/images/proof/applications-reviewer-filter.webp" alt="Reviewer filter open, listing All Reviewers, Unassigned and a member name, which is redacted" />
+    </Frame>
+  </Step>
+  <Step title="Open the application">
+    Click a row (5) to open it.
   </Step>
 </Steps>
 
-| Status | Meaning |
+## Read an application
+
+<Steps>
+  <Step title="Read the answers">
+    The **Application** tab (2) shows the issuer's answers, grouped into the form's sections (4). Unanswered fields read *Not provided*. A required field with no answer shows *Value is required*. Use the arrows (1) to move to the previous or next application.
+
+    <Frame caption="An application's answers">
+      <img src="/images/proof/application-detail.webp" alt="Application detail with callouts on the previous and next arrows, the Application tab, the Entity Details tab and the Overview section tab" />
+    </Frame>
+  </Step>
+  <Step title="Download documents">
+    File answers appear as documents. Click the download button (1) to open one.
+
+    <Frame caption="Documents attached to an application">
+      <img src="/images/proof/application-documents.webp" alt="Application showing six Word documents, file names redacted, with a callout on a download button" />
+    </Frame>
+  </Step>
+  <Step title="Check the issuer">
+    Click **Entity Details** (3) to see the organization behind the application. See [Watchlist issuers](/proof/watchlist-issuers).
+  </Step>
+</Steps>
+
+## Review an application
+
+The review buttons appear at the top of the application, based on its state. Each one asks you to confirm.
+
+| State | Buttons you see | What the confirmation says |
+|---|---|---|
+| Pending Review | **Accept** | *This action will move the application to review.* |
+| In Review | **Approve**, plus a menu with **Approve**, **Decline** and **Request for information** | See below |
+
+| Action | Confirmation | Result |
+|---|---|---|
+| **Accept** | *This action will move the application to review. Continue?* | In Review |
+| **Approve** | *This action will approve the application and issue the credential. Continue?* | Next approver, or Approved |
+| **Decline** | *This action will decline the application. Continue?* | Denied |
+| **Request for information** | *This action will request additional information from the issuer. Continue?* | Request for Info |
+
+To review:
+
+1. Filter to **Needs Review** and open an application.
+2. Click **Accept** to take it into review.
+3. Read the answers and documents.
+4. Click **Approve**, or open the menu and click **Decline** or **Request for information**.
+5. Confirm.
+
+Only the assigned reviewer can approve, decline or request information. If the form has several approvers, **Approve** hands the application to the next one. See [Approval workflow](/proof/approval-workflow).
+
+## Reference
+
+### List columns
+
+| Column | Shows |
 |---|---|
-| Draft | The issuer hasn't submitted yet. |
-| Pending review | Submitted and waiting for the reviewer. |
-| In review | The reviewer accepted it. |
-| Request for info | Back with the issuer for more information. |
-| Approved | The credential is issued. |
-| Rejected | Declined. |
-| Archived | No longer active. |
+| **Date / ID** | When the application was created, and its ID |
+| **Credential / Form** | Credential type, with the form name below |
+| **Issuing to** | The organization or asset receiving the credential |
+| **Issuer** | The issuer organization |
+| **Status** | The [state](/proof/application-states) |
+| **Reviewer** | The assigned reviewer, or *Unassigned* |
+
+### Filters
+
+| Filter | Values |
+|---|---|
+| Status | All Statuses, Needs Review, Pending Review, In Review, Request for Info, Approved, Denied, Archived, Draft |
+| Reviewer | All Reviewers, Unassigned, each member |
+
+## Worked example
+
+You open **Applications** and filter to **Needs Review**. A *Know Your Issuer* application sits in **Pending Review**, assigned to you. You click **Accept**, then read the answers on the **Application** tab and download the attached disclosures. The reserves section is incomplete, so you open the menu, click **Request for information** and confirm. The issuer gets the application back to edit.
+
+## Errors and troubleshooting
+
+| Problem | Cause | What to do |
+|---|---|---|
+| No review buttons | The state has no review action, for example Draft or Archived | Check the **Status** column. |
+| *You are not assigned to this application yet* | Someone else is the assigned reviewer | Check **Reviewer**. Ask them, or an admin to change the workflow. |
+| *Invalid application state for this operation* | The state changed since you opened it | Reload the page. |
+| A filing never appears in Needs Review | Filings are approved on submit | Filter to **Approved**. |
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Is Denied the same as Rejected?">
+    Yes. The Compliance Hub labels a declined application **Denied**.
+  </Accordion>
+  <Accordion title="Can I edit an issuer's answers?">
+    No. Use **Request for information** to send the application back to the issuer.
+  </Accordion>
+  <Accordion title="Where do new applications come from?">
+    Issuers start them from a published form, or you send a form with **Request a form**. See [Watchlist issuers](/proof/watchlist-issuers#request-a-form).
+  </Accordion>
+  <Accordion title="What happens after I approve?">
+    The credential is issued in the background. See [Credentials](/proof/credentials#how-a-credential-is-issued).
+  </Accordion>
+</AccordionGroup>
+
+## Related pages
+
+- [Application states](/proof/application-states)
+- [Approval workflow](/proof/approval-workflow)
+- [Form manager](/proof/form-manager)
+- [Credentials](/proof/credentials)
