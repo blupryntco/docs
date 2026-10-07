@@ -4,15 +4,17 @@ sidebarTitle: "Quickstart"
 description: "Embed Bluprynt KYI verification in your app in three steps."
 ---
 
-The [KYI Widget SDK](https://blupryntco.github.io/kyi-widget-sdk/index.html) runs the [KYI](/tools/kyi) flow inside your product. Your server mints a short-lived token; your frontend opens the widget in a drawer.
+This guide gets the [KYI widget](/sdk/overview) running on your page. Your server mints a short-lived token, and your frontend opens the widget in a drawer. For what the widget does after it opens, see [Verification flow](/sdk/flow).
 
-<Frame caption="The widget verifying an asset.">
-  <img src="/images/sdk/verify-asset.png" alt="KYI widget drawer showing the asset verification step." />
+<Frame caption="The kyi scope, opened from a partner page.">
+  <img src="/images/sdk/flow/01-launch.png" alt="KYI drawer open over a partner page." />
 </Frame>
 
 ## Before you start
 
-Send your Bluprynt representative every origin that will embed the widget, such as `https://app.example.com` and `http://localhost:3000`. You get back a partner ID and a `SECRET_KEY`. The widget only loads on allowlisted origins; scheme, host and port must match exactly. The server helper needs Node.js 18 or later.
+- **Credentials.** Send your Bluprynt representative every origin that will embed the widget, including staging and local development (for example `https://app.example.com` and `http://localhost:3000`). You get back a partner ID and a `SECRET_KEY`. Store them as `KYI_PARTNER_ID` and `KYI_SECRET_KEY` on your server.
+- **Runtime.** `generateToken()` needs Node.js 18 or later. For other languages, see [Access tokens](/sdk/tokens#python).
+- **Signed-in members.** The token endpoint needs to know who's asking, so it sits behind your own authentication.
 
 ```bash
 npm install @bluprynt/kyi-widget-sdk
@@ -21,43 +23,79 @@ npm install @bluprynt/kyi-widget-sdk
 <Steps>
   <Step title="Mint a token on your server">
     ```ts server.ts
+    import express from 'express'
     import { generateToken } from '@bluprynt/kyi-widget-sdk/server'
 
-    // requireLogin: your own auth middleware
+    const app = express()
+
+    // requireLogin: your own session middleware; it sets req.user
     app.post('/api/kyi/token', requireLogin, async (req, res) => {
-      const accessToken = await generateToken({
-        issuer: process.env.BLUPRYNT_PARTNER_ID, // your partner ID
-        secretKey: process.env.BLUPRYNT_SECRET_KEY,
-        userId: req.session.user.id, // from the session, never the request body
-        expiresIn: 3600, // seconds
-      })
-      res.json({ accessToken })
+      res.set('Cache-Control', 'no-store')
+      const issuer = process.env.KYI_PARTNER_ID
+      const secretKey = process.env.KYI_SECRET_KEY
+      if (!issuer || !secretKey) return res.status(503).json({ error: 'kyi_not_configured' })
+
+      try {
+        const accessToken = await generateToken({
+          issuer,
+          secretKey,
+          userId: String(req.user.id), // from the session, never from the request
+          expiresIn: 3600, // seconds
+        })
+        res.json({ accessToken })
+      } catch {
+        res.status(502).json({ error: 'kyi_token_failed' })
+      }
     })
     ```
-    <Warning>Keep `SECRET_KEY` on the server. Take the user ID from your authenticated session: if your endpoint reads it from the request, anyone can open someone else's verification.</Warning>
+    <Warning>Keep `KYI_SECRET_KEY` on the server. Take the user ID from your authenticated session: if your endpoint reads it from the request, anyone can open someone else's verification.</Warning>
   </Step>
   <Step title="Open the widget">
-    The widget slides in from the right as a drawer. Mint a fresh token each time you open it.
+    Mint a fresh token every time you open the widget. The drawer slides in from the right, and it closes on the close button, a click outside it, or `Escape`.
     ```ts app.ts
-    import { kyi } from '@bluprynt/kyi-widget-sdk'
+    import { kyi, type KYIWidget } from '@bluprynt/kyi-widget-sdk'
 
-    const { accessToken } = await fetch('/api/kyi/token', { method: 'POST' })
-      .then((r) => r.json())
+    let widget: KYIWidget | null = null
 
-    const widget = kyi('drawer', 'kyi', accessToken, {
-      onReady: () => console.log('Widget loaded'),
-      onClose: () => console.log('Widget closed'),
-      onError: (error) => console.error(error),
+    document.querySelector('#verify')!.addEventListener('click', async () => {
+      if (widget) return // already open
+      const res = await fetch('/api/kyi/token', { method: 'POST', cache: 'no-store' })
+      if (!res.ok) return showError(res.status)
+      const { accessToken } = await res.json()
+
+      widget = kyi('drawer', 'kyi', accessToken, {
+        onReady: () => console.log('Widget loaded'),
+        onClose: () => { widget = null },
+        onError: (error) => console.error(error),
+      })
     })
+
+    // When your page or component goes away:
+    // widget?.destroy()
     ```
   </Step>
   <Step title="Pick a scope">
-    | Scope | Opens |
-    |---|---|
-    | `kyi` | The full verification flow. |
-    | `asset-list` | The member's verified assets. |
-    | `wallet-list` | The member's verified wallets. |
+    | Scope | Opens | Screen |
+    |---|---|---|
+    | `kyi` | The verification flow: KYB, add an asset, sign wallets. | [Flow](/sdk/flow) |
+    | `asset-list` | The organization's assets and their KYI status. | [Assets](/sdk/flow#the-asset-list-scope) |
+    | `wallet-list` | The organization's verified wallets. | [Wallets](/sdk/flow#the-wallet-list-scope) |
   </Step>
 </Steps>
 
-Next: [verify the controlling wallets](/sdk/wallet-verification), or see the full [reference](/sdk/reference).
+## Check it works
+
+1. Sign in to your app on an allowlisted origin and click your button.
+2. The drawer opens and shows **Start here — two steps to your first verified asset**. `onReady` logs `Widget loaded`.
+3. Close it. `onClose` fires and the next click opens a new drawer.
+
+If the drawer stays empty, your origin isn't allowlisted yet. See [Errors and troubleshooting](/sdk/errors).
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Verification flow" icon="list-check" href="/sdk/flow">Every screen, step by step.</Card>
+  <Card title="Access tokens" icon="key" href="/sdk/tokens">Next.js, Flask and FastAPI endpoints.</Card>
+  <Card title="Security" icon="shield" href="/sdk/security">The checklist before going live.</Card>
+  <Card title="Example: Claim this profile" icon="code" href="/sdk/example-explorer-claim">A complete Next.js integration.</Card>
+</CardGroup>
