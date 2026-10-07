@@ -1,0 +1,10 @@
+/* Quickstart persona tabs scroll sideways on phones; hide the scrollbar track. */
+[role="tablist"] { scrollbar-width: none; }
+[role="tablist"]::-webkit-scrollbar { display: none; }
+
+/* Phone-sized crops of wide annotated screenshots. */
+.screenshot-mobile { display: none; }
+@media (max-width: 639px) {
+  .screenshot-mobile { display: block; }
+  .screenshot-desktop { display: none; }
+}

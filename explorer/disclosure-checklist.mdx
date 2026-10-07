@@ -79,7 +79,7 @@ flowchart TD
 | Evidence quality | 10 |
 | **Total** | **48** |
 
-Issuer and protocol checklists are described on [Issuer, regulator and protocol pages](/tools/explorer/profiles).
+Issuer and protocol checklists are described on [Issuer, regulator and protocol pages](/explorer/profiles).
 
 ### Status tags
 
@@ -129,23 +129,9 @@ You can rely on those 7 facts and their sources. Everything else is unknown, not
 | Items read **Self-reported** | The issuer hasn't verified through KYI. The values still come from public sources. |
 | Score differs between asset and issuer | An issuer's score counts items across all deployments of all its assets. |
 
-## FAQ
-
-<AccordionGroup>
-  <Accordion title="Does 'Not disclosed' mean the issuer is hiding something?">
-    No. It means the registry holds no evidenced value. The issuer may publish it somewhere the registry hasn't read yet.
-  </Accordion>
-  <Accordion title="Can Bluprynt fill a missing item with an estimate?">
-    No. Items count only when a source supports them. Missing items stay missing.
-  </Accordion>
-  <Accordion title="What happens after an issuer claims its profile?">
-    It creates an issuer account, verifies a control wallet and continues in [Bluprynt Passport](/passport/overview), where it completes [KYI](/tools/kyi) and publishes disclosures. The record then shows **KYI verified**.
-  </Accordion>
-</AccordionGroup>
-
 ## Related pages
 
 <CardGroup cols={2}>
   <Card title="Claim this profile" icon="badge-check" href="/sdk/example-explorer-claim">The claim flow end to end.</Card>
-  <Card title="Access, freshness and provenance" icon="lock-open" href="/tools/explorer/access-and-provenance">What is open and how current it is.</Card>
+  <Card title="Access, freshness and provenance" icon="lock-open" href="/explorer/access-and-provenance">What is open and how current it is.</Card>
 </CardGroup>

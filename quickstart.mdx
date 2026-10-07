@@ -1,10 +1,11 @@
 ---
 title: "Quickstart"
 description: "Pick the path that matches your role and get to your first result."
+mode: "wide"
 ---
 
 <Tabs>
-  <Tab title="I issue a token" icon="coins">
+  <Tab title="Issue a token" icon="coins">
     <Steps>
       <Step title="Create your organization">
         Sign up at [app.bluprynt.com](https://app.bluprynt.com) and set up your organization. See [Set up your organization](/passport/organization).
@@ -17,20 +18,39 @@ description: "Pick the path that matches your role and get to your first result.
       </Step>
     </Steps>
   </Tab>
-  <Tab title="I verify or supervise" icon="scale">
+  <Tab title="Verify or supervise" icon="scale">
     <Steps>
       <Step title="Sign in to Bluprynt Proof">
         Bluprynt Proof is in early access. Ask [product@bluprynt.com](mailto:product@bluprynt.com) for an organization, then sign in at [compliance.bluprynt.com](https://compliance.bluprynt.com).
       </Step>
       <Step title="Add the assets you oversee">
-        Add an asset by token address, or add the issuer behind it. See [Registry](/proof/registry).
+        Add an asset by token address, or add the issuer behind it. See [Watchlist](/proof/registry).
       </Step>
       <Step title="Request and review information">
         Send a form to an issuer and review what comes back. See [Applications and review](/proof/applications).
       </Step>
     </Steps>
   </Tab>
-  <Tab title="I'm a developer" icon="terminal">
+  <Tab title="I'm researching compliance information" icon="search">
+    <Steps>
+      <Step title="Search for an asset">
+        Open [explorer.bluprynt.com](https://explorer.bluprynt.com) and search by name, ticker, issuer or contract address. You don't need an account. See [Search and browse](/explorer/search).
+      </Step>
+      <Step title="Read the asset page">
+        Check the issuer, status tags, listed venues and chain deployments, then move through the tabs. See [The asset page](/explorer/asset-page).
+      </Step>
+      <Step title="Check what is disclosed">
+        The disclosure checklist shows which facts are on record and which are **Not disclosed**. Opening source documents needs Explorer Pro. See [Disclosure checklist](/explorer/disclosure-checklist) and [Access and provenance](/explorer/access-and-provenance).
+      </Step>
+      <Step title="Monitor changes">
+        With Explorer Pro, add the asset to your watchlist to get classified disclosure changes. See [Disclosure Monitoring](/tools/disclosure-monitoring).
+      </Step>
+      <Step title="Read it from your systems">
+        Pull your watchlist, changes and notifications with an Explorer API key. See [Explorer API](/api/explorer/overview).
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="Build with the API" icon="terminal">
     Check a badge with no key at all:
 
     ```bash

@@ -24,7 +24,8 @@
     "default": "light"
   },
   "styling": {
-    "codeblocks": "system"
+    "codeblocks": "system",
+    "eyebrows": "breadcrumbs"
   },
   "navbar": {
     "links": [
@@ -62,6 +63,7 @@
             "group": "Bluprynt Passport",
             "pages": [
               "passport/overview",
+              "passport/concepts",
               "passport/sign-in",
               "passport/home",
               {
@@ -91,13 +93,15 @@
                   "passport/reports"
                 ]
               },
-              "passport/settings"
+              "passport/settings",
+              "passport/faq"
             ]
           },
           {
             "group": "Bluprynt Proof",
             "pages": [
               "proof/overview",
+              "proof/concepts",
               "proof/sign-in",
               "proof/dashboard",
               {
@@ -124,7 +128,22 @@
                 ]
               },
               "proof/credentials",
-              "proof/members"
+              "proof/members",
+              "proof/faq"
+            ]
+          },
+          {
+            "group": "Compliance Explorer",
+            "pages": [
+              "explorer/overview",
+              "explorer/concepts",
+              "explorer/search",
+              "explorer/directories",
+              "explorer/asset-page",
+              "explorer/profiles",
+              "explorer/disclosure-checklist",
+              "explorer/access-and-provenance",
+              "explorer/faq"
             ]
           },
           {
@@ -147,18 +166,6 @@
                   "tools/monitoring/watchlist",
                   "tools/monitoring/change-detection",
                   "tools/monitoring/notifications"
-                ]
-              },
-              {
-                "group": "Compliance Explorer",
-                "pages": [
-                  "tools/compliance-explorer",
-                  "tools/explorer/search",
-                  "tools/explorer/directories",
-                  "tools/explorer/asset-page",
-                  "tools/explorer/profiles",
-                  "tools/explorer/disclosure-checklist",
-                  "tools/explorer/access-and-provenance"
                 ]
               }
             ]
@@ -240,5 +247,41 @@
       "x": "https://x.com/blupryntco",
       "linkedin": "https://www.linkedin.com/company/the-bluprynt/"
     }
+  },
+  "redirects": [
+    {
+      "source": "/tools/compliance-explorer",
+      "destination": "/explorer/overview"
+    },
+    {
+      "source": "/tools/explorer/search",
+      "destination": "/explorer/search"
+    },
+    {
+      "source": "/tools/explorer/directories",
+      "destination": "/explorer/directories"
+    },
+    {
+      "source": "/tools/explorer/asset-page",
+      "destination": "/explorer/asset-page"
+    },
+    {
+      "source": "/tools/explorer/profiles",
+      "destination": "/explorer/profiles"
+    },
+    {
+      "source": "/tools/explorer/disclosure-checklist",
+      "destination": "/explorer/disclosure-checklist"
+    },
+    {
+      "source": "/tools/explorer/access-and-provenance",
+      "destination": "/explorer/access-and-provenance"
+    }
+  ],
+  "contextual": {
+    "options": [
+      "copy",
+      "view"
+    ]
   }
 }

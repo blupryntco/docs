@@ -1,0 +1,44 @@
+---
+title: "Compliance Explorer concepts"
+sidebarTitle: "Concepts"
+description: "The records, evidence states and access tiers you meet on every Compliance Explorer page."
+---
+
+Every Compliance Explorer page uses the same few ideas. Learn them once here; the feature pages link back.
+
+## Records
+
+| Term | Meaning |
+| --- | --- |
+| Registry | The set of records Compliance Explorer shows. It covers assets, issuers, entities, protocols, groups and regulators. |
+| Asset | One tokenized asset, such as a stablecoin or tokenized fund, with its contract deployments on each chain. |
+| Issuer | The legal entity behind an asset. An issuer is "inferred" until it verifies itself through [KYI](/tools/kyi). |
+| Regulator | A financial supervisor or company register, with the entities on its register. |
+| Protocol | An on-chain protocol that issues, lends against or routes tokenized assets, such as a bridge. |
+| Disclosure checklist | The fixed list of facts the registry tracks for each subject. Assets have 48 items. |
+| Not disclosed | The registry looked for a fact and holds no evidenced value for it. It is never filled with a guess. |
+| Source document | A document, page or register entry the registry read to evidence a field. |
+| Explorer Pro | The paid tier that opens source documents, the full disclosure record and [Disclosure Monitoring](/tools/disclosure-monitoring). |
+
+## Evidence states
+
+| State | What it means | Where you see it |
+|---|---|---|
+| **On record** | A source supports the value, and the source is kept with it. | Checklist items and asset fields. See [Disclosure checklist](/explorer/disclosure-checklist). |
+| **Not disclosed** | The registry looked and holds no evidenced value. Nothing is estimated. | Checklist items. |
+| **Issuer (inferred)** | The issuer was matched from sources, not confirmed by the issuer. | Asset header and issuer profile. See [Profiles](/explorer/profiles). |
+| **KYI verified** | The issuer claimed its profile and completed [KYI](/tools/kyi). | Asset header and issuer profile. |
+
+## Access tiers
+
+| Tier | What you can open |
+|---|---|
+| Public, no account | Search, directories and every public record field. |
+| Explorer Pro | Source documents, verbatim quotes, the complete disclosure record and [Disclosure Monitoring](/tools/disclosure-monitoring). See [Access and provenance](/explorer/access-and-provenance). |
+
+## Related pages
+
+<CardGroup cols={2}>
+  <Card title="Overview" icon="search" href="/explorer/overview">What Compliance Explorer is and who it's for.</Card>
+  <Card title="FAQ" icon="circle-help" href="/explorer/faq">Answers that apply across the Explorer.</Card>
+</CardGroup>
