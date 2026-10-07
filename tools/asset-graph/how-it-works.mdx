@@ -69,7 +69,7 @@ Anything else that stops a branch is not a terminal. It is a flagged node, with 
   <Step title="Check the block pins">
     Under the graph, the pinned blocks line (1) lists the block read on each chain and the skew between them. The legend (2) explains the colors: dark is the asset you hold, white nodes were read, green is a terminal and amber is a layer the engine couldn't read.
 
-    <Frame caption="Block pins and the color legend under the hero graph.">
+    <Frame caption="Block pins and the color legend under the illustrative hero graph.">
       <img src="/images/explorer/ade-landing-graph.webp" alt="The hero graph with callouts on the pinned blocks line and the color legend." />
     </Frame>
   </Step>
@@ -84,7 +84,7 @@ Anything else that stops a branch is not a terminal. It is a flagged node, with 
 
 ## Worked example: a vault share on an L2
 
-You hold a vault share and want to know what is under it.
+You hold a vault share and want to know what is under it. This example follows the illustrative graph above; it isn't a specific listed asset.
 
 1. **Depth 0.** The vault share is classified as an ERC-4626 vault, and the engine finds its underlying.
 2. **Depth 1.** The underlying is a tokenized money market fund, read with `totalSupply` and its NAV. The vault also has an L2 deployment reached through a bridge. The engine can't read that bridge, so it draws the node and flags it `BRIDGE_UNSUPPORTED`.
