@@ -1,38 +1,122 @@
 ---
 title: "Bluprynt Passport"
-sidebarTitle: "Overview"
-description: "The issuer workspace for KYI, Proof of Collateral and disclosures."
+description: "The issuer workspace where you verify your organization, verify your assets, publish Proof of Collateral and prepare regulatory documents."
 ---
 
-<Frame caption="Product design: the Passport overview once an issuer's assets are verified.">
-  <img src="/images/design/passport-home.png" alt="Bluprynt Passport overview design showing a verified entity, the Verify a new asset panel and a table of assets with KYI and Proof of Collateral status." />
+Bluprynt Passport is the issuer workspace at [app.bluprynt.com](https://app.bluprynt.com). Issuers, their compliance teams and their advisers use it to prove who stands behind a token and what backs it. Everything you verify in Passport appears on the asset's public trust page and in [Compliance Explorer](/tools/compliance-explorer).
+
+<Frame caption="The Passport Overview for a verified organization.">
+  <img src="/images/passport/passport-home.webp" alt="Passport Overview page showing the organization switcher, the Entity verified KYB badge, the Verify a new asset panel and the Your assets table." />
 </Frame>
 
-Bluprynt Passport, at [app.bluprynt.com](https://app.bluprynt.com), is where an issuer proves who it is and what backs its tokens. What you publish here appears on each asset's public page and in the [Public API](/api/public/overview).
+## Key concepts
 
-## What you can do
-
-| Area | Use it to |
+| Term | Meaning |
 |---|---|
-| **Overview** | See every asset and what each one still needs. Start verifying a new asset. |
-| **My Entity** | Check the legal entity of record and its KYB status. |
-| **My Assets** | Open an asset's trust center: KYI status, Proof of Collateral and composition. |
-| **Integrations** | Connect AML screening and smart-contract monitoring providers. |
-| **Reports** | Generate entity and asset reports once their prerequisites are met. |
-| **Documents** | Draft and publish disclosures such as MiCA white papers. |
-| **Wallets** · **Attestations** | Review verified wallets and published KYI attestations. |
-| **Analyze** | Check a white paper against MiCA. |
+| **Organization** | The issuer you act for. Assets, members, documents and reports belong to an organization. |
+| **Member** | A person with access to an organization, with the Admin or Member role. |
+| **KYB** | Verification of the organization's legal entity. It unlocks asset verification. |
+| **Entity profile** | The registry-backed record of your legal entity: name, LEI, jurisdiction, licenses and responsible persons. |
+| **KYI** | Know Your Issuer. The per-asset check that ties a token to your verified entity, closed by authority wallet signatures. |
+| **Proof of Collateral** | The asset disclosure form that evidences what backs an asset. It needs KYI first. |
+| **Trust center** | The asset page in Passport that shows each verification step and its state. |
+| **Public page** | The read-only page at `verified.bluprynt.com` that anyone can open for an asset. |
+| **Smart Disclosure** | A regulatory document, such as a MiCA white paper, that you prepare in **Documents**. |
 
-## Get started
+## How it works
 
-<Steps>
-  <Step title="Set up your organization" icon="building-2">
-    [Create an organization](/passport/organization) and invite members.
-  </Step>
-  <Step title="Verify an asset" icon="fingerprint">
-    [Run KYI](/passport/verify-asset) for each token you issue.
-  </Step>
-  <Step title="Publish Proof of Collateral" icon="vault">
-    [Show what backs the token](/passport/proof-of-collateral).
-  </Step>
-</Steps>
+```mermaid
+flowchart TD
+  A[Sign in] --> B[Create or pick organization]
+  B --> C[Verify organization KYB]
+  C --> D[Add asset address]
+  D --> E[Complete KYI details]
+  E --> F[Sign with authority wallets]
+  F --> G[Submit Proof of Collateral]
+  G --> H[Public trust page]
+```
+
+Each step unlocks the next. Asset verification stays locked until KYB is complete. Proof of Collateral shows **Needs KYI first** until KYI is verified.
+
+## Feature guides
+
+<CardGroup cols={2}>
+  <Card title="Sign in and sign up" icon="log-in" href="/passport/sign-in">
+    Create your account, sign in and reset your password.
+  </Card>
+  <Card title="Overview" icon="layout-dashboard" href="/passport/home">
+    Your home screen: progress, assets and the next action for each.
+  </Card>
+  <Card title="Organizations and KYB" icon="building-2" href="/passport/organization">
+    Create and switch organizations, and verify the legal entity.
+  </Card>
+  <Card title="Members and roles" icon="users" href="/passport/members">
+    Invite colleagues and choose Admin or Member.
+  </Card>
+  <Card title="Entity profile" icon="landmark" href="/passport/entity">
+    Your legal entity record, LEI lookup, licenses and documents.
+  </Card>
+  <Card title="Verify an asset (KYI)" icon="badge-check" href="/passport/verify-asset">
+    Add a token, fill in its details and sign with your wallets.
+  </Card>
+  <Card title="Asset trust center" icon="shield-check" href="/passport/asset-page">
+    Every verification step for one asset, in one place.
+  </Card>
+  <Card title="Public trust page" icon="globe" href="/passport/public-page">
+    What anyone sees at verified.bluprynt.com.
+  </Card>
+  <Card title="Proof of Collateral" icon="vault" href="/passport/proof-of-collateral">
+    The asset disclosure form, its sections and evidence uploads.
+  </Card>
+  <Card title="Documents" icon="file-text" href="/passport/disclosures">
+    Prepare Smart Disclosures such as MiCA white papers.
+  </Card>
+  <Card title="Analyze" icon="scan-search" href="/passport/analyze">
+    Score an existing white paper against MiCA.
+  </Card>
+  <Card title="MiCA asset classifier" icon="list-checks" href="/passport/mica-classifier">
+    Find out whether your token is an EMT, an ART or another token.
+  </Card>
+  <Card title="Reports" icon="chart-bar" href="/passport/reports">
+    Generate entity, collateral, AML, cyber and custody reports.
+  </Card>
+  <Card title="Wallets and attestations" icon="wallet" href="/passport/wallets-and-attestations">
+    Every wallet you proved and every attestation published.
+  </Card>
+  <Card title="Settings" icon="settings" href="/passport/settings">
+    Your account, your plan and your organizations.
+  </Card>
+  <Card title="Proof of Collateral tool" icon="layers" href="/tools/proof-of-collateral">
+    How lenders, exchanges and supervisors read your collateral.
+  </Card>
+</CardGroup>
+
+## Navigation
+
+The left sidebar holds every Passport area.
+
+| Sidebar item | What it opens |
+|---|---|
+| Organization switcher | The current organization, your other organizations and **Create new**. |
+| **Overview** | The home screen. See [Overview](/passport/home). |
+| **My Entity** | The entity profile. See [Entity profile](/passport/entity). |
+| **My Assets** | Your assets, with a **Filter assets…** box and a status chip per asset. |
+| **Integrations** | API keys and connections. See the [Public API](/api/public/overview). |
+| **Reports** | Report templates and prerequisites. See [Reports](/passport/reports). |
+| **Documents** | Smart Disclosures. See [Documents](/passport/disclosures). |
+| **Wallets** | Wallets you proved. See [Wallets and attestations](/passport/wallets-and-attestations). |
+| **Attestations** | Published KYI attestations. |
+| **Analyze** | White paper analysis. See [Analyze](/passport/analyze). |
+| **Invite members** | The invite dialog. See [Members and roles](/passport/members). |
+| **Settings** | Account and organization settings. See [Settings](/passport/settings). |
+
+## Embed verification in your own app
+
+Passport is the hosted workspace. To run KYI inside your own product, use the [KYI widget](/tools/kyi) and the [SDK quickstart](/sdk/quickstart).
+
+## Related pages
+
+- [Proof of Collateral tool](/tools/proof-of-collateral)
+- [KYI widget](/tools/kyi)
+- [Compliance Explorer](/tools/compliance-explorer)
+- [Bluprynt Proof](/proof/overview)

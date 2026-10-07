@@ -1,0 +1,38 @@
+[
+  {
+    "group": "Bluprynt Passport",
+    "pages": [
+      "passport/overview",
+      "passport/sign-in",
+      "passport/home",
+      {
+        "group": "Organization",
+        "pages": ["passport/organization", "passport/members", "passport/entity"]
+      },
+      {
+        "group": "Assets",
+        "pages": [
+          "passport/verify-asset",
+          "passport/asset-page",
+          "passport/public-page",
+          "passport/proof-of-collateral",
+          "passport/wallets-and-attestations"
+        ]
+      },
+      {
+        "group": "Documents and compliance",
+        "pages": [
+          "passport/disclosures",
+          "passport/analyze",
+          "passport/mica-classifier",
+          "passport/reports"
+        ]
+      },
+      "passport/settings"
+    ]
+  },
+  {
+    "group": "Tools: Proof of Collateral",
+    "pages": ["tools/proof-of-collateral"]
+  }
+]
