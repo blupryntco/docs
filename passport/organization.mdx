@@ -1,31 +1,139 @@
 ---
-title: "Set up your organization"
-description: "Create an organization in Bluprynt Passport, complete KYB and invite members."
+title: "Organizations and KYB"
+description: "Create an organization, switch between organizations and verify your legal entity with KYB."
 ---
 
-KYI is issued to an organization, not to a person. Create one before you verify any asset.
+An organization is the issuer you act for in Passport. Assets, members, documents and reports all belong to one organization. Before you can verify an asset, you verify the organization's legal entity. This is KYB.
+
+## Key concepts
+
+| Term | Meaning |
+|---|---|
+| **Organization** | A workspace for one issuer. You can belong to several. |
+| **Organization switcher** | The control at the top of the sidebar that shows the current organization and lets you change it. |
+| **LEI** | Legal Entity Identifier, the 20-character code from the GLEIF register. Optional when you create an organization. |
+| **ONCHAIN ID / DID** | A decentralized identifier that links your organization to its on-chain identity, for example ERC734/735. Optional. |
+| **KYB** | Verification of the organization's legal entity. Bluprynt matches the entity against GLEIF and regulator registers. |
+| **Verified / Unverified** | The organization's KYB status, shown in **Settings → Organizations**. |
+
+## How it works
+
+```mermaid
+flowchart TD
+  A[Create organization] --> B[Unverified]
+  B --> C[Verify organization]
+  C --> D[Registry match]
+  D --> E[Verified]
+  E --> F[Asset verification unlocked]
+```
+
+A new organization starts **Unverified**. The Overview shows **Start here — two steps to your first verified asset**. Step 2, verifying your first asset, stays **Locked** until step 1 is done.
+
+## Create an organization
 
 <Steps>
-  <Step title="Sign in">
-    Go to [app.bluprynt.com](https://app.bluprynt.com) and sign in, or choose **Sign Up** to create a login.
-  </Step>
-  <Step title="Create the organization">
-    Open **Settings** → **Organizations** and click **Create organization**. One login can belong to several organizations, each with its own role.
-    <Frame>
-      <img src="/images/live/passport-organizations.png" alt="The Organizations tab in Passport settings with the Create organization button." />
+  <Step title="Open the switcher">
+    Click the organization name at the top of the sidebar. The list shows your organizations (1). Click **Create new** (2).
+
+    <Frame caption="The organization switcher, open.">
+      <img src="/images/passport/passport-org-switcher.webp" alt="Sidebar organization switcher open, with callouts on the organization list and the Create new item." />
     </Frame>
   </Step>
-  <Step title="Complete KYB">
-    Provide your legal entity details. When the check passes, the overview shows **Entity verified · KYB** and **My Entity** shows the entity of record.
-    <Frame>
-      <img src="/images/live/passport-entity.png" alt="My Entity page showing a KYB verified entity and the assets it issues." />
+  <Step title="Fill in the organization">
+    In **Create your Organization**, enter the **Organization Name** (1). This is the public display name. Optionally add an **LEI Number** (2) and an **ONCHAIN ID / DID** (3). You can also add an organization logo. Click **Create organization** (4).
+
+    <Frame caption="The Create your Organization dialog.">
+      <img src="/images/passport/passport-create-organization.webp" alt="Create your Organization dialog with callouts on Organization Name, LEI Number, ONCHAIN ID / DID and the Create organization button." />
     </Frame>
   </Step>
-  <Step title="Invite members">
-    Click **Invite members** at the bottom of the sidebar, then enter each person's email and role.
+  <Step title="Or create it from Settings">
+    Open **Settings → Organizations** (1). Search your organizations (2) or click **Create organization** (3). The same dialog opens.
+
+    <Frame caption="Settings, Organizations tab.">
+      <img src="/images/passport/passport-settings-organizations.webp" alt="Settings Organizations tab with callouts on the tab, the search box and the Create organization button, and a table of organizations with status and role." />
+    </Frame>
   </Step>
 </Steps>
 
-<Tip>
-Related companies only need their own organization if they hold assets themselves.
-</Tip>
+## Verify the organization (KYB)
+
+<Steps>
+  <Step title="Start from the checklist">
+    In a new organization, the Overview shows **ENTITY NOT VERIFIED** (4) and the **Start here** checklist. Click **Verify organization** (1). Step 2 shows **Locked** (2) until you finish. The sidebar also shows a **Verify Your Business** prompt (3).
+
+    <Frame caption="Overview for an organization that isn't verified yet.">
+      <img src="/images/passport/passport-kyb-start.webp" alt="Overview of an unverified organization with callouts on Verify organization, the Locked second step, the sidebar Verify Your Business card and the Entity not verified badge." />
+    </Frame>
+  </Step>
+  <Step title="Confirm your legal entity">
+    Bluprynt matches your legal entity against the GLEIF register and regulator registers. When verification completes, the Overview shows **Entity verified · KYB** and **My Entity** fills with the registry record. See [Entity profile](/passport/entity).
+  </Step>
+</Steps>
+
+<Note>
+The KYB submission itself is a write to production, so this guide stops at the **Verify organization** step.
+</Note>
+
+## Reference
+
+### Create organization fields
+
+| Field | Required | Notes |
+|---|---|---|
+| Organization logo | No | Shown in the switcher and on public pages. |
+| Organization Name | Yes | Public display name of your organization. |
+| LEI Number | No | 20 characters, for example `2549000PPUXXXX999999`. |
+| ONCHAIN ID / DID | No | For example an ERC734/735 identity. |
+
+### Organizations table
+
+| Column | Shows |
+|---|---|
+| Name | Organization name and logo. |
+| Status | **Verified** or **Unverified**. |
+| ONCHAIN ID / DID | The identifier, if set. |
+| LEI Number | The LEI, if set. |
+| Role | Your role: **Admin** or **Member**. |
+| Actions | A menu for the organization. |
+
+### Who can do what
+
+| Action | Admin | Member |
+|---|---|---|
+| Update organization details | Yes | No |
+| Invite members and manage invites | Yes | No |
+| Manage memberships | Yes | No |
+| Delete the organization | Owner only | No |
+
+## Worked example
+
+You run compliance for a fund issuer. You click **Create new**, enter the fund manager's name and its LEI, and click **Create organization**. The Overview shows **Start here**. You click **Verify organization**. Once KYB completes, the badge reads **Entity verified · KYB** and the **Verify a new asset** panel unlocks.
+
+## Troubleshooting
+
+| Problem | What to do |
+|---|---|
+| **Verify** on the Overview says *Locked — complete step 1 above* | Finish KYB first. |
+| You can't edit organization details | Only Admins can. Ask an Admin, or ask to be made one. |
+| The wrong assets are showing | You're in another organization. Use the switcher. |
+| You don't know your LEI | Leave it blank. You can look it up later from **My Entity → Find my LEI**. |
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Do I need an LEI to create an organization?">
+    No. Both the LEI and the ONCHAIN ID / DID are optional.
+  </Accordion>
+  <Accordion title="Can I belong to more than one organization?">
+    Yes. Each organization keeps its own assets, members and documents. Switch between them from the sidebar.
+  </Accordion>
+  <Accordion title="How do I leave an organization?">
+    Open **Settings → Organizations**, open the organization, and click **Leave Organization**. See [Settings](/passport/settings).
+  </Accordion>
+</AccordionGroup>
+
+## Related pages
+
+- [Members and roles](/passport/members)
+- [Entity profile](/passport/entity)
+- [Settings](/passport/settings)

@@ -28,8 +28,14 @@
   },
   "navbar": {
     "links": [
-      { "label": "Explorer", "href": "https://explorer.bluprynt.com" },
-      { "label": "Support", "href": "mailto:product@bluprynt.com" }
+      {
+        "label": "Explorer",
+        "href": "https://explorer.bluprynt.com"
+      },
+      {
+        "label": "Support",
+        "href": "mailto:product@bluprynt.com"
+      }
     ],
     "primary": {
       "type": "button",
@@ -45,35 +51,98 @@
         "groups": [
           {
             "group": "Get started",
-            "pages": ["index", "quickstart", "concepts", "supported-chains"]
+            "pages": [
+              "index",
+              "quickstart",
+              "concepts",
+              "supported-chains"
+            ]
           },
           {
             "group": "Bluprynt Passport",
             "pages": [
               "passport/overview",
-              "passport/organization",
-              "passport/verify-asset",
-              "passport/proof-of-collateral",
-              "passport/disclosures"
+              "passport/sign-in",
+              "passport/home",
+              {
+                "group": "Organization",
+                "pages": [
+                  "passport/organization",
+                  "passport/members",
+                  "passport/entity"
+                ]
+              },
+              {
+                "group": "Assets",
+                "pages": [
+                  "passport/verify-asset",
+                  "passport/asset-page",
+                  "passport/public-page",
+                  "passport/proof-of-collateral",
+                  "passport/wallets-and-attestations"
+                ]
+              },
+              {
+                "group": "Documents and compliance",
+                "pages": [
+                  "passport/disclosures",
+                  "passport/analyze",
+                  "passport/mica-classifier",
+                  "passport/reports"
+                ]
+              },
+              "passport/settings"
             ]
           },
           {
             "group": "Bluprynt Proof",
-            "pages": ["proof/overview", "proof/applications", "proof/registry"]
+            "pages": [
+              "proof/overview",
+              "proof/applications",
+              "proof/registry"
+            ]
           },
           {
             "group": "Tools",
             "pages": [
               "tools/kyi",
               "tools/proof-of-collateral",
-              "tools/asset-dependency-engine",
-              "tools/disclosure-monitoring",
-              "tools/compliance-explorer"
+              {
+                "group": "Asset Dependency Engine",
+                "pages": [
+                  "tools/asset-dependency-engine",
+                  "tools/asset-graph/how-it-works",
+                  "tools/asset-graph/reference"
+                ]
+              },
+              {
+                "group": "Disclosure Monitoring",
+                "pages": [
+                  "tools/disclosure-monitoring",
+                  "tools/monitoring/watchlist",
+                  "tools/monitoring/change-detection",
+                  "tools/monitoring/notifications"
+                ]
+              },
+              {
+                "group": "Compliance Explorer",
+                "pages": [
+                  "tools/compliance-explorer",
+                  "tools/explorer/search",
+                  "tools/explorer/directories",
+                  "tools/explorer/asset-page",
+                  "tools/explorer/profiles",
+                  "tools/explorer/disclosure-checklist",
+                  "tools/explorer/access-and-provenance"
+                ]
+              }
             ]
           },
           {
             "group": "Help",
-            "pages": ["support"]
+            "pages": [
+              "support"
+            ]
           }
         ]
       },
@@ -83,7 +152,18 @@
         "groups": [
           {
             "group": "KYI Widget SDK",
-            "pages": ["sdk/quickstart", "sdk/wallet-verification", "sdk/reference"]
+            "pages": [
+              "sdk/overview",
+              "sdk/quickstart",
+              "sdk/flow",
+              "sdk/tokens",
+              "sdk/wallet-verification",
+              "sdk/reference",
+              "sdk/security",
+              "sdk/errors",
+              "sdk/example-explorer-claim",
+              "sdk/faq"
+            ]
           },
           {
             "group": "Public API",

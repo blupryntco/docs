@@ -1,0 +1,146 @@
+---
+title: "Graph reference"
+description: "Every node type, edge type, flag and wallet type in an Asset Dependency Engine graph, plus the graph envelope and limits."
+---
+
+This page lists every value an Asset Dependency Engine graph can contain. Use it when you read a graph closely or check a flag. For how the engine builds a graph, see [How resolution works](/tools/asset-graph/how-it-works).
+
+## Graph envelope
+
+Each sealed graph carries these fields.
+
+| Field | Meaning |
+| --- | --- |
+| `rootNodeId` | The node for the asset you hold |
+| `traversalId` | The traversal that produced the graph |
+| `contentHash` | A hash of the sealed graph. The same blocks in give the same hash out. |
+| `blockPins` | The finalized block read on each chain |
+| `depth` | How deep the traversal went, up to 16 |
+| `nodes` | Every node in the graph |
+| `edges` | Every edge between nodes |
+
+## Nodes
+
+| Field | Meaning |
+| --- | --- |
+| `nodeId` | The node's identifier |
+| `type` | The node's structural role (see below) |
+| `family` | The asset family, or `ORACLE`, `CONTROLLER` or `OFF_CHAIN_COLLATERAL` |
+| `walletType` | For controller nodes, the kind of wallet (see below) |
+| `lastUpdateBlock` | The block the node's reads are true at |
+| `terminal` | `true` when a branch legitimately ends here |
+| `flags` | Reasons and annotations for the node |
+| `reads` | The values read for the node, each with its source and block |
+
+### Node types
+
+| Type | Meaning |
+| --- | --- |
+| `Asset` | A token or vault the engine walks further |
+| `BaseAsset` | A real-money leaf, such as ETH or a plain token |
+| `Custody` | A leaf backed by off-chain attestation |
+| `Oracle` | A price-feed dependency, or a NAV mark |
+| `Controller` | An on-chain wallet or contract that owns or can upgrade another node |
+| `OffChainCollateral` | Attested off-chain backing proven by a proof-of-reserve feed rather than an on-chain balance. Always terminal. |
+| `Junk` | A token sitting in a vault that never entered through a deposit path. It is real on-chain but not collateral anyone put up, so it is excluded from coverage. |
+
+### Wallet types
+
+| Value | Meaning |
+| --- | --- |
+| `EOA` | An externally owned account: one private key |
+| `SAFE_MULTISIG` | A Safe multisig wallet |
+| `TIMELOCK` | A timelock contract that delays changes |
+| `GOVERNOR` | An on-chain governance contract |
+| `ROLES_AUTHORITY` | A roles-authority contract that grants permissions |
+
+## Edges
+
+| Field | Meaning |
+| --- | --- |
+| `src` | The node that depends |
+| `dst` | The node it depends on |
+| `edgeType` | The kind of dependency |
+| `share` | The fraction of the parent's backing attributed to this edge, as a decimal string such as `"0.31"` |
+| `blockPin` | The block the edge was read at |
+
+### Edge types
+
+| Type | Meaning |
+| --- | --- |
+| `BACKED_BY` | The source is backed by the target |
+| `WRAPS` | The source wraps the target token |
+| `BRIDGED_BY` | The source reached its chain through the target bridge |
+| `PRICED_BY` | The source is priced by the target oracle |
+| `MARKED_AT_NAV` | The source is marked at NAV by the target feed |
+| `ATTESTED_RESERVES` | The source's reserves are attested by the target |
+| `ISSUED_BY` | The source is issued by the target |
+| `CUSTODIED_BY` | The source is held by the target custodian |
+| `CONTROLLED_BY` | The target owns or administers the source |
+| `UPGRADE_ADMIN` | The target can upgrade the source contract |
+
+## Flags
+
+### Unsupported or unresolved layers
+
+| Flag | Meaning |
+| --- | --- |
+| `UNRESOLVABLE` | The engine couldn't classify the address. |
+| `UNSUPPORTED_CHAIN` | The node lives on a chain the engine can't read. Terminal, never fatal. |
+| `BRIDGE_UNSUPPORTED` | The bridge type isn't supported, so the other side isn't walked. |
+| `ORACLE_UNSUPPORTED` | The oracle type isn't supported. |
+| `LP_UNSUPPORTED` | The liquidity-pool position isn't supported. |
+| `YIELD_UNSUPPORTED` | No adapter matched a yield-bearing node. |
+| `NON_EVM_ORIGIN` | A bridged asset whose origin is on a non-EVM chain such as Solana, Sui or Aptos. The node is terminal here and the origin is recorded. |
+| `BACKING_UNRESOLVED` | A recognized vault whose backing couldn't be resolved on-chain. The node is real; its underlying isn't walked yet. |
+| `BACKING_DISCOVERY_TRUNCATED` | The vault holds more tokens than the discovery cap carries. The basket shown is partial. |
+| `UNATTRIBUTED_BACKING` | The vault holds a token that never entered through a deposit path. That leg is excluded from coverage. |
+
+### Traversal
+
+| Flag | Meaning |
+| --- | --- |
+| `CYCLE` | A loop back to a node already on the path. Recorded, never fatal. |
+| `DEPTH_EXCEEDED` | The branch went past depth 16. Recorded, never fatal. |
+| `CONTROLLER_READ_FAILED` | A controller's wallet-type reads failed. The node is kept so the edge is preserved. |
+
+### Feeds and annotations
+
+| Flag | Meaning |
+| --- | --- |
+| `BACKING_OFFCHAIN_ATTESTED` | The backing is off-chain and attested. |
+| `RATE_CROSSCHECKED` | The vault's share-to-asset rate was corroborated by a second on-chain read. |
+| `DONATION_GUARDED` | The vault's rate couldn't be corroborated, so the engine treats it conservatively and keeps resolving. |
+| `BRIDGE_MESH` | The token moves across chains through a mesh with no single backing contract. |
+| `CCIP_ENABLED` | The token is registered for Chainlink CCIP transfers. A transport capability, not a reclassification. |
+| `CCTP_ENABLED` | The token is burnable through Circle's CCTP. A transport capability, not a reclassification. |
+| `SMARTDATA_ASSET_LEVEL_AGGREGATE` | The SmartData feed publishes one figure for the asset across all chains, not per deployment. |
+| `SMARTDATA_READ_FAILED` | A configured SmartData feed couldn't be read, so its figure isn't shown. |
+| `PYTH_PRICE_UNPUBLISHED` | Pyth lists the asset, but no price has been pushed on this chain. |
+
+## Limits
+
+| Limit | Value |
+| --- | --- |
+| Maximum traversal depth | 16 |
+| Block pins | One finalized block per chain per traversal |
+| Shared nodes | Reused, so the graph is acyclic |
+| Graph changes | None after sealing. A new traversal produces a new graph. |
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Is an UNSUPPORTED flag an error?">
+    No. It records where the engine's reading stops. The rest of the graph is still valid.
+  </Accordion>
+  <Accordion title="Why is a Junk node excluded from coverage?">
+    The token was sent to the vault from an outside wallet rather than deposited, so nobody put it up as collateral. It stays visible in the graph but doesn't count toward backing.
+  </Accordion>
+</AccordionGroup>
+
+## Related pages
+
+<CardGroup cols={2}>
+  <Card title="How resolution works" icon="diagram-project" href="/tools/asset-graph/how-it-works">The four stages and how to read a graph.</Card>
+  <Card title="Asset Dependency Engine" icon="layer-group" href="/tools/asset-dependency-engine">Overview.</Card>
+</CardGroup>

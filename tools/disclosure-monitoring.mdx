@@ -1,33 +1,55 @@
 ---
 title: "Disclosure Monitoring"
-description: "Know the moment an issuer's disclosure changes, and whether it matters."
+sidebarTitle: "Overview"
+description: "Watch tokenized assets and get told, with proof, when their disclosures, licences, sanctions screening, named parties or collateral change."
 ---
 
-Disclosure Monitoring re-reads every tracked disclosure on a cadence. Each change is versioned, quoted and classified, so you see what changed, where, and how much it matters.
+Disclosure Monitoring re-reads every tracked source for the assets you watch, keeps each version and tells you when something changes. Every change arrives classified for materiality, with the text before and after, the verbatim quote and the hash of the version read. Compliance desks, risk teams and allocators use it so they don't have to re-read issuer documents by hand.
 
-<Frame>
-  <img src="/images/live/explorer-monitoring.png" alt="The Disclosure Monitoring page on Bluprynt Explorer." />
+<Frame caption="Change events by materiality on the public Disclosure Monitoring page.">
+  <img src="/images/explorer/monitoring-landing-classes.webp" alt="The Disclosure Monitoring page hero with callouts on the five materiality classes: Material, Clarification, Editorial, Review and Unclassified." />
 </Frame>
 
-## How changes are classified
+Read the public overview at [explorer.bluprynt.com/tools/disclosure-monitoring](https://explorer.bluprynt.com/tools/disclosure-monitoring). Disclosure Monitoring is part of Explorer Pro. Open it at [explorer.bluprynt.com/monitoring](https://explorer.bluprynt.com/monitoring).
 
-| Class | Meaning |
-|---|---|
-| **Material** | The fact changed, for example a new reserve custodian. |
-| **Clarification** | Same fact, stated differently, for example the custodian's full legal name. |
-| **Editorial** | Formatting or wording only, such as a reflowed PDF. Kept, but folded away in the timeline. |
-| **Needs review** | The change couldn't be classified automatically. |
+## What it watches
 
-## What you can rely on
+| Monitor | What changes it catches |
+| --- | --- |
+| Disclosure field | A disclosed fact changes, is newly disclosed or is withdrawn |
+| Source document | A tracked document changes in substance |
+| Licence / register | A licence or register status changes |
+| Sanctions screening | A screening result matches a sanctions list |
+| Named parties | A named party, such as a custodian or auditor, changes |
+| Collateral ISIN | A collateral instrument is linked |
 
-- **Same source, same field.** A change is one source saying something different about a disclosed field. Two sources disagreeing is a finding, not a change.
-- **Removal is evidence-gated.** A field that disappears is re-read several times before it counts as removed. A failed fetch never counts as a withdrawal.
-- **History is immutable.** Every version stays retrievable with its quote, document and hash.
+## Pages in this section
 
-## Watch an asset
+<CardGroup cols={2}>
+  <Card title="Watchlist" icon="eye" href="/tools/monitoring/watchlist">
+    Watch an asset, read its coverage and choose what to be notified about.
+  </Card>
+  <Card title="How change detection works" icon="code-compare" href="/tools/monitoring/change-detection">
+    Cadence, versioning, materiality classes and evidence-gated removals.
+  </Card>
+  <Card title="Notifications and change detail" icon="bell" href="/tools/monitoring/notifications">
+    Read notifications, filter the change feed and open a change with its proof.
+  </Card>
+  <Card title="Explorer API" icon="code" href="/api/explorer/overview">
+    Manage a watchlist and read changes from your own systems.
+  </Card>
+</CardGroup>
 
-On any asset page in [Compliance Explorer](https://explorer.bluprynt.com), click **Watch**. Your watched assets and their changes appear under [Monitoring](https://explorer.bluprynt.com/monitoring).
+## Who can use it
 
-<Info>
-Monitoring needs Explorer Pro. To manage a watchlist from code, use the [Explorer API](/api/explorer/overview).
-</Info>
+| Access | What you get |
+| --- | --- |
+| Anonymous or free account | The public overview page. `/monitoring` shows the Explorer Pro gate. |
+| Explorer Pro | A watchlist of up to 5 assets, in-app notifications and the full change feed with proof |
+
+## Related tools
+
+<CardGroup cols={2}>
+  <Card title="Compliance Explorer" icon="magnifying-glass" href="/tools/compliance-explorer">The registry Monitoring watches.</Card>
+  <Card title="Asset Dependency Engine" icon="diagram-project" href="/tools/asset-dependency-engine">What each asset depends on.</Card>
+</CardGroup>
