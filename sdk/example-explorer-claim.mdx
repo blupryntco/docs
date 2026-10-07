@@ -4,7 +4,7 @@ sidebarTitle: "Example: Claim this profile"
 description: "A complete Next.js integration: an Explorer asset page opens the KYI drawer so the issuer can claim it."
 ---
 
-This example comes from the [Compliance Explorer](/tools/compliance-explorer) integration (`BLU-4627`). An asset page that no issuer has claimed shows a **Claim this profile** button. The button opens the KYI drawer, so the issuer can verify and claim the asset without leaving Explorer.
+This example comes from the [Compliance Explorer](/explorer/overview) integration (`BLU-4627`). An asset page that no issuer has claimed shows a **Claim this profile** button. The button opens the KYI drawer, so the issuer can verify and claim the asset without leaving Explorer.
 
 <Note>This integration is in review and isn't live on explorer.bluprynt.com yet. The code below is the reviewed implementation, shortened. Use it as a template for your own app.</Note>
 
@@ -222,4 +222,4 @@ const { status, open } = useKyiDrawer({ onUnavailable: showInPageClaim })
 - **Tests.** The handler takes `config`, `resolveResearcher` and `sign` as parameters, so all four responses can be unit-tested without network calls or real keys.
 - **Origins.** Every origin that renders the button, including staging and local development, has to be on the [allow-list](/sdk/security#origin-allow-list).
 
-Related: [Access tokens](/sdk/tokens) · [API reference](/sdk/reference) · [Compliance Explorer](/tools/compliance-explorer)
+Related: [Access tokens](/sdk/tokens) · [API reference](/sdk/reference) · [Compliance Explorer](/explorer/overview)
