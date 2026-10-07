@@ -28,8 +28,14 @@
   },
   "navbar": {
     "links": [
-      { "label": "Explorer", "href": "https://explorer.bluprynt.com" },
-      { "label": "Support", "href": "mailto:product@bluprynt.com" }
+      {
+        "label": "Explorer",
+        "href": "https://explorer.bluprynt.com"
+      },
+      {
+        "label": "Support",
+        "href": "mailto:product@bluprynt.com"
+      }
     ],
     "primary": {
       "type": "button",
@@ -45,7 +51,12 @@
         "groups": [
           {
             "group": "Get started",
-            "pages": ["index", "quickstart", "concepts", "supported-chains"]
+            "pages": [
+              "index",
+              "quickstart",
+              "concepts",
+              "supported-chains"
+            ]
           },
           {
             "group": "Bluprynt Passport",
@@ -59,7 +70,11 @@
           },
           {
             "group": "Bluprynt Proof",
-            "pages": ["proof/overview", "proof/applications", "proof/registry"]
+            "pages": [
+              "proof/overview",
+              "proof/applications",
+              "proof/registry"
+            ]
           },
           {
             "group": "Tools",
@@ -73,7 +88,9 @@
           },
           {
             "group": "Help",
-            "pages": ["support"]
+            "pages": [
+              "support"
+            ]
           }
         ]
       },
@@ -83,7 +100,18 @@
         "groups": [
           {
             "group": "KYI Widget SDK",
-            "pages": ["sdk/quickstart", "sdk/wallet-verification", "sdk/reference"]
+            "pages": [
+              "sdk/overview",
+              "sdk/quickstart",
+              "sdk/flow",
+              "sdk/tokens",
+              "sdk/wallet-verification",
+              "sdk/reference",
+              "sdk/security",
+              "sdk/errors",
+              "sdk/example-explorer-claim",
+              "sdk/faq"
+            ]
           },
           {
             "group": "Public API",
