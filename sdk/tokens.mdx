@@ -1,0 +1,188 @@
+---
+title: "Access tokens"
+description: "Sign KYI access tokens on your server in Node.js, Python or any JWT library."
+---
+
+Every time the [widget](/sdk/overview) opens, it needs an access token. Your server signs the token with your `SECRET_KEY`, and the token says which of your members is using the widget. The widget reads the token, links the session to that member's Bluprynt organization, and never asks them to sign in a second time.
+
+## Token format
+
+The access token is a JWT signed with HMAC-SHA256 (`HS256`), using your `SECRET_KEY` as the key.
+
+| Claim | Type | Value |
+|---|---|---|
+| `iss` | string | Your partner ID. |
+| `sub` | string | Your internal ID for the signed-in member. |
+| `iat` | number | Issued-at time, in Unix seconds. |
+| `exp` | number | Expiry time, in Unix seconds. The SDK sets it to `iat + 3600` unless you pass `expiresIn`. |
+
+The header is `{"alg":"HS256"}`. No other claims are needed.
+
+### Choosing `sub`
+
+Bluprynt uses `sub` to find the member's organization, KYB result, assets and wallets. The same `sub` always reopens the same progress.
+
+| Requirement | Why |
+|---|---|
+| **Stable**: never changes for a member. | A new value starts a new, empty verification. |
+| **Unique** across your platform. | Two members sharing a value would share an organization. |
+| **Internal**: a database ID or UUID, not an email or wallet address. | The token is visible in the browser. Don't put personal data in it. |
+| **Never reused** after an account is deleted. | A recycled ID would hand the old verification to a new person. |
+
+## Build a token endpoint
+
+Expose one authenticated `POST` route that returns `{ "accessToken": "..." }`. Every example below follows the same rules:
+
+- It reads the member ID from your authenticated session, never from the request body.
+- It returns `401` when nobody is signed in.
+- It returns `503` when the partner ID or secret isn't configured.
+- It sends `Cache-Control: no-store`, so no browser or proxy caches a token.
+
+<CodeGroup>
+
+```ts Node.js (Express)
+import express from 'express'
+import { generateToken } from '@bluprynt/kyi-widget-sdk/server'
+
+const app = express()
+
+// requireLogin: your own session middleware; it sets req.user
+app.post('/api/kyi/token', requireLogin, async (req, res) => {
+  const issuer = process.env.KYI_PARTNER_ID
+  const secretKey = process.env.KYI_SECRET_KEY
+  if (!issuer || !secretKey) return res.status(503).json({ error: 'kyi_not_configured' })
+
+  try {
+    const accessToken = await generateToken({
+      issuer,
+      secretKey,
+      userId: String(req.user.id), // from the session, never from req.body
+      expiresIn: 3600,
+    })
+    res.set('Cache-Control', 'no-store').json({ accessToken })
+  } catch {
+    res.status(502).json({ error: 'kyi_token_failed' })
+  }
+})
+```
+
+```ts Next.js (App Router)
+// app/api/kyi/token/route.ts
+import { NextResponse } from 'next/server'
+import { generateToken } from '@bluprynt/kyi-widget-sdk/server'
+import { getSession } from '@/lib/auth' // your auth helper
+
+export async function POST() {
+  const session = await getSession()
+  if (!session) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+
+  const issuer = process.env.KYI_PARTNER_ID
+  const secretKey = process.env.KYI_SECRET_KEY
+  if (!issuer || !secretKey) {
+    return NextResponse.json({ error: 'kyi_not_configured' }, { status: 503 })
+  }
+
+  const accessToken = await generateToken({ issuer, secretKey, userId: session.user.id })
+  return NextResponse.json({ accessToken }, { headers: { 'Cache-Control': 'no-store' } })
+}
+```
+
+```python Python (Flask + PyJWT)
+# pip install pyjwt flask
+import os, time
+import jwt
+from flask import Flask, jsonify, session, abort
+
+app = Flask(__name__)
+
+def mint_kyi_token(user_id: str, expires_in: int = 3600) -> str:
+    now = int(time.time())
+    return jwt.encode(
+        {"sub": user_id, "iss": os.environ["KYI_PARTNER_ID"], "iat": now, "exp": now + expires_in},
+        os.environ["KYI_SECRET_KEY"],
+        algorithm="HS256",
+    )
+
+@app.post("/api/kyi/token")
+def kyi_token():
+    user_id = session.get("user_id")  # from your login, never from the request body
+    if not user_id:
+        abort(401)
+    if not os.environ.get("KYI_PARTNER_ID") or not os.environ.get("KYI_SECRET_KEY"):
+        return jsonify(error="kyi_not_configured"), 503
+    resp = jsonify(accessToken=mint_kyi_token(str(user_id)))
+    resp.headers["Cache-Control"] = "no-store"
+    return resp
+```
+
+```python Python (FastAPI + PyJWT)
+# pip install pyjwt fastapi
+import os, time
+import jwt
+from fastapi import Depends, FastAPI, Response
+
+app = FastAPI()
+
+@app.post("/api/kyi/token")
+def kyi_token(response: Response, user=Depends(current_user)):  # current_user: your auth dependency
+    now = int(time.time())
+    token = jwt.encode(
+        {"sub": str(user.id), "iss": os.environ["KYI_PARTNER_ID"], "iat": now, "exp": now + 3600},
+        os.environ["KYI_SECRET_KEY"],
+        algorithm="HS256",
+    )
+    response.headers["Cache-Control"] = "no-store"
+    return {"accessToken": token}
+```
+
+</CodeGroup>
+
+<Info>The Node.js and Python versions produce the same token. Bluprynt tested both against the production widget: a PyJWT token built exactly as above opens the same drawer as one from `generateToken()`.</Info>
+
+### Other languages
+
+Any JWT library that supports HS256 works. Sign `{ sub, iss, iat, exp }` with your `SECRET_KEY` as a UTF-8 string key. For example:
+
+| Language | Library | Call |
+|---|---|---|
+| Go | `github.com/golang-jwt/jwt/v5` | `jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(secret))` |
+| Java / Kotlin | `io.jsonwebtoken:jjwt` | `Jwts.builder().issuer(id).subject(uid).issuedAt(now).expiration(exp).signWith(Keys.hmacShaKeyFor(secret.getBytes(UTF_8))).compact()` |
+| Ruby | `jwt` | `JWT.encode({ sub:, iss:, iat:, exp: }, secret, 'HS256')` |
+| PHP | `firebase/php-jwt` | `JWT::encode($payload, $secret, 'HS256')` |
+
+## Call the endpoint from the browser
+
+```ts
+async function getKyiToken(): Promise<string> {
+  const res = await fetch('/api/kyi/token', { method: 'POST', credentials: 'same-origin' })
+  if (res.status === 401) throw new Error('signed_out') // send the member to your sign-in
+  if (!res.ok) throw new Error(`kyi_token_${res.status}`) // 503: KYI not configured; 502: signing failed
+  const { accessToken } = await res.json()
+  return accessToken
+}
+```
+
+## Lifetime
+
+- **Mint a new token every time you call `kyi()`.** Don't store tokens in `localStorage`, cookies or global state.
+- **Keep the lifetime short.** The default `3600` seconds gives a member an hour to finish a session. You don't need more: progress is saved against `sub`, so a new token with the same `sub` resumes where they stopped.
+- **Rotate your `SECRET_KEY`** through your Bluprynt contact if it may have leaked. Tokens signed with the old key stop working.
+
+## Test your token
+
+Decode the token without verifying it, and check its claims before you call `kyi()`:
+
+```bash
+# Prints the payload: expect sub, iss, iat, exp
+TOKEN=$(curl -s -X POST https://app.example.com/api/kyi/token -b cookies.txt | jq -r .accessToken)
+echo "$TOKEN" | cut -d. -f2 | tr '_-' '/+' | base64 -d 2>/dev/null; echo
+```
+
+| Check | Expected |
+|---|---|
+| `iss` | Exactly your partner ID. |
+| `sub` | Your member's internal ID, the same one every time for that member. |
+| `exp - iat` | `3600`, or the lifetime you chose. |
+| Header `alg` | `HS256` |
+
+Related: [Security](/sdk/security) · [Errors and troubleshooting](/sdk/errors) · [API reference](/sdk/reference)

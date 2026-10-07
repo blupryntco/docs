@@ -1,0 +1,74 @@
+---
+title: "Security"
+description: "Origin allow-list, secret handling and token rules for a safe KYI integration."
+---
+
+A KYI access token lets whoever holds it act as one of your members inside the widget, until it expires. Most integration risks come from minting the wrong token, or giving it to the wrong person.
+
+## Origin allow-list
+
+Bluprynt only loads the widget on origins registered for your partner ID.
+
+| Rule | Example |
+|---|---|
+| Origins are matched exactly: scheme, host and port. | `https://app.example.com` doesn't allow `https://www.example.com`. |
+| Every environment needs its own entry, including staging and local development. | `https://app.example.com`, `https://staging.example.com`, `http://localhost:3000`. |
+| A missing origin shows as an empty drawer, often with a CSP error in the console. | See [Errors and troubleshooting](/sdk/errors). |
+
+To add or remove an origin, contact your Bluprynt representative. If your page sets a Content Security Policy, allow the iframe:
+
+```text
+Content-Security-Policy: frame-src https://app.bluprynt.com;
+```
+
+## Checklist
+
+<Steps>
+  <Step title="Keep SECRET_KEY on the server">
+    Store it in your secrets manager or server environment, not in front-end code, `NEXT_PUBLIC_*` variables, mobile apps or Git. Anyone with the key can sign tokens for any `sub`.
+  </Step>
+  <Step title="Authenticate the token endpoint">
+    Only signed-in members can mint tokens. Return `401` otherwise.
+  </Step>
+  <Step title="Take sub from the session">
+    Never read the user ID from the request body, query string or headers the browser controls. Bluprynt trusts `sub` as-is: whoever can choose `sub` can open that member's verification.
+  </Step>
+  <Step title="Use stable, unique, internal IDs">
+    A database primary key or UUID. Not emails, wallet addresses or usernames, which change or get reused and would end up in a token visible in the browser.
+  </Step>
+  <Step title="Send Cache-Control: no-store">
+    On every token response, including errors, so no browser, CDN or proxy caches a token.
+  </Step>
+  <Step title="Mint per open, keep lifetimes short">
+    A fresh token for each `kyi()` call, with the default one-hour lifetime or less. Don't store tokens.
+  </Step>
+  <Step title="Protect against CSRF">
+    Use `POST` for the endpoint, plus your usual CSRF protection (same-site cookies or a CSRF token). Otherwise another site could mint tokens through a member's session.
+  </Step>
+  <Step title="Fail closed">
+    If the partner ID or secret is missing, return `503` and hide the button. Never fall back to a shared or test key.
+  </Step>
+  <Step title="Don't log tokens">
+    Leave the token and `SECRET_KEY` out of logs, analytics and error reports.
+  </Step>
+</Steps>
+
+## What the SDK does for you
+
+- It only processes `postMessage` events from a `bluprynt.com` origin and from its own iframe.
+- The widget runs in a cross-origin iframe, so your page can't read what the member types into KYB forms, and the widget can't read your page.
+- The iframe gets only `clipboard-write` and `web-share`.
+
+## Data handling
+
+| Data | Where it lives |
+|---|---|
+| KYB documents and personal data | Collected by Sumsub inside the iframe, on behalf of Bluprynt. Your platform never receives them. |
+| Wallet signatures | Sent to Bluprynt for verification. Off-chain signatures don't move funds. |
+| What becomes public | Nothing until the member signs. After approval, the asset's KYI status is public through its trust center, badges and the Public API. |
+
+## Rotating your secret
+
+If `SECRET_KEY` may have leaked, ask Bluprynt for a new one, deploy it, and confirm the old one is revoked. Tokens signed with the old key stop working, so members just need to reopen the widget.
+
+Related: [Access tokens](/sdk/tokens) · [Errors and troubleshooting](/sdk/errors)

@@ -1,0 +1,88 @@
+---
+title: "Errors and troubleshooting"
+description: "Every error the KYI SDK throws, what your token endpoint should return, and how to fix a widget that won't load."
+---
+
+KYI errors come from three places: the SDK in the browser, `generateToken()` on your server, and the widget itself through `onError`.
+
+## Errors thrown by `kyi()`
+
+`kyi()` throws synchronously, before any iframe is created.
+
+| Message | Cause | Fix |
+|---|---|---|
+| `Access token is required` | `accessToken` is empty, `null` or `undefined`. | Check your token endpoint's response and only call `kyi()` once you have a token. |
+| `Invalid mode: <mode>. Expected 'modal' or 'drawer'.` | The first argument is misspelled. | Pass `'drawer'`. |
+| `Invalid scope: <scope>` | The scope isn't `kyi`, `asset-list` or `wallet-list`. | Use one of the three [scopes](/sdk/reference#scopes). |
+
+```ts
+try {
+  widget = kyi('drawer', 'kyi', accessToken, { onError: report })
+} catch (err) {
+  report(err) // a bug in your call, not a member-facing error
+}
+```
+
+## Errors thrown by `generateToken()`
+
+The promise rejects before anything is signed.
+
+| Message | Cause |
+|---|---|
+| `Issuer is required` | `issuer` (your partner ID) is empty. Usually a missing environment variable. |
+| `Secret key is required` | `secretKey` is empty. |
+| `User ID is required` | `userId` is empty, for example because the session didn't resolve. |
+
+## Recommended token endpoint responses
+
+Your endpoint is your API, but these responses keep the browser logic simple. The [Claim this profile example](/sdk/example-explorer-claim#responses) uses them.
+
+| Status | When | Browser should |
+|---|---|---|
+| `200 { accessToken }` | Token signed. | Call `kyi()`. |
+| `401` | No signed-in member. | Show sign-in, then retry. |
+| `503` | Partner ID or secret not configured. | Hide the button or use a fallback. |
+| `502` | `generateToken()` threw. | Show "Couldn't start verification" and log it on the server. |
+
+Send `Cache-Control: no-store` on all of them.
+
+## Errors from the widget (`onError`)
+
+When the widget reports a problem, the SDK calls `onError` with an `Error` whose `message` is the payload the widget sent (or `Unknown error`). The drawer stays open, so the member sees the widget's own message. Use `onError` for logging and analytics:
+
+```ts
+kyi('drawer', 'kyi', accessToken, {
+  onError: (error) => logger.warn('kyi_widget_error', { message: error.message }),
+})
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The drawer opens but stays empty">
+    Your page's origin probably isn't on the allow-list. Open the browser console and look for a frame or CSP error. Scheme, host and port must match exactly: `http://localhost:3000` and `http://localhost:5173` are different origins. Ask your Bluprynt representative to add the origin. If your own site sets a Content Security Policy, it must allow `frame-src https://app.bluprynt.com`.
+  </Accordion>
+  <Accordion title="The drawer shows an error instead of the flow">
+    The token was probably rejected: it's expired, signed with the wrong secret, or has the wrong `iss`. Mint a new token for each open, check your server clock, and check the partner ID matches the secret. Decode the token to inspect its claims; see [Access tokens](/sdk/tokens#check-a-token).
+  </Accordion>
+  <Accordion title="A member sees someone else's organization">
+    Two people share one `sub`. Use a stable, unique internal ID per member, never a shared service ID or an email that can be reassigned.
+  </Accordion>
+  <Accordion title="A member's progress is gone">
+    The `sub` changed, for example because you switched from email to database ID. Bluprynt stores progress per `sub`. Keep it stable for the member's whole lifetime.
+  </Accordion>
+  <Accordion title="onClose fires twice, or a second drawer appears">
+    Guard against double clicks and hold the widget in one place, as in the [example hook](/sdk/example-explorer-claim#5-a-react-hook). Clear your reference in `onClose`. `destroy()` doesn't call `onClose`.
+  </Accordion>
+  <Accordion title="Asset verification is locked">
+    KYB isn't approved yet. The drawer shows "Locked — complete step 1 above to verify your first asset." KYB review can take time; the member can close and come back.
+  </Accordion>
+  <Accordion title="The address isn't recognised">
+    "We could not read that address on any chain we support." Check the address and the [supported chains](/supported-chains).
+  </Accordion>
+  <Accordion title="Next.js: 'window is not defined'">
+    `kyi()` uses the DOM. Call it only in client code, ideally with `await import('@bluprynt/kyi-widget-sdk')` inside the click handler.
+  </Accordion>
+</AccordionGroup>
+
+Related: [API reference](/sdk/reference) · [Security](/sdk/security) · [FAQ](/sdk/faq)
