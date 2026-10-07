@@ -30,22 +30,20 @@ mint broken-links
 
 ```
 docs/
-├── docs.json                     # Mintlify config — navigation, theme, colors, logo
-├── index.mdx                     # Home page
-├── quickstart.mdx                # 15-minute first-time walkthrough
-├── overview/                     # What Bluprynt is, architecture, key concepts
-├── getting-started/              # Account creation + first attestation
-├── core-products/
-│   ├── kyi/                      # Know Your Issuer
-│   ├── smart-disclosures/        # Smart Disclosures
-│   ├── compliance-hub/           # Compliance Hub
-│   └── mica-checker/             # MiCA Checker
-├── architecture-and-standards/   # System overview, attestation schemas, CCID, chain compatibility
-├── integration-guides/           # KYI widget, public API, on-chain reads
-├── api-reference/                # REST API reference per resource
-├── logo/                         # light.svg + dark.svg
-├── images/                       # Screenshots and diagrams
-├── snippets/                     # Reusable MDX
+├── docs.json            # Mintlify config: navigation, theme, colors, logo
+├── index.mdx            # Introduction
+├── quickstart.mdx       # Three paths: issuer, verifier, developer
+├── concepts.mdx         # Terms and how they relate
+├── supported-chains.mdx
+├── passport/            # Bluprynt Passport (app.bluprynt.com)
+├── proof/               # Bluprynt Proof / Compliance Hub (compliance.bluprynt.com)
+├── tools/               # KYI, Proof of Collateral, Asset Dependency Engine, Disclosure Monitoring, Compliance Explorer
+├── sdk/                 # KYI Widget SDK
+├── api/                 # Public API and Explorer API guides
+├── openapi/             # public.json (live spec) and explorer.json (8 key-callable routes)
+├── images/live/         # Screenshots of the live products
+├── images/design/       # Frames from the approved Passport and Proof Figma source pages
+├── logo/                # light.svg + dark.svg
 └── favicon.svg
 ```
 
