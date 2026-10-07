@@ -1,6 +1,6 @@
 ---
 title: "Build with Bluprynt"
-sidebarTitle: "Overview"
+sidebarTitle: "Choose an integration"
 description: "Embed KYI, read verified assets and run monitoring from code: the widget SDK and the two APIs."
 ---
 
@@ -14,20 +14,19 @@ Bluprynt gives integrators three surfaces. Use the [KYI Widget SDK](/sdk/overvie
     Look up KYI-verified assets, issuers and authority wallets.
   </Card>
   <Card title="Explorer API" icon="radio-tower" href="/api/explorer/overview">
-    Stream tokenomics changes and read your watchlist's changes.
+    Poll tokenomics changes and your watchlist's disclosure changes.
   </Card>
 </CardGroup>
 
 ## Choose a surface
 
-| | KYI Widget SDK | Public API | Explorer API |
+| Surface | Use it to | Credential | Writes |
 |---|---|---|---|
-| **Use it to** | Verify an issuer and its assets in your product | Show whether a token is KYI verified | Track tokenomics and disclosure changes |
-| **Runs in** | Browser drawer + your server | Your server | Your server |
-| **Base URL** | Package `@bluprynt/kyi-widget-sdk` | `https://integrations.bluprynt.com` | `https://explorer-api.bluprynt.com` |
-| **Credential** | Partner ID + `SECRET_KEY`, used to mint a short-lived access token | API key, sent raw in `Authorization` | Exchange key `bx_live_…`, sent as `Bearer` |
-| **Writes data** | Yes, the member's own KYB, assets and wallet signatures | No, every route is `GET` | Only the three `watchlist:write` routes |
-| **Get access** | Ask your Bluprynt representative | [product@bluprynt.com](mailto:product@bluprynt.com) | [product@bluprynt.com](mailto:product@bluprynt.com) |
+| **KYI Widget SDK** | Verify an issuer and its assets in your product | Partner ID + `SECRET_KEY` mint a short-lived token on your server | The member's own KYB, assets and wallet signatures |
+| **Public API** | Show whether a token is KYI verified | API key, raw in `Authorization` | Nothing, every route is `GET` |
+| **Explorer API** | Track tokenomics and disclosure changes | `bx_live_…` key as `Bearer` | Only the `watchlist:write` routes |
+
+Base URLs: the SDK ships as `@bluprynt/kyi-widget-sdk`, the Public API is at `https://integrations.bluprynt.com` and the Explorer API is at `https://explorer-api.bluprynt.com`. For SDK partner credentials, ask your Bluprynt representative. For API keys, write to [product@bluprynt.com](mailto:product@bluprynt.com).
 
 <Warning>
 The two APIs authenticate differently. The Public API rejects a `Bearer` prefix. The Explorer API requires one.
