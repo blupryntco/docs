@@ -26,6 +26,10 @@ flowchart TD
     E -->|Yes| C
     E -->|No| F[Unresolved]
     C --> G[Sources re-read and hashed]
+classDef start stroke-width:2px
+classDef done stroke-width:2px
+class A start
+class F,G done
 ```
 
 When you add an asset the registry already holds, monitoring starts at once. When you add an unknown token, Bluprynt gathers it first. You get a **Monitoring started** notification when it's ready, **Monitoring started · partial** if only some sources could be read, or **Could not add asset** if the token couldn't be resolved.

@@ -28,6 +28,10 @@ flowchart TD
   E --> F[Approved and published]
   F --> G[Credential queued]
   G --> H[View form]
+classDef start stroke-width:2px
+classDef done stroke-width:2px
+class A start
+class H done
 ```
 
 Proof of Collateral needs KYI first. Until KYI is verified, the card shows **Needs KYI first**. The form is filled in from the asset it's about, so asset facts you already confirmed carry over.

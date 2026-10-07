@@ -1,0 +1,163 @@
+---
+title: "Build with Bluprynt"
+sidebarTitle: "Overview"
+description: "Embed KYI, read verified assets and run monitoring from code: the widget SDK and the two APIs."
+---
+
+Bluprynt gives integrators three surfaces. Use the [KYI Widget SDK](/sdk/overview) to verify issuers inside your product. Use the [Public API](/api/public/overview) to read verified asset records and badges. Use the [Explorer API](/api/explorer/overview) to read tokenomics changes and run a [Disclosure Monitoring](/tools/disclosure-monitoring) watchlist.
+
+<CardGroup cols={3}>
+  <Card title="KYI Widget SDK" icon="app-window" href="/sdk/quickstart">
+    Open the KYI drawer on your page with one `kyi()` call.
+  </Card>
+  <Card title="Public API" icon="plug" href="/api/public/overview">
+    Look up KYI-verified assets, issuers and authority wallets.
+  </Card>
+  <Card title="Explorer API" icon="radio-tower" href="/api/explorer/overview">
+    Stream tokenomics changes and read your watchlist's changes.
+  </Card>
+</CardGroup>
+
+## Choose a surface
+
+| | KYI Widget SDK | Public API | Explorer API |
+|---|---|---|---|
+| **Use it to** | Verify an issuer and its assets in your product | Show whether a token is KYI verified | Track tokenomics and disclosure changes |
+| **Runs in** | Browser drawer + your server | Your server | Your server |
+| **Base URL** | Package `@bluprynt/kyi-widget-sdk` | `https://integrations.bluprynt.com` | `https://explorer-api.bluprynt.com` |
+| **Credential** | Partner ID + `SECRET_KEY`, used to mint a short-lived access token | API key, sent raw in `Authorization` | Exchange key `bx_live_…`, sent as `Bearer` |
+| **Writes data** | Yes, the member's own KYB, assets and wallet signatures | No, every route is `GET` | Only the three `watchlist:write` routes |
+| **Get access** | Ask your Bluprynt representative | [product@bluprynt.com](mailto:product@bluprynt.com) | [product@bluprynt.com](mailto:product@bluprynt.com) |
+
+<Warning>
+The two APIs authenticate differently. The Public API rejects a `Bearer` prefix. The Explorer API requires one.
+</Warning>
+
+## Authenticate
+
+<Tabs>
+  <Tab title="KYI Widget SDK" icon="app-window">
+    Your server mints a token for the signed-in member, and the browser opens the drawer with it. The full server code is in [Access tokens](/sdk/tokens).
+
+    ```ts
+    // server
+    import { generateToken } from '@bluprynt/kyi-widget-sdk/server'
+
+    const accessToken = await generateToken({
+      issuer: process.env.KYI_PARTNER_ID!,
+      secretKey: process.env.KYI_SECRET_KEY!,
+      userId: String(session.user.id),
+    })
+
+    // browser
+    import { kyi } from '@bluprynt/kyi-widget-sdk'
+
+    const widget = kyi('drawer', 'kyi', accessToken, {
+      onClose: () => widget.destroy(),
+    })
+    ```
+  </Tab>
+  <Tab title="Public API" icon="plug">
+    <CodeGroup>
+    ```bash curl
+    curl -s "https://integrations.bluprynt.com/assets/solana/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" \
+      -H "Authorization: $BLUPRYNT_API_KEY"
+    ```
+    ```ts TypeScript
+    const res = await fetch(
+      'https://integrations.bluprynt.com/assets/solana/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+      { headers: { Authorization: process.env.BLUPRYNT_API_KEY! } },
+    )
+    const asset = await res.json()
+    ```
+    ```python Python
+    import os, requests
+
+    asset = requests.get(
+        "https://integrations.bluprynt.com/assets/solana/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        headers={"Authorization": os.environ["BLUPRYNT_API_KEY"]},
+    ).json()
+    ```
+    </CodeGroup>
+  </Tab>
+  <Tab title="Explorer API" icon="radio-tower">
+    <CodeGroup>
+    ```bash curl
+    curl -s "https://explorer-api.bluprynt.com/me/watchlist" \
+      -H "Authorization: Bearer $BLUPRYNT_EXPLORER_KEY"
+    ```
+    ```ts TypeScript
+    const res = await fetch('https://explorer-api.bluprynt.com/me/watchlist', {
+      headers: { Authorization: `Bearer ${process.env.BLUPRYNT_EXPLORER_KEY}` },
+    })
+    const { data } = await res.json()
+    ```
+    ```python Python
+    import os, requests
+
+    body = requests.get(
+        "https://explorer-api.bluprynt.com/me/watchlist",
+        headers={"Authorization": f"Bearer {os.environ['BLUPRYNT_EXPLORER_KEY']}"},
+    ).json()
+    ```
+    </CodeGroup>
+  </Tab>
+</Tabs>
+
+## Key routes
+
+<Columns cols={2}>
+  <div>
+    **Public API**
+
+    | Route | Returns |
+    |---|---|
+    | `GET /assets` | All verified assets, paged |
+    | `GET /assets/{chain}/{account_address}` | One asset by chain name |
+    | `GET /assets/{namespace}/{reference}/{account_address}` | One asset by CAIP-2 chain ID |
+    | `GET /kyi/v1/tokens` | KYI verification for a token |
+    | `GET /api/v1/badges/{credential_type}` | A badge image, no key needed |
+
+    [Full Public API reference](/api/public/overview)
+  </div>
+  <div>
+    **Explorer API**
+
+    | Route | Scope |
+    |---|---|
+    | `GET /tokenomics/changes` | `tokenomics:read` |
+    | `GET /assets/{id}/tokenomics/changes` | `tokenomics:read` |
+    | `GET /me/watchlist` | `monitoring:read` |
+    | `GET /me/monitoring/changes` | `monitoring:read` |
+    | `GET /me/notifications` | `monitoring:read` |
+    | `POST`, `PATCH`, `DELETE /me/watchlist…` | `watchlist:write` |
+
+    [Full Explorer API reference](/api/explorer/overview)
+  </div>
+</Columns>
+
+## Try it without a key
+
+Badges need no key, so this call works as is:
+
+```bash
+curl -s -o kyi.svg -w "%{http_code} %{content_type}\n" \
+  "https://integrations.bluprynt.com/api/v1/badges/kyi_verified?variant=full"
+# 200 image/svg+xml
+```
+
+The Explorer API health check needs no key either: `curl -s https://explorer-api.bluprynt.com/health`.
+
+## Next steps
+
+<CardGroup cols={3}>
+  <Card title="Embed KYI" icon="app-window" href="/sdk/quickstart">
+    Mint a token and open the drawer in three steps.
+  </Card>
+  <Card title="Show a KYI badge" icon="badge-check" href="/api/public/badge-recipe">
+    Badge a verified token in your listing, end to end.
+  </Card>
+  <Card title="Watch an asset" icon="eye" href="/api/explorer/watchlist-monitoring">
+    Watch, read changes and pull notifications.
+  </Card>
+</CardGroup>

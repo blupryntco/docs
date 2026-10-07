@@ -23,6 +23,10 @@ flowchart TD
   C -->|Approve| E[Approved]
   C -->|Decline| F[Denied]
   F -->|Archive| G[Archived]
+classDef start stroke-width:2px
+classDef done stroke-width:2px
+class A start
+class E,G done
 ```
 
 This is the main path. **Request for information** sends an application to **Request for Info**, and the issuer's edit returns it to **Draft**. A filing form goes straight from **Draft** to **Approved**. Every other move is listed in [Transition rules](#transition-rules).

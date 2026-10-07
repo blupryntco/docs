@@ -22,6 +22,10 @@ flowchart TD
     B --> C{"business_verified + authority verified?"}
     C -->|"Yes"| D["Render badge, link to asset_url"]
     C -->|"404 or false"| E["Render nothing — unverified"]
+classDef start stroke-width:2px
+classDef done stroke-width:2px
+class A start
+class D,E done
 ```
 
 The badge is a claim, not a check. Gate it on the live record: show it only when the lookup confirms verification, so a revoked asset never keeps a stale badge.

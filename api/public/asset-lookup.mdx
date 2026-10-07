@@ -24,6 +24,10 @@ flowchart TD
     B --> C{Verified asset?}
     C -->|Yes| D["AssetInfo record"]
     C -->|"No — 404"| E["Not KYI-verified (or wrong chain)"]
+classDef start stroke-width:2px
+classDef done stroke-width:2px
+class A start
+class D,E done
 ```
 
 A `404` is a meaningful answer: the token is not KYI-verified — or it's verified on a different chain. The same address can exist on several chains, so always include the chain.

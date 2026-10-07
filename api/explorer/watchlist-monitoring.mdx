@@ -26,6 +26,10 @@ flowchart TD
     C -->|"unresolved"| E["stateReason says why"]
     D --> F["GET /me/monitoring/changes"]
     F --> G["GET /me/notifications"]
+classDef start stroke-width:2px
+classDef done stroke-width:2px
+class A start
+class E,G done
 ```
 
 ## Watchlist routes

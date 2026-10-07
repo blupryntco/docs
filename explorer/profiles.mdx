@@ -25,6 +25,10 @@ flowchart TD
     B -->|on register of| C[Regulator]
     A -->|routed by| D[Protocol]
     D -->|operated by| B
+classDef start stroke-width:2px
+classDef done stroke-width:2px
+class A start
+class C done
 ```
 
 Each link is a registry record you can click through. An issuer page lists the issuer's assets and registers. A regulator page lists every entity on its registers and the assets those entities issue.
