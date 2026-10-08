@@ -31,6 +31,10 @@ flowchart TD
   E --> F[Submit for review]
   F --> G[Pending]
   G --> H[Verified]
+classDef start stroke-width:2px
+classDef done stroke-width:2px
+class A start
+class H done
 ```
 
 One signature settles every token a wallet controls. Bluprynt takes the proof from the signer and writes it against every authority that wallet controls.

@@ -34,6 +34,10 @@ flowchart TD
   C --> D["Bluprynt checks token<br/>and origin"]
   D --> E["Drawer: KYB, add asset,<br/>sign wallets"]
   E --> F["onReady / onClose / onError<br/>back to your page"]
+classDef start stroke-width:2px
+classDef done stroke-width:2px
+class A start
+class F done
 ```
 
 1. Your server signs a token with your `SECRET_KEY`. The secret never reaches the browser.

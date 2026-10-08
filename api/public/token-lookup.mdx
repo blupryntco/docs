@@ -24,6 +24,10 @@ flowchart TD
     B -->|No match| C["404 — kyi_verified: false, data: empty"]
     B -->|Match| D[KYI check per token]
     D --> E["data: token, asset, issuer, authorities, verifications"]
+classDef start stroke-width:2px
+classDef done stroke-width:2px
+class A start
+class C,E done
 ```
 
 An address-only lookup can match several deployments — the same contract address on different chains — so the response is always a list. Add `chain_slug` to narrow it.

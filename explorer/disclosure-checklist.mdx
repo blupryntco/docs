@@ -27,6 +27,10 @@ flowchart TD
     C --> E{Issuer KYI verified?}
     E -->|Yes| F[Verified]
     E -->|No| G[Self-reported]
+classDef start stroke-width:2px
+classDef done stroke-width:2px
+class A start
+class D,F,G done
 ```
 
 - The score is items on record divided by the total. For an asset that is out of 48.

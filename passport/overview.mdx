@@ -26,6 +26,10 @@ flowchart TD
   E --> F[Sign with authority wallets]
   F --> G[Submit Proof of Collateral]
   G --> H[Public trust page]
+classDef start stroke-width:2px
+classDef done stroke-width:2px
+class A start
+class H done
 ```
 
 Each step unlocks the next. Asset verification stays locked until KYB is complete. Proof of Collateral shows **Needs KYI first** until KYI is verified.

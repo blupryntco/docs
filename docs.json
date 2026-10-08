@@ -183,6 +183,12 @@
         "icon": "code",
         "groups": [
           {
+            "group": "Get started",
+            "pages": [
+              "developers/overview"
+            ]
+          },
+          {
             "group": "KYI Widget SDK",
             "pages": [
               "sdk/overview",

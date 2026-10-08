@@ -26,6 +26,10 @@ flowchart TD
   C -->|Yes| E[Issuer identity shown]
   E --> F{PoC submitted?}
   F -->|Yes| G[Reserve and asset graph]
+classDef start stroke-width:2px
+classDef done stroke-width:2px
+class A start
+class D,G done
 ```
 
 Completing KYI and Proof of Collateral unlocks the issuer identity, the reserve and asset graph, the risk scorecard, credentials and continuous monitoring on this page.

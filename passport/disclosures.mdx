@@ -31,6 +31,10 @@ flowchart TD
   H --> I[Proceed to review]
   I --> J[Submit]
   J --> K[Published]
+classDef start stroke-width:2px
+classDef done stroke-width:2px
+class A start
+class C,K done
 ```
 
 When you import, Passport shows *We're processing your document* while it extracts, transforms and populates data from the upload, then converts the answers to additional formats. It ends with *Your document is ready!*

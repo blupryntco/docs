@@ -8,3 +8,86 @@
   .screenshot-mobile { display: block; }
   .screenshot-desktop { display: none; }
 }
+
+/* Diagrams: site palette instead of the default Mermaid look. */
+.mermaid svg .node rect,
+.mermaid svg .node polygon,
+.mermaid svg .node circle,
+.mermaid svg .node ellipse,
+.mermaid svg .node path {
+  fill: #F0F7FF !important;
+  stroke: #4DA3FF !important;
+  stroke-width: 1.5px !important;
+}
+.mermaid svg .node rect { rx: 10px; ry: 10px; }
+.mermaid svg .node polygon { fill: #E6F2FF !important; stroke: #007BFF !important; }
+.mermaid svg .nodeLabel,
+.mermaid svg .node .label,
+.mermaid svg .node text {
+  color: #0B1B33 !important;
+  fill: #0B1B33 !important;
+}
+.mermaid svg .flowchart-link,
+.mermaid svg .edgePath .path {
+  stroke: #94A3B8 !important;
+  stroke-width: 1.5px !important;
+}
+.mermaid svg .arrowMarkerPath,
+.mermaid svg marker path { fill: #94A3B8 !important; stroke: #94A3B8 !important; }
+.mermaid svg .edgeLabel,
+.mermaid svg .edgeLabel p,
+.mermaid svg .edgeLabel span,
+.mermaid svg .labelBkg {
+  background-color: #FFFFFF !important;
+  color: #475569 !important;
+}
+.mermaid svg .edgeLabel rect { fill: #FFFFFF !important; opacity: 1 !important; }
+.mermaid svg .cluster rect {
+  fill: #F8FAFC !important;
+  stroke: #CBD5E1 !important;
+  stroke-dasharray: 4 3;
+  rx: 12px; ry: 12px;
+}
+.mermaid svg .cluster-label .nodeLabel,
+.mermaid svg .cluster text { color: #0062CC !important; fill: #0062CC !important; }
+
+html.dark .mermaid svg .node rect,
+html.dark .mermaid svg .node circle,
+html.dark .mermaid svg .node ellipse,
+html.dark .mermaid svg .node path { fill: #0E2747 !important; stroke: #4DA3FF !important; }
+html.dark .mermaid svg .node polygon { fill: #0B3260 !important; stroke: #4DA3FF !important; }
+html.dark .mermaid svg .nodeLabel,
+html.dark .mermaid svg .node .label,
+html.dark .mermaid svg .node text { color: #E6EDF7 !important; fill: #E6EDF7 !important; }
+html.dark .mermaid svg .flowchart-link,
+html.dark .mermaid svg .edgePath .path { stroke: #64748B !important; }
+html.dark .mermaid svg .arrowMarkerPath,
+html.dark .mermaid svg marker path { fill: #64748B !important; stroke: #64748B !important; }
+html.dark .mermaid svg .edgeLabel,
+html.dark .mermaid svg .edgeLabel p,
+html.dark .mermaid svg .edgeLabel span,
+html.dark .mermaid svg .labelBkg { background-color: #0B1120 !important; color: #CBD5E1 !important; }
+html.dark .mermaid svg .edgeLabel rect { fill: #0B1120 !important; }
+html.dark .mermaid svg .cluster rect { fill: #0F172A !important; stroke: #334155 !important; }
+html.dark .mermaid svg .cluster-label .nodeLabel,
+html.dark .mermaid svg .cluster text { color: #4DA3FF !important; fill: #4DA3FF !important; }
+
+/* First step solid blue; outcomes outlined. */
+.mermaid svg g.node.start rect,
+.mermaid svg g.node.start polygon,
+.mermaid svg g.node.start path { fill: #0062CC !important; stroke: #0062CC !important; }
+.mermaid svg g.node.start .nodeLabel,
+.mermaid svg g.node.start text { color: #FFFFFF !important; fill: #FFFFFF !important; }
+.mermaid svg g.node.done rect,
+.mermaid svg g.node.done polygon,
+.mermaid svg g.node.done path { fill: #FFFFFF !important; stroke: #007BFF !important; }
+.mermaid svg g.node.done .nodeLabel,
+.mermaid svg g.node.done text { color: #0062CC !important; fill: #0062CC !important; }
+html.dark .mermaid svg g.node.start rect,
+html.dark .mermaid svg g.node.start polygon,
+html.dark .mermaid svg g.node.start path { fill: #0062CC !important; stroke: #4DA3FF !important; }
+html.dark .mermaid svg g.node.done rect,
+html.dark .mermaid svg g.node.done polygon,
+html.dark .mermaid svg g.node.done path { fill: #0B1120 !important; stroke: #4DA3FF !important; }
+html.dark .mermaid svg g.node.done .nodeLabel,
+html.dark .mermaid svg g.node.done text { color: #4DA3FF !important; fill: #4DA3FF !important; }
