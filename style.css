@@ -9,6 +9,9 @@
   .screenshot-desktop { display: none; }
 }
 
+/* Diagrams: centered in the content column. */
+.mermaid svg { display: block; margin-left: auto; margin-right: auto; }
+
 /* Diagrams: site palette instead of the default Mermaid look. */
 .mermaid svg .node rect,
 .mermaid svg .node polygon,
