@@ -23,9 +23,20 @@ flowchart TD
   C -->|Approve| E[Approved]
   C -->|Decline| F[Denied]
   F -->|Archive| G[Archived]
+classDef start stroke-width:2px
+classDef done stroke-width:2px
+class A start
+class E,G done
 ```
 
 This is the main path. **Request for information** sends an application to **Request for Info**, and the issuer's edit returns it to **Draft**. A filing form goes straight from **Draft** to **Approved**. Every other move is listed in [Transition rules](#transition-rules).
+
+<Frame caption="Filter the Applications list by state.">
+  <img className="screenshot-desktop" src="/images/proof/application-status-filter.webp" alt="Applications page with callouts on the All Statuses filter (1), its list of states (2) and an application's Draft status badge (3)." />
+  <img className="screenshot-mobile" src="/images/proof/application-status-filter-mobile.webp" alt="The All Statuses filter (1), its list of states (2) and a Draft status badge (3)." />
+</Frame>
+
+Open **All Statuses** (1) to filter the list by state (2). **Needs Review** selects **Pending Review** and **In Review** together. The **Status** column (3) shows each application's current state.
 
 <Note>
 The Compliance Hub labels a declined application **Denied**. Earlier versions of these docs called it *Rejected*. It's the same state.

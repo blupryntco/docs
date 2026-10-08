@@ -51,6 +51,10 @@ flowchart TD
     D --> E[Explorer record]
     F[Issuer claims profile] --> G[KYI verification]
     G --> E
+classDef start stroke-width:2px
+classDef done stroke-width:2px
+class A,F start
+class E done
 ```
 
 - **Sources.** Issuer documents and web pages, on-chain contract reads, regulator registers, GLEIF, market data and oracles.

@@ -30,6 +30,10 @@ flowchart TD
     F --> G{Confirmed?}
     G -->|Yes| H[Notify watchers]
     G -->|No| I[Keep as draft]
+classDef start stroke-width:2px
+classDef done stroke-width:2px
+class A start
+class H,I done
 ```
 
 1. **Re-read.** Every tracked source is fetched again on a schedule. Register, sanctions, named-party and collateral monitors run on their own cadence.

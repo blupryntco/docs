@@ -27,6 +27,10 @@ flowchart TD
   C -->|Yes| D[Q9 One currency?]
   D -->|Yes| M[EMT]
   D -->|No| R[Q10 ART or review]
+classDef start stroke-width:2px
+classDef done stroke-width:2px
+class A start
+class X,Y,O,M,R done
 ```
 
 Each answer either ends the flow with a result or opens the next question. The [Questions](#questions) table gives the exact result for each exit.

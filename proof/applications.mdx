@@ -28,6 +28,10 @@ flowchart TD
   F --> G[Credential issued]
   E -->|Decline| H[Denied]
   E -->|Request for information| I[Request for Info]
+classDef start stroke-width:2px
+classDef done stroke-width:2px
+class A start
+class G,H,I done
 ```
 
 Filing forms skip review. Their credential is issued as soon as the issuer submits.

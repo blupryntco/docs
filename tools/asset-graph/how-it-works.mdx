@@ -28,6 +28,10 @@ flowchart TD
     D --> E{Terminal?}
     E -->|No| B
     E -->|Yes| F[Seal]
+classDef start stroke-width:2px
+classDef done stroke-width:2px
+class A start
+class F done
 ```
 
 1. **Classify.** The engine works out what the address is: a vault, a wrapper, a CDP, an oracle feed or a fund share class.

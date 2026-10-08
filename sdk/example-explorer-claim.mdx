@@ -16,6 +16,10 @@ flowchart TD
   B --> C["200: accessToken<br/>(401 / 503 / 502: see below)"]
   C --> D["kyi('drawer', 'kyi', token)"]
   D --> E["KYB, add asset,<br/>sign wallets"]
+classDef start stroke-width:2px
+classDef done stroke-width:2px
+class A start
+class E done
 ```
 
 ## 1. Configuration
