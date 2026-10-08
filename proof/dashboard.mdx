@@ -1,9 +1,9 @@
 ---
 title: "Dashboard"
-description: "The Compliance Hub home page: set up supervision and see your monitored assets."
+description: "The Compliance Hub home page: start onboarding or supervision, and see your monitored assets."
 ---
 
-The dashboard is the first page you see after you sign in. It gets a new organization started with three independent setup paths, and lists the assets you monitor. Every member sees it.
+The dashboard is the first page you see after you sign in. It gets a new organization started with three independent setup paths, and lists the assets you monitor. Every member sees it. Its wording depends on your organization's [sector](/proof/concepts#your-organization).
 
 ## Key concepts
 
@@ -11,8 +11,8 @@ The dashboard is the first page you see after you sign in. It gets a new organiz
 |---|---|
 | **Monitored asset** | A token on your [Watchlist](/proof/registry). The dashboard lists its chain, address, KYI and Proof of Collateral status. |
 | **Issuer information request** | A structured form you send to an issuer. Their answers come back verified, timestamped and attached to the record. |
-| **Authorization** | A licence, registration or approval you publish on-chain as a [credential](/proof/credentials). |
-| **Resolved data** | Facts the Compliance Hub reads for you: price, holders, net flow, collateral, oracles and admin controls. |
+| **Authorization** or **attestation** | A licence, registration, listing, rating or approval you publish on-chain as a [credential](/proof/credentials). Public-sector dashboards say _authorization_; private-sector dashboards say _attestation_. |
+| **Resolved data** | Facts the Compliance Hub reads for you: price, holders, collateral, oracles and admin controls. |
 | **Requested data** | Facts only the issuer can give: reserves, legal terms, redemption and disclosures. |
 
 ## How it works
@@ -21,7 +21,7 @@ The dashboard is the first page you see after you sign in. It gets a new organiz
 flowchart TD
   A[Dashboard] --> B[Add an asset]
   A --> C[Request issuer information]
-  A --> D[Publish an authorization]
+  A --> D[Publish an authorization or attestation]
   B --> E[Watchlist]
   C --> F[Form manager]
   D --> G[Credentials]
@@ -31,7 +31,20 @@ class A start
 class E,F,G done
 ```
 
-The three paths are independent. Start with whichever matches your mandate.
+The three paths are independent. Start with whichever matches your mandate or your diligence.
+
+## Public and private sector
+
+The dashboard has the same three paths for every organization. The labels follow the sector you picked when the organization was created.
+
+| | Public sector | Private sector |
+|---|---|---|
+| **Heading for a new organization** | **Set up supervision** | **Get started** |
+| **Third setup card** | **Publish an Authorization Onchain** — a licence, registration or approval. The answer to "is this licensed?" | **Publish an Attestation Onchain** — a listing, rating or approval you granted. The answer to "does this still hold?" |
+| **Where issuer answers go** | Your examination record | Your diligence record |
+| **Privacy banner** | Not shown | **Your workspace is private** |
+
+Both sectors issue the same [credentials](/proof/credentials). Only the wording differs.
 
 <Info>
 Your workspace is private. Assets, forms and answers stay inside your organization. Nothing is filed on your behalf.
@@ -43,16 +56,16 @@ Your workspace is private. Assets, forms and answers stay inside your organizati
   <Step title="Add an asset to monitor">
     Click **Add an Asset to Monitor** (1), then **Go to Registry**. You add a token by its contract address and network. On-chain data such as issuer identity, mint authority and collateral status fills in and stays up to date. See [Watchlist assets](/proof/watchlist-assets).
 
-    <Frame caption="The dashboard for a new organization">
+    <Frame caption="The dashboard for a new public-sector organization">
       <img className="screenshot-desktop" src="/images/proof/dashboard.webp" alt="Compliance Hub dashboard with callouts on Add an Asset to Monitor, Request Issuer Information, Publish an Authorization Onchain and Invite team members" />
       <img className="screenshot-mobile" src="/images/proof/dashboard-mobile.webp" alt="Phone-sized close-up of the numbered callouts. Compliance Hub dashboard with callouts on Add an Asset to Monitor, Request Issuer Information, Publish an Authorization Onchain and Invite team members" />
     </Frame>
   </Step>
   <Step title="Request issuer information">
-    Click **Request Issuer Information** (2), then **Go to Form manager**. Build a form and send it to a supervised issuer. See [Form manager](/proof/form-manager).
+    Click **Request Issuer Information** (2), then **Go to Form manager**. Build a form and send it to an issuer you supervise or deal with. See [Form manager](/proof/form-manager).
   </Step>
-  <Step title="Publish an authorization on-chain">
-    Click **Publish an Authorization Onchain** (3), then **Go to Credentials**. A credential is the official answer to "is this licensed?". You can update or revoke it as status changes. See [Credentials](/proof/credentials).
+  <Step title="Publish an authorization or attestation on-chain">
+    Click **Publish an Authorization Onchain** (3), or **Publish an Attestation Onchain** in a private-sector organization, then **Go to Credentials**. You can update or revoke the credential as status changes. See [Credentials](/proof/credentials).
   </Step>
   <Step title="Invite your team">
     Click **Invite team members** (4) to add colleagues. See [Members and settings](/proof/members).
@@ -75,12 +88,18 @@ Your workspace is private. Assets, forms and answers stay inside your organizati
 
 | Data | Source | When |
 |---|---|---|
-| Price, holders, net flow, collateral, oracles, admin controls | Resolved by the Compliance Hub | Starts within minutes of adding an asset |
+| Price, holders, collateral, oracles, admin controls | Resolved by the Compliance Hub | Starts within minutes of adding an asset |
 | Reserves, legal terms, redemption, disclosures | Requested from the issuer | Blank until the issuer files. That's a gap in their filing, not an error. |
 
-## Worked example
+## Worked examples
+
+### A supervisor
 
 You supervise three stablecoins. You click **Add an Asset to Monitor** and add each by contract address. Within minutes the **Monitored assets** table lists all three with their chain and address. Their reserves stay blank, so you click **Request Issuer Information** and send each issuer your reserve disclosure form.
+
+### An exchange
+
+Your listings team wants to list a new tokenized money market fund. You click **Add an Asset to Monitor** and add the token by contract address and network. Its admin controls and asset graph fill in, but its reserves are blank. You click **Request Issuer Information** and send the issuer your listing due diligence form. When your approvers sign off, you click **Publish an Attestation Onchain** to record the listing approval. The token stays on your Watchlist, so you can check its dependencies and on-chain activity after it's listed.
 
 ## Errors and troubleshooting
 
@@ -95,7 +114,7 @@ You supervise three stablecoins. You click **Add an Asset to Monitor** and add e
   <Accordion title="Do I have to complete all three setup cards?">
     No. They're independent. You can monitor assets without ever publishing a credential.
   </Accordion>
-  <Accordion title="Why are Activity and Monitoring greyed out?">
+  <Accordion title="Why are Activity, Supervisory Intelligence and Monitoring greyed out?">
     They aren't available yet.
   </Accordion>
 </AccordionGroup>
