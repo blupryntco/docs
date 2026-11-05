@@ -9,6 +9,14 @@ KYI, Know Your Issuer, ties a token to your verified entity. You paste the token
 To run the same flow inside your own app, use the [KYI widget](/tools/kyi). The SDK guides cover the [flow](/sdk/flow) and [wallet verification](/sdk/wallet-verification).
 </Note>
 
+<Info>
+**Before you start**
+
+- **Your keys stay with you.** Bluprynt never sees or holds your private keys. You sign with the tools you already use.
+- **Any member can do the setup.** The keyholder is needed only for the signature.
+- **KYB comes first.** Your organization must pass [KYB](/passport/organization#verify-the-organization-kyb) before you can verify an asset.
+</Info>
+
 ## Key concepts
 
 | Term | Meaning |
@@ -149,18 +157,51 @@ You paste Plume USD's Ethereum address and press **Verify**. Passport reads the 
 
 ## FAQ
 
+### Security and signing
+
 <AccordionGroup>
-  <Accordion title="Do I sign once per token?">
-    No. One signature settles every token a wallet controls.
+  <Accordion title="Does Bluprynt see or hold our private keys?">
+    No. You sign with your own wallet, command-line tool or HSM. Your keys never leave your custody. Bluprynt receives only the signature or the transaction.
+  </Accordion>
+  <Accordion title="Which key do we sign with?">
+    The key of a wallet that controls the token, for example its owner, admin or mint authority. Passport lists each authority and its signer.
+  </Accordion>
+  <Accordion title="Can we sign offline, without connecting a wallet?">
+    Yes. Sign the message with a command-line tool on an offline machine, or use your HSM. You do not need to connect a wallet to Passport. See [Wallet verification](/sdk/wallet-verification).
+  </Accordion>
+  <Accordion title="Can the signature move funds or approve anything?">
+    No. You sign a message, not a transaction. The signature proves control of the address. It cannot transfer funds or approve contracts.
   </Accordion>
   <Accordion title="Does signing cost gas or write to the chain?">
     No. You sign an off-chain message on every chain, including XRPL. Only the optional HSM or custody and transaction verification methods send a transaction.
   </Accordion>
+  <Accordion title="How does signing work for a multisig?">
+    The authority is the multisig. One of its signer wallets signs, and Bluprynt records the proof against the multisig.
+  </Accordion>
+</AccordionGroup>
+
+### Your team
+
+<AccordionGroup>
+  <Accordion title="Who on our team needs to do this?">
+    Any member can create the organization, start KYB and add the asset. The person who controls the authority key signs at the end. That person does not need to do the other steps.
+  </Accordion>
+  <Accordion title="Can our tokenization provider do this for us?">
+    Yes. [Invite them](/passport/members) as a member of your organization. They can do the setup. The signature must come from a wallet that controls the token. If the provider holds that key, the provider signs.
+  </Accordion>
+</AccordionGroup>
+
+### Scope and results
+
+<AccordionGroup>
+  <Accordion title="Do I sign once per token?">
+    No. One signature settles every token a wallet controls.
+  </Accordion>
   <Accordion title="Do I sign again for each EVM L2?">
     No. The proof belongs to the address, so one signature covers it on Ethereum and every EVM L2 where it holds authority. Sign again only for an address that's different on another chain.
   </Accordion>
-  <Accordion title="How does signing work for a multisig?">
-    The authority is the multisig. One of its signer wallets signs, and Bluprynt records the proof against the multisig.
+  <Accordion title="What will the public see?">
+    After verification, the [public trust page](/passport/public-page) shows the asset, its verified issuer and its KYI status.
   </Accordion>
 </AccordionGroup>
 

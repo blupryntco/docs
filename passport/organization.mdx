@@ -73,14 +73,21 @@ A new organization starts **Unverified**. The Overview shows **Start here — tw
       <img className="screenshot-mobile" src="/images/passport/passport-kyb-start-mobile.webp" alt="ENTITY NOT VERIFIED (4), Verify organization (1), Locked (2) and the Verify Your Business card (3)." />
     </Frame>
   </Step>
+  <Step title="Choose the entity and the document">
+    Verify the legal entity that issues the token, not its parent company. Have one formation document ready:
+
+    - articles of incorporation,
+    - a certificate of incorporation, or
+    - a recent excerpt from the company registry.
+  </Step>
   <Step title="Confirm your legal entity">
     Bluprynt matches your legal entity against the GLEIF register and regulator registers. When verification completes, the Overview shows **Entity verified · KYB** and **My Entity** fills with the registry record. See [Entity profile](/passport/entity).
   </Step>
 </Steps>
 
-<Note>
-The KYB submission itself is a write to production, so this guide stops at the **Verify organization** step.
-</Note>
+<Tip>
+**Next step:** when the Overview shows **Entity verified · KYB**, step 2 unlocks. Continue with [Verify an asset (KYI)](/passport/verify-asset).
+</Tip>
 
 ## Reference
 
@@ -131,6 +138,9 @@ You run compliance for a fund issuer. You click **Create new**, enter the fund m
 <AccordionGroup>
   <Accordion title="Do I need an LEI to create an organization?">
     No. Both the LEI and the ONCHAIN ID / DID are optional.
+  </Accordion>
+  <Accordion title="Which entity should we verify, the parent or the issuer?">
+    The issuer: the legal entity that issues the token, not its parent company.
   </Accordion>
   <Accordion title="How do I leave an organization?">
     Open **Settings → Organizations**, open the organization, and click **Leave Organization**. See [Settings](/passport/settings).
