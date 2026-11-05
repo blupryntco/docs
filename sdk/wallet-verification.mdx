@@ -10,7 +10,7 @@ KYI verifies an asset by tying it to the organization that controls it. After [K
 | Term | Meaning |
 |---|---|
 | **Authority wallet** | A wallet the token contract gives control to: owner, admin, minter or upgrade admin on EVM; mint authority or freeze authority on Solana; the issuing account on XRPL. Bluprynt reads these from the chain. |
-| **Challenge** | A one-time message, issued to the organization, that contains the wallet address and a nonce. |
+| **Challenge** | A one-time message that names the wallet address and the member who requested it. |
 | **Declared → attested** | Before signing, an authority is `DECLARED`: Bluprynt read it from the chain. After a valid signature, it's `ATTESTED`. Signing attests to control of the address only, not to any other field. |
 | **Wallet queue** | The list of authority wallets still waiting for a signature, across all of an asset's tokens. One signature covers every token that wallet controls. |
 
@@ -18,10 +18,51 @@ KYI verifies an asset by tying it to the organization that controls it. After [K
 
 1. Bluprynt reads the token's contract and lists the authority wallets.
 2. The member picks a wallet and a signing method.
-3. Bluprynt issues a challenge that expires: five minutes for a browser wallet, 30 minutes for a manual signature. An expired challenge is refreshed automatically.
+3. Bluprynt issues a challenge that expires: five minutes for a browser wallet, 30 minutes for a manual signature, seven days for an HSM memo. An expired challenge is refreshed automatically.
 4. The member signs. Most methods sign off-chain: no funds move and no gas is paid.
-5. Bluprynt verifies the signature against the wallet address. Off-chain signatures are confirmed instantly; HSM memo transactions are reviewed by Bluprynt.
+5. Bluprynt verifies the signature against the wallet address. Off-chain signatures are confirmed instantly. HSM memo transactions are reviewed by hand.
 6. When every token has an attested authority, the member can file the asset for decision.
+
+## How Bluprynt checks a signature
+
+This section is the reference for how each chain family is verified. Other pages link here.
+
+### Ethereum and L2s
+
+The member signs an off-chain EIP-191 (`personal_sign`) message. There's no transaction and no gas.
+
+1. Bluprynt issues a short challenge. It names the wallet address and the member who requested it.
+2. The member signs it.
+3. Bluprynt checks the signature against the address.
+
+Proofs are tied to the address, not the chain. One signature covers that address on Ethereum and on every L2 where it's used. The member only signs again for an address that differs on an L2. The EVM chains are listed in [Supported chains](/supported-chains#evm-chains).
+
+### XRPL
+
+XRPL works the same way: an off-chain signed message, no fee, nothing written to the ledger.
+
+1. The wallet signs the challenge and sends its public key.
+2. Bluprynt checks the key belongs to the r-address, then verifies the signature.
+3. If no key is sent, Bluprynt reads the signing key from the account's recent transactions on the ledger. The [manual signature](#manual-signature-cli) script sends no key, so it uses this lookup.
+
+If the account hasn't signed a transaction recently, the lookup finds no key. Use an extension wallet instead, which sends the key.
+
+**Regular keys.** Sign with the account's master key. A regular-key signature only verifies when no key is sent and none of the account's last 100 transactions was signed with the master key.
+
+### Safe and other multisig wallets
+
+Smart-contract wallets like a Safe can't sign the message, so one owner signs instead. Bluprynt doesn't verify contract signatures (EIP-1271). If a token's authority is a multisig, the queue offers two ways to prove control:
+
+| Option | When to use it |
+|---|---|
+| **Signer on the multisig** | One owner signs the challenge with their own key. Any one owner is enough. Bluprynt records the proof against the multisig. |
+| **The multisig itself** | The multisig sends the [HSM memo transaction](#hsm-or-custody) from its own address. Bluprynt reviews it by hand. |
+
+### Custody setups and transaction verification
+
+Custody setups that can't sign messages have an on-chain memo option on EVM, XRPL and Solana. Bluprynt reviews it by hand. See [HSM or custody](#hsm-or-custody).
+
+On EVM there's also transaction verification via a small ETH transfer. See [Transaction verification](#transaction-verification).
 
 <Frame caption="Signing methods for an Ethereum authority wallet (Bluprynt Passport; the widget shows the same dialog).">
   <img src="/images/sdk/flow/07-signing-method.png" alt="Select Signing Method dialog listing extension wallet, manual signature and HSM options." />
@@ -37,7 +78,7 @@ KYI verifies an asset by tying it to the organization that controls it. After [K
 | **HSM or custody** | Memo transaction | Memo transaction | Memo transaction | On-chain no-op | After Bluprynt review |
 | **Transaction verification** | Micro-ETH transfer | — | — | On-chain transfer | When the transaction is found |
 
-<Note>WalletConnect and transaction verification are switched on per integration. Ask your Bluprynt contact which methods your members get.</Note>
+<Note>WalletConnect and transaction verification are off by default. Bluprynt switches them on per member account. Ask your Bluprynt contact which methods your members get.</Note>
 
 ## Extension wallet
 
@@ -46,7 +87,7 @@ KYI verifies an asset by tying it to the organization that controls it. After [K
 </Frame>
 
 1. **Connect Wallet**, and switch to the authority account if the wallet opens another one.
-2. Check the **message being signed**. It names the purpose, the organization it's issued to, and the address with a nonce.
+2. Check the **message being signed**. It names the purpose, the member it's issued to, and the wallet address.
 3. The message **expires** after five minutes and is refreshed automatically.
 4. **Sign Message**. The wallet shows a `personal_sign` request (EVM), a message-signing request (Solana), or a GemWallet / Crossmark prompt (XRPL).
 
@@ -83,11 +124,11 @@ console.log(await account.signMessage({ message: challenge })) // EIP-191 person
 ```
 </CodeGroup>
 
-`cast` prints a `0x`-prefixed 65-byte signature. Paste only that line. For XRPL, the widget shows a short script for `xrpl` or `ripple-keypairs` with the challenge filled in.
+`cast` prints a `0x`-prefixed 65-byte signature. Paste only that line. For XRPL, the widget shows a short script for `xrpl` or `ripple-keypairs` with the challenge filled in. The script sends no public key, so Bluprynt [looks the key up](#xrpl) from the ledger.
 
 ## HSM or custody
 
-Use this when the key can't sign arbitrary messages, for example an HSM policy or a qualified custodian.
+Use this when the key can't sign arbitrary messages, for example an HSM policy or a qualified custodian. It works on EVM, XRPL and Solana.
 
 <Frame>
   <img src="/images/sdk/flow/10-sign-hsm.png" alt="HSM screen with the memo text and email instructions." />
@@ -102,14 +143,16 @@ Use this when the key can't sign arbitrary messages, for example an HSM policy o
 
 No assets move. The transaction pays normal network fees.
 
-## Multisig
+## Transaction verification
 
-If a token's authority is a multisig, such as a Safe, the queue offers two ways to sign:
+On EVM, a member can also prove control by sending a small ETH transfer. It's off by default; Bluprynt switches it on per member account.
 
-| Option | When to use it |
-|---|---|
-| **The multisig itself** | The multisig signs, for example by sending the HSM memo transaction from the multisig. |
-| **Signer on the multisig** | One owner of the multisig signs with their own key. Any one eligible signer is enough. |
+1. Bluprynt shows its verification address and an exact amount between 0.000001 and 0.00099999 ETH.
+2. From the authority wallet, send exactly that amount to that address within seven days.
+3. Paste the transaction hash.
+4. Bluprynt checks the transaction is confirmed, comes from the authority wallet, goes to the verification address and carries the exact amount.
+
+The transaction pays normal network fees.
 
 ## Worked example: USD Coin on Ethereum
 
@@ -132,19 +175,23 @@ The queue for an asset with one authority, an upgrade admin:
 | Wrong account connected | The signature doesn't verify for the authority address. | Switch the wallet to the authority address and sign again. |
 | Edited challenge | The signature doesn't verify. | Copy the whole challenge, including line breaks. |
 | No authority found on chain | "No controlling authority has been found on chain yet, so there is nothing to prove." | Check the address, or contact Bluprynt for tokens whose control sits off-chain. |
+| XRPL key not found | "Could not look up the public key" for the r-address. | Sign with an extension wallet, which sends the public key. |
 | Wallet you can't sign for | Its tokens stay listed but unverified. | Sign with another authority, or use HSM or custody. |
 
 ## FAQ
 
 <AccordionGroup>
   <Accordion title="Does signing cost gas or move funds?">
-    No, for extension wallet, WalletConnect and manual signatures: they sign off-chain. HSM memo transactions and transaction verification are on-chain and pay network fees, but move no assets beyond the micro-transfer.
+    No, for extension wallet, WalletConnect and manual signatures: they sign off-chain. HSM memo transactions and transaction verification are on-chain and pay network fees. Only transaction verification moves funds: the small ETH amount.
   </Accordion>
   <Accordion title="What exactly does a signature prove?">
     Only that the signer controls the address. It doesn't attest to the asset's name, reserves or any other field.
   </Accordion>
   <Accordion title="Do I sign once per token?">
     Once per wallet. One signature covers every token that wallet controls.
+  </Accordion>
+  <Accordion title="Do I sign again on each L2?">
+    No. EVM proofs are tied to the address, not the chain. See [Ethereum and L2s](#ethereum-and-l2s).
   </Accordion>
 </AccordionGroup>
 

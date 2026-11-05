@@ -132,7 +132,7 @@ Bluprynt lists every wallet with on-chain authority over the token: owner, admin
 1. **Authority wallet** and its on-chain role, here `Upgrade admin`.
 2. **Sign** opens the signing methods.
 
-A wallet the member can't sign for leaves its tokens listed but unverified. If a token is controlled by a multisig, the queue shows "The multisig itself" or "Signer on the multisig". See [Wallet verification](/sdk/wallet-verification#multisig).
+A wallet the member can't sign for leaves its tokens listed but unverified. If a token is controlled by a multisig, the queue shows "The multisig itself" or "Signer on the multisig". See [Safe and other multisig wallets](/sdk/wallet-verification#safe-and-other-multisig-wallets).
 
 ### Choose a signing method
 
@@ -142,7 +142,7 @@ A wallet the member can't sign for leaves its tokens listed but unverified. If a
 
 1. **Selected wallet**, with its role and status (`Unverified`).
 2. **What this signature attests**: only that the member controls the address. The message is signed off-chain, so no funds move and no gas is paid. On the asset page, the authority moves from `DECLARED` to `ATTESTED`.
-3. **Signing options.** See the tabs below. Some integrations also offer **Transaction Verification**, where you send a micro-ETH amount to Bluprynt's verification address. Ask your Bluprynt contact whether it's enabled for you.
+3. **Signing options.** See the tabs below. On EVM, members Bluprynt has switched it on for also see **Transaction Verification**, a small ETH transfer. See [Transaction verification](/sdk/wallet-verification#transaction-verification).
 4. **Next** opens the chosen method.
 
 <Tabs>
@@ -151,10 +151,10 @@ A wallet the member can't sign for leaves its tokens listed but unverified. If a
       <img src="/images/sdk/flow/08-sign-extension.png" alt="Sign with Extension Wallet screen with Connect Wallet, message, expiry and Sign Message." />
     </Frame>
 
-    1. **Connect Wallet** connects a browser extension wallet such as MetaMask or Phantom. Where WalletConnect is enabled for your integration, it opens the WalletConnect picker instead, for mobile wallets.
-    2. **Message being signed.** It contains a purpose line, the organization it's issued to, and the address with a one-time nonce.
+    1. **Connect Wallet** connects a browser extension wallet such as MetaMask or Phantom. Where Bluprynt has switched on WalletConnect, it opens the WalletConnect picker instead, for mobile wallets.
+    2. **Message being signed.** It contains a purpose line, the member it's issued to, and the wallet address.
     3. **Expiry.** The message is valid for five minutes.
-    4. **Sign Message** asks the wallet for a `personal_sign` signature.
+    4. **Sign Message** asks the wallet for a `personal_sign` signature. For how Bluprynt checks it, see [How Bluprynt checks a signature](/sdk/wallet-verification#how-bluprynt-checks-a-signature).
   </Tab>
   <Tab title="Manual signature (CLI)">
     <Frame>
@@ -174,9 +174,9 @@ A wallet the member can't sign for leaves its tokens listed but unverified. If a
 
     1. **Memo.** From the authority wallet, submit a no-op on-chain transaction carrying this memo. No assets move.
     2. **Send the transaction link** to `product@bluprynt.com`.
-    3. **Email** opens a new email to that address in your mail client. Bluprynt checks the transaction and replies. Until then, the wallet stays unverified.
+    3. **Email** opens a new email to that address in your mail client. Bluprynt reviews the transaction by hand and replies. Until then, the wallet stays unverified.
 
-    Use this when the key sits in an HSM or with a custodian that can't sign arbitrary messages. The transaction pays normal network fees.
+    See [HSM or custody](/sdk/wallet-verification#hsm-or-custody) for when to use it.
   </Tab>
 </Tabs>
 
