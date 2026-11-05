@@ -14,7 +14,7 @@ description: "Look up KYI verification, authorities and wallet proofs for a toke
 | `chain_slug` | Optional chain filter for address lookups, e.g. `ethereum`. |
 | `kyi_verified` | `true` when the token's issuer is KYI-verified. Appears on the response and per item. |
 | Verification | One wallet-proof record: when it was made, which authority it backs, and the method used. |
-| Method | The proof type — a signature (`eip191`, `eip712`, `solana_raw`, `solana_offchain_v0`, `xrpl`), a contract signature (`eip1271`), an on-chain transfer (amount or memo), or `admin_manual` (out of the public trust model). |
+| Method | The proof type — a signature (`eip191`, `solana_raw`, `solana_offchain_v0`, `xrpl`), an on-chain transfer of an exact amount, or `admin_manual` (out of the public trust model). See [How Bluprynt checks a signature](/sdk/wallet-verification#how-bluprynt-checks-a-signature). |
 
 ## How it works
 
@@ -148,11 +148,9 @@ Every verification carries a `method` object describing the proof:
 
 | `type` | Scheme | How the wallet proved control |
 |---|---|---|
-| `signature` | `eip191`, `eip712`, `solana_raw`, `solana_offchain_v0`, `xrpl` | Signed a message. XRPL proofs carry `signer_public_key`. |
-| `contract_signature` | `eip1271` | A contract wallet signed via EIP-1271, with an inner `eip191`/`eip712` scheme, `caip2` and `block_number`. |
+| `signature` | `eip191`, `solana_raw`, `solana_offchain_v0`, `xrpl` | Signed a message. XRPL proofs carry `signer_public_key`. |
 | `transfer` (`kind: amount`) | — | Sent a specific amount on-chain; carries `transaction_hash`, `sender`, `asset`, `amount`. |
-| `transfer` (`kind: memo`) | — | Sent a transaction carrying a `memo`. |
-| `admin_manual` | — | Recorded by an operator; not part of the public trust model. |
+| `admin_manual` | — | Recorded by an operator; not part of the public trust model. Memo transactions reviewed by hand appear here. |
 
 ## Errors
 
