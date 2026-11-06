@@ -3,11 +3,15 @@ title: "Verify an asset (KYI)"
 description: "Add a token to Passport, fill in its details and prove control with authority wallet signatures."
 ---
 
-KYI, Know Your Issuer, ties a token to your verified entity. You paste the token address, confirm the details Bluprynt reads, and sign once with each wallet that controls the token. Bluprynt then reviews the filing and publishes a KYI attestation.
+KYI, Know Your Issuer, ties a token to your verified entity. You paste the token address, confirm the details Bluprynt reads, and sign once with each wallet that controls the token. When you submit, Passport verifies the filing straight away and publishes a KYI attestation for each token you proved.
 
 <Note>
 To run the same flow inside your own app, use the [KYI widget](/tools/kyi). The SDK guides cover the [flow](/sdk/flow) and [wallet verification](/sdk/wallet-verification).
 </Note>
+
+<Tip>
+Came here from **Claim this profile** on [Compliance Explorer](/explorer/overview)? Passport keeps the asset you were claiming through sign-in or sign-up and business verification (KYB), then fills it in for you here. When it's verified, **Return to Explorer** takes you back to the asset page, which shows **KYI Verified**. Passport keeps the asset for 30 days, so you can confirm your email or finish on another device.
+</Tip>
 
 ## Key concepts
 
@@ -18,7 +22,7 @@ To run the same flow inside your own app, use the [KYI widget](/tools/kyi). The 
 | **Authority** | A wallet or contract that controls a token, such as its owner or a permission registry. |
 | **Signer** | The wallet that signs for an authority. For a multisig, the signer and the authority differ. |
 | **What we need from you** | The asset details Passport asks you to confirm. |
-| **Submit for review** | Sends the filing to Bluprynt. Verified tokens get attestations once it's approved. |
+| **Submit and verify** | Files the asset and verifies it at once. Each token whose authority you proved is verified and gets its attestation. |
 
 ## How it works
 
@@ -28,9 +32,8 @@ flowchart TD
   B --> C[Verify]
   C --> D[Confirm details]
   D --> E[Sign per authority]
-  E --> F[Submit for review]
-  F --> G[Pending]
-  G --> H[Verified]
+  E --> F[Submit and verify]
+  F --> H[Verified]
 classDef start stroke-width:2px
 classDef done stroke-width:2px
 class A start
@@ -66,8 +69,8 @@ One signature settles every token a wallet controls. Bluprynt takes the proof fr
       <img className="screenshot-mobile" src="/images/passport/passport-sign-wallets-mobile.webp" alt="Phone-sized close-up of the numbered callouts. Verify your wallets dialog with callouts on the title, the Sign buttons for each authority and Close." />
     </Frame>
   </Step>
-  <Step title="Submit for review">
-    When every token has a signature, click **Submit for review**. The KYI state becomes **Pending**: *Your Know Your Issuer filing is in. Verification finishes on our side.* When Bluprynt approves it, the state becomes **Verified** and the attestation appears under [Attestations](/passport/wallets-and-attestations).
+  <Step title="Submit and verify">
+    When every token has a signature, click **Submit and verify**. Passport verifies the filing at once: the KYI state becomes **Verified**, or **Partly verified** if only some tokens were proven, and the attestation appears under [Attestations](/passport/wallets-and-attestations). There is no separate review wait.
   </Step>
 </Steps>
 
@@ -96,8 +99,7 @@ A wallet you can't sign for leaves its tokens listed but unverified.
 |---|---|---|
 | Not started | Nothing filed. | **Start KYI verification** |
 | Sign to finish | Details are complete; signatures are missing. | **Sign** or **Sign all wallets** |
-| Submit for review | Every token has a signature. | **Submit for review** |
-| Pending | Filed and under review. | Wait. |
+| Ready to submit | Every token has a signature. | **Submit and verify** |
 | Partly verified | Some tokens are verified, others aren't. | Sign the rest. |
 | Verified | KYI is complete. | Start [Proof of Collateral](/passport/proof-of-collateral). |
 | Revoked | Verification was revoked. | **Verify KYI again** |
@@ -113,7 +115,7 @@ A wallet you can't sign for leaves its tokens listed but unverified.
 
 ## Worked example
 
-You paste Plume USD's Ethereum address and press **Verify**. Passport reads the name, ticker, description, white paper and website. You set **Image License** to *All Rights Reserved*. The banner says **1 token still needs a wallet signature**. The token's owner is a multisig of 6 signers, so you click **Sign** and approve the message from one signer wallet. You click **Submit for review**, and the asset shows **Pending** until Bluprynt approves it.
+You paste Plume USD's Ethereum address and press **Verify**. Passport reads the name, ticker, description, white paper and website. You set **Image License** to *All Rights Reserved*. The banner says **1 token still needs a wallet signature**. The token's owner is a multisig of 6 signers, so you click **Sign** and approve the message from one signer wallet. You click **Submit and verify**, and the asset shows **Verified** straight away.
 
 ## Troubleshooting
 
