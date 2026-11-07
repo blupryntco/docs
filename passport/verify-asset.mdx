@@ -39,6 +39,29 @@ class H done
 
 One signature settles every token a wallet controls. Bluprynt takes the proof from the signer and writes it against every authority that wallet controls.
 
+## How signing works
+
+Signing works like verifying a domain, except you sign a message instead of publishing a DNS record. By default you sign a short message, not a transaction. Nothing is written to any chain, no funds move and no gas or fee is paid.
+
+- **Expiry.** Each message is valid for five minutes in a browser wallet and 30 minutes for a manual signature. An expired message is replaced automatically.
+- **What it proves.** A valid signature proves you control the authority address — nothing else about the asset.
+- **Scope.** A proof belongs to the address, not to one network. One signature covers that address wherever it holds authority.
+
+Two optional methods are on-chain and pay normal network fees:
+
+- **HSM or custody.** For keys that can't sign arbitrary messages. The wallet sends a no-op transaction with the memo Passport shows, and Bluprynt reviews it.
+- **Transaction verification (EVM only).** The wallet sends the small amount of ETH Passport shows to a Bluprynt address. The wallet is verified once the transaction is found. This method is switched on per integration.
+
+See [Wallet verification](/sdk/wallet-verification#methods-by-chain) for every signing method.
+
+### Notes per chain
+
+| Chain | How you sign | What to know |
+|---|---|---|
+| **Ethereum and EVM L2s** | EIP-191 `personal_sign` message | One signature covers the address on Ethereum and every EVM L2 where it holds authority. A smart-contract wallet such as a Safe can't sign the message itself: one of its owners signs instead. |
+| **Solana** | Signed message | Sign in a browser wallet or with the Solana CLI. |
+| **XRPL** | Signed message | No transaction is submitted. Sign with the account's master key, in GemWallet, Crossmark or with the script Passport shows. If a manual signature isn't accepted, sign in GemWallet or Crossmark. |
+
 ## Verify an asset
 
 <Steps>
@@ -129,6 +152,12 @@ You paste Plume USD's Ethereum address and press **Verify**. Passport reads the 
 <AccordionGroup>
   <Accordion title="Do I sign once per token?">
     No. One signature settles every token a wallet controls.
+  </Accordion>
+  <Accordion title="Does signing cost gas or write to the chain?">
+    No. You sign an off-chain message on every chain, including XRPL. Only the optional HSM or custody and transaction verification methods send a transaction.
+  </Accordion>
+  <Accordion title="Do I sign again for each EVM L2?">
+    No. The proof belongs to the address, so one signature covers it on Ethereum and every EVM L2 where it holds authority. Sign again only for an address that's different on another chain.
   </Accordion>
   <Accordion title="How does signing work for a multisig?">
     The authority is the multisig. One of its signer wallets signs, and Bluprynt records the proof against the multisig. See [Safe and other multisig wallets](/sdk/wallet-verification#safe-and-other-multisig-wallets).
