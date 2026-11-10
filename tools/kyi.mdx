@@ -42,13 +42,41 @@ class A start
 class F done
 ```
 
-1. **KYB.** The organization is verified once, with forms provided by Sumsub, and matched against GLEIF where possible.
+1. **KYB.** The organization is verified once, with forms provided by Sumsub, and matched against GLEIF where possible. See [What KYB verification asks for](#what-kyb-verification-asks-for).
 2. **Asset.** A member pastes the token address. Bluprynt detects the chain and reads the token's metadata.
 3. **Authorities.** Bluprynt reads which wallets control the token on-chain.
 4. **Signatures.** A member signs a one-time challenge with each authority wallet. Most methods are off-chain: no funds move, no gas. See [Wallet verification](/sdk/wallet-verification).
 5. **Decision.** The application is filed and reviewed. Once approved, the asset is **KYI Verified** and its public record shows the verified issuer.
 
 Every screen of this process, with screenshots, is in [Verification flow](/sdk/flow).
+
+## What KYB verification asks for
+
+KYB runs in four steps. Have this information and one company document at hand before you start.
+
+**Step 1: Company data** (all required; pre-filled from the registry where possible)
+
+- Company name.
+- Country.
+- Registration number.
+- Location of registration.
+- Website.
+- Legal address.
+- Legal entity identifier (LEI).
+- No custom fields or questionnaire questions are added.
+
+**Step 2: Company documents.** There's one required group, "Legal presence," and the applicant uploads one of these:
+
+- Certificate of incorporation/registration.
+- Memorandum/articles of incorporation, association or registration.
+- A recent excerpt from a state company registry.
+
+**Step 3: Email verification.** The email field is locked if it's already pre-filled.
+
+**Step 4: Associated parties**
+
+- UBOs (applicants can skip this): first, middle and last name, date of birth, email, phone.
+- Company officers: the same fields.
 
 ## What it protects against
 
