@@ -39,7 +39,7 @@ class F,G,H,I done
 | Issuer documents and web pages | Disclosure fields, parties, holder terms, reserve attestations |
 | On-chain reads | Contract addresses, supply, controller and admin roles, reserve accounts |
 | Regulator registers and GLEIF | Legal-entity identity, LEI, licences |
-| CoinGecko | Price, volume, market cap, exchange and DEX listings, and tracked network details where available |
+| CoinGecko | Price, volume, market cap, circulating supply, exchange and DEX listings, and tracked network details where available |
 | Oracles | Price and reserve feeds where an asset publishes one |
 
 ## Read an asset page
@@ -53,7 +53,7 @@ class F,G,H,I done
     </Frame>
   </Step>
   <Step title="Read the Overview tab">
-    Use the tabs to move between views. The evidence strip counts the disclosure fields backed by a source document and shows the latest reserve attestation and when the next one is due. **At a glance** summarizes price, market cap, total supply, reserve coverage, attestation cadence, disclosure score, latest disclosure and when the record was last checked. The credit **Price and market cap · Powered by CoinGecko** appears when either figure is available. Supply comes from on-chain reads. **Issuer** shows the issuing entity and its regulatory claims, then **Other parties** named in the asset's documents. **Disclosure checklist** shows coverage by family.
+    Use the tabs to move between views. The evidence strip counts the disclosure fields backed by a source document and shows the latest reserve attestation and when the next one is due. **At a glance** summarizes market figures, supply and disclosure status. When CoinGecko provides circulating supply, the figure counts tokens across all networks. Otherwise, the supply tile shows on-chain total supply for the deployment, if available. The **Powered by CoinGecko** credit names the figures it covers. **Issuer** shows the issuing entity and its regulatory claims, then **Other parties** named in the asset's documents. **Disclosure checklist** shows coverage by family.
 
   </Step>
   <Step title="Check the evidence">
@@ -64,7 +64,7 @@ class F,G,H,I done
     </Frame>
   </Step>
   <Step title="Read the Markets tab">
-    Click **Markets**. Available CoinGecko figures include price, 24-hour volume, market cap and fully diluted value. **Listed on · exchanges** lists order-book venues by 24-hour volume. Each venue row can show its country, trust rank and pair count, and each pair row can show price, 24-hour volume, spread and last trade. **Listed on · DEX pools** lists on-chain pools. **Deployed on** lists tracked networks with their token contracts and decimals, not circulating value. Look for **Powered by CoinGecko** beneath each section that uses its data.
+    Click **Markets**. Available CoinGecko figures include price, 24-hour volume, market cap, fully diluted value and circulating supply across all networks. **Listed on · exchanges** lists order-book venues by 24-hour volume. Each venue row can show its country, trust rank and pair count, and each pair row can show price, 24-hour volume, spread and last trade. **Listed on · DEX pools** lists on-chain pools. **Deployed on** lists tracked networks with their token contracts and decimals, not circulating value. Look for **Powered by CoinGecko** beneath each section that uses its data.
   </Step>
   <Step title="Read the Governance & Control tab">
     Click **Governance & Control**. **Parties & control** lists every party named for the asset (1). Each party shows its roles, such as service provider, oracle or code auditor, and the source page it was read from (2). **Smart contract & operational integrity** (3) lists control facts, such as who can control the token. Each fact shows its **Basis** (why the registry reads the source that way), its **Source** and a **Confidence** percentage.
@@ -161,7 +161,6 @@ The **Documentation** section on **Overview** is also Explorer Pro only.
 | Listed on · exchanges | Pair, Price, 24h volume, Spread, Last trade. Venues show country, trust rank and pair count. |
 | Listed on · DEX pools | Pair, Price, 24h volume, Spread, Last trade, by pool venue |
 | Deployed on | Network, Contract, Decimals |
-| Primary liquidity pool (registry snapshot, not live) | Pool and Fee tier; DEX, Pool TVL and Pool 24h volume only when verified |
 
 Venue trust is shown as **High trust**, **Medium trust** or **Low trust**. When the market data feed doesn't respond, the tab says **Live market data unavailable** and the rest of the record is unaffected.
 
