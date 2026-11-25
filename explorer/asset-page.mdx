@@ -39,7 +39,7 @@ class F,G,H,I done
 | Issuer documents and web pages | Disclosure fields, parties, holder terms, reserve attestations |
 | On-chain reads | Contract addresses, supply, controller and admin roles, reserve accounts |
 | Regulator registers and GLEIF | Legal-entity identity, LEI, licences |
-| Market data providers | Price, volume, market cap, exchange and DEX listings |
+| CoinGecko | Price, volume, market cap, fully diluted value, circulating supply, maximum supply, exchange and DEX listings, and tracked network details where available |
 | Oracles | Price and reserve feeds where an asset publishes one |
 
 ## Read an asset page
@@ -53,11 +53,8 @@ class F,G,H,I done
     </Frame>
   </Step>
   <Step title="Read the Overview tab">
-    Use the tabs (1) to move between views. The evidence strip (2) counts the disclosure fields backed by a source document and shows the latest reserve attestation and when the next one is due. **At a glance** (3) summarizes price, market cap, total supply, reserve coverage, attestation cadence, disclosure score, latest disclosure and when the record was last checked. Each tile names its source underneath, such as **Market data · USD** or **On-chain**. **Issuer** (4) shows the issuing entity and its regulatory claims, then **Other parties** named in the asset's documents. **Disclosure checklist** (5) shows coverage by family.
+    Use the tabs to move between views. The evidence strip counts the disclosure fields backed by a source document and shows the latest reserve attestation and when the next one is due. **At a glance** summarizes market figures, supply and disclosure status. When CoinGecko provides circulating supply, the figure counts tokens across all networks. Otherwise, the supply tile shows on-chain total supply for the deployment, if available. The **Powered by CoinGecko** credit names the figures it covers. **Issuer** shows the issuing entity and its regulatory claims, then **Other parties** named in the asset's documents. **Disclosure checklist** shows coverage by family.
 
-    <Frame caption="The Overview tab: evidence strip, at a glance, issuer and checklist.">
-      <img src="/images/explorer/explorer-asset-overview.webp" alt="The Overview tab of an asset page with callouts on the tabs, the evidence strip, the At a glance card, the Issuer card and the Disclosure checklist card." />
-    </Frame>
   </Step>
   <Step title="Check the evidence">
     Further down, **Reserve attestation** (1) names the attester, standard, scope and coverage ratio, and **Disclosure areas covered** shows which of five areas (issuer, parties and control, reserve, documentation, evidence grade) have evidence. **Evidence & Verification** (2) lists the network, token contract, disclosed fields, source documents, reserve dependencies mapped, registry grade and open gaps. **Holder terms** (3) shows what the documents say about who can control the token, governing law, regulatory claims and named auditors. **Documentation** (4) counts the source documents on file; the documents themselves open with Explorer Pro.
@@ -67,11 +64,9 @@ class F,G,H,I done
     </Frame>
   </Step>
   <Step title="Read the Markets tab">
-    Click **Markets**. The tiles (1) show price, 24-hour volume across all venues, market cap, fully diluted value and on-chain circulating supply. **Listed on · exchanges** (2) lists order-book venues by 24-hour volume. Each venue row (3) shows its country, trust rank and pair count, and each pair row (4) shows price, 24-hour volume, spread and last trade. **Listed on · DEX pools** (5) lists on-chain pools the same way. **Deployed on**, further down, lists each chain with its contract, decimals and share of circulating supply.
+    Click **Markets**. CoinGecko supplies these tiles when it has a value: price, market cap, 24-hour volume, global circulating supply, fully diluted value (FDV), and global maximum supply (**Max supply**).
 
-    <Frame caption="The Markets tab: market tiles, exchange venues and DEX pools.">
-      <img src="/images/explorer/explorer-asset-markets.webp" alt="The Markets tab with callouts on the market tiles, the exchanges section, a venue row, a pair row and the DEX pools section." />
-    </Frame>
+    **Listed on · exchanges** lists order-book venues by 24-hour volume. Each venue row can show its country, trust rank and pair count, and each pair row can show price, 24-hour volume, spread and last trade. **Listed on · DEX pools** lists on-chain pools. **Deployed on** lists tracked networks with their token contracts and decimals, not circulating value. Look for **Powered by CoinGecko** beneath each section that uses its data.
   </Step>
   <Step title="Read the Governance & Control tab">
     Click **Governance & Control**. **Parties & control** lists every party named for the asset (1). Each party shows its roles, such as service provider, oracle or code auditor, and the source page it was read from (2). **Smart contract & operational integrity** (3) lists control facts, such as who can control the token. Each fact shows its **Basis** (why the registry reads the source that way), its **Source** and a **Confidence** percentage.
@@ -120,9 +115,10 @@ The **Documentation** section on **Overview** is also Explorer Pro only.
 
 | Field | Meaning |
 | --- | --- |
-| Token price | Latest price from market data |
-| Market cap | From market data providers |
-| Total supply | Read on-chain from the token contract |
+| Token price | Latest verified CoinGecko price; unavailable if there is no current quote |
+| Market cap | Verified CoinGecko market cap, not a fund's assets under management |
+| Circulating supply | Fresh CoinGecko token count across all networks, when available |
+| Total supply | When CoinGecko does not provide circulating supply, the tile shows this deployment's on-chain total supply only if that figure is available. If neither figure is available, the tile is omitted. |
 | Reserve coverage | Reserves to supply as a ratio such as `1.02 : 1`, from the reserve attestation, or **No attestation on record** |
 | Attestation cadence | How often reserve attestations are published, from the issuer's disclosure where stated |
 | Disclosure % | Checklist items on record, out of 48 |
@@ -164,11 +160,10 @@ The **Documentation** section on **Overview** is also Explorer Pro only.
 
 | Section | Columns |
 | --- | --- |
-| Tiles | Price, 24h volume (all venues), Market cap, FDV, On-chain circulating |
+| Tiles | From CoinGecko, when available: price, market cap, 24-hour volume, global circulating supply, fully diluted value (FDV), and global maximum supply (**Max supply**) |
 | Listed on · exchanges | Pair, Price, 24h volume, Spread, Last trade. Venues show country, trust rank and pair count. |
 | Listed on · DEX pools | Pair, Price, 24h volume, Spread, Last trade, by pool venue |
-| Deployed on | Network, Contract, Decimals, Circulating · share |
-| Primary liquidity pool (registry snapshot, not live) | Pool, DEX, Pool TVL, Pool 24h volume, Fee tier, ±2% depth |
+| Deployed on | Network, Contract, Decimals |
 
 Venue trust is shown as **High trust**, **Medium trust** or **Low trust**. When the market data feed doesn't respond, the tab says **Live market data unavailable** and the rest of the record is unaffected.
 

@@ -35,11 +35,7 @@ Filters and sort are stored in the page URL. Copy the URL to share a filtered vi
 
 <Steps>
   <Step title="Open the assets directory">
-    Go to [explorer.bluprynt.com/assets](https://explorer.bluprynt.com/assets), or click **Open the Explorer** on the home page. Search by asset name or ticker (1). The summary cards (2) count assets on record, classifications, chains covered and the 48 checklist items tracked per asset. Use the filters and sort (3) to narrow the list. Each row (4) shows the issuer, chains, market cap and disclosure checklist score. **Claim this profile** (5) is the entry point for the issuer to verify the record.
-
-    <Frame caption="The digital assets directory.">
-      <img src="/images/explorer/explorer-assets.webp" alt="The digital assets directory with callouts on the search field, the summary cards, the filters and sort, an asset row and the Claim this profile link." />
-    </Frame>
+    Go to [explorer.bluprynt.com/assets](https://explorer.bluprynt.com/assets), or click **Open the Explorer** on the home page. Search by asset name or ticker. The summary cards count assets on record, classifications, chains covered and the 48 checklist items tracked per asset. Use the filters and sort to narrow the list. Each row shows the issuer, chains, disclosure checklist score and market cap when CoinGecko provides it. The list credits CoinGecko when a market cap is shown. **Claim this profile** is the entry point for the issuer to verify the record.
   </Step>
   <Step title="Filter by classification or chain">
     Click **All classifications** (1). Each option (2) shows how many assets carry that classification. Pick one to filter the list. **All chains** works the same way for deployments.
@@ -63,11 +59,7 @@ Filters and sort are stored in the page URL. Copy the URL to share a filtered vi
     </Frame>
   </Step>
   <Step title="Browse protocols">
-    Go to [explorer.bluprynt.com/protocols](https://explorer.bluprynt.com/protocols). Search by protocol name (1). The summary cards (2) count protocols and categories. **Value locked tracked** and **With audit record** count the protocols on the current page. Filter by category and sort by value locked, name or recency (3). Each row (4) shows the category, description, value locked, chains, contracts and audits.
-
-    <Frame caption="The protocol monitor directory.">
-      <img src="/images/explorer/explorer-protocols.webp" alt="The protocol monitor directory with callouts on the search field, summary cards, the category filter and sort, and a protocol row." />
-    </Frame>
+    Go to [explorer.bluprynt.com/protocols](https://explorer.bluprynt.com/protocols). Search by protocol name. The audit card counts only protocols with audits on the current page, not across the directory. Filter by category and sort by name, recency or value locked. Each row shows the category, description, chains, contracts and audits when available. Value locked appears only for protocols with a current CoinGecko TVL figure. The **Largest TVL** rail ranks those protocols; it does not represent total TVL across the directory.
   </Step>
 </Steps>
 
@@ -80,7 +72,7 @@ Filters and sort are stored in the page URL. Copy the URL to share a filtered vi
 | Assets | Classification, Chain | Market cap (default), Name, Recently updated |
 | Issuers | Jurisdiction, Asset count, Coverage, Screening, Verification | Name (A–Z) (default), Most live tokens, Highest checklist coverage |
 | Regulators | Jurisdiction, Type, Evidence | Most entities (default), Most assets, Name A–Z, Jurisdiction |
-| Protocols | Category | Value locked (default), Name, Recently updated |
+| Protocols | Category | Name, Recently updated, Value locked |
 
 ### Row fields
 
@@ -88,7 +80,7 @@ Filters and sort are stored in the page URL. Copy the URL to share a filtered vi
 | --- | --- | --- |
 | Assets | Issuer | The linked issuer's legal name, or **Not linked** when no issuer is resolved. |
 | Assets | Chain | The primary chain, plus the number of other chains the asset is deployed on. |
-| Assets | Market cap | From market data providers. Blank when no provider prices the asset. |
+| Assets | Market cap | From verified CoinGecko data. Unavailable if the source does not provide the figure. |
 | Assets | Disclosure % | Checklist items on record out of 48. |
 | Issuers | Jurisdiction | Where the entity is incorporated or domiciled, or **Not disclosed**. |
 | Issuers | Assets on record | Assets linked to this issuer, or **None linked**. |
@@ -97,7 +89,6 @@ Filters and sort are stored in the page URL. Copy the URL to share a filtered vi
 | Regulators | Type | For example **Securities regulator**, **Payments regulator** or **Banking supervisor**. |
 | Regulators | Entities regulated | Entities on this authority's registers or licence lists, as published by the register itself. One row per entity. |
 | Regulators | Assets governed | Assets the registry links to this authority. |
-| Protocols | Value locked | Total value locked as reported by DeFiLlama, where tracked. |
 | Protocols | Contracts, Audits | Contracts and audits on record, or **None recorded** / **No record**. |
 
 ## Worked example: shortlist stablecoins on one chain
@@ -113,7 +104,7 @@ Filters and sort are stored in the page URL. Copy the URL to share a filtered vi
 | Problem | What to do |
 | --- | --- |
 | A filter returns nothing | Clear one filter at a time. The option counts show how many records each choice matches before you pick it. |
-| Market cap is blank | No market data provider prices the asset. The rest of the record is unaffected. |
+| Market cap is blank | No fresh CoinGecko market cap is available. The asset can still have a price. |
 | A protocol count says "on this page" | That card counts only the protocols shown on the current page, not the whole directory. |
 
 ## FAQ
